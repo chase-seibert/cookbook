@@ -80,11 +80,13 @@ Slowly whisk oil into the dressing. Season to taste with salt and pepper.
 \end{multicols}
 \clearpage
 
+\newgeometry{margin=0in}
 \begin{figure}[p]
     \centering
-    \includegraphics[width=\textwidth]{caesar2.jpg}
+    \includegraphics[width=\paperwidth,height=\paperheight]{caesar2.jpg}
     \caption{Caesar Salad}
 \end{figure}
+\restoregeometry
 
 \clearpage
 
@@ -146,11 +148,13 @@ If you want to chop bacon very fine, freeze it for 10 minutes first.
 
 \clearpage
 
+\newgeometry{margin=0in}
 \begin{figure}[p]
     \centering
-    \includegraphics[width=\paperwidth]{spinach.jpg}
+    \includegraphics[width=\paperwidth,height=\paperheight]{spinach.jpg}
     \caption{Fresh Spinach}
 \end{figure}
+\restoregeometry
 
 \clearpage
 
@@ -159,7 +163,6 @@ If you want to chop bacon very fine, freeze it for 10 minutes first.
 \end{document}
 
 - custom title pages (section 7.2)
-- fix full page images to use no margin, strech?
 - reduce chapter title height
 - image attribution
 - tips styling
@@ -168,3 +171,5 @@ If you want to chop bacon very fine, freeze it for 10 minutes first.
 - better fonts
 - create own package (sty file)
 - separate tex files per recipe?
+- symlink to Dropbox + README
+- make macros (?) for images, lists, etc to reduce redundancy. DRY
