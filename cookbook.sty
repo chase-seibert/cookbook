@@ -12,11 +12,14 @@
 }
 
 \newcommand\ingredients[1]{
+    \sffamily
+    \bfseries
     \vspace{1em}
     \begin{tabular}{r@{ }l}
         #1
     \end{tabular}
     \vspace{1em}
+    \mdseries
 }
 
 \newenvironment{recipe} {
@@ -42,3 +45,4 @@
     \vfill
     \oldcolumnbreak
 }
+
