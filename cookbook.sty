@@ -1,0 +1,13 @@
+\ProvidesPackage{cookbook}
+
+\newcommand\fullpageimage[1]{
+    \newgeometry{margin=0in}
+    \begin{figure}[p]
+        \centering
+        \includegraphics[width=\paperwidth,height=\paperheight]{#1}
+        \caption{Caesar Salad}
+    \end{figure}
+    \restoregeometry
+    \clearpage
+}
+
