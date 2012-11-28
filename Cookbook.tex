@@ -19,12 +19,15 @@
 \author{Chase Seibert}
 \maketitle
 
+\columnsep=2em
+\setlength{\columnseprule}{0pt}.
+
 \cleardoublepage
 \tableofcontents
 \chapter{Salads}
 
 \section{Caesar Salad}
-\begin{multicols}{3}
+\begin{multicols*}{3}
 
 Place serving bowls and large mixing bowl in the freezer.
 
@@ -77,7 +80,7 @@ Blanch egg in shell for 45 seconds in boiling water. Remove and crack into a sma
 
 Slowly whisk oil into the dressing. Season to taste with salt and pepper.
 
-\end{multicols}
+\end{multicols*}
 \clearpage
 
 \newgeometry{margin=0in}
@@ -92,7 +95,7 @@ Slowly whisk oil into the dressing. Season to taste with salt and pepper.
 
 
 \section{Anne's Spinach Salad}
-\begin{multicols}{3}
+\begin{multicols*}{3}
 
 \begin{quote}
     This recipe is from my Aunt Anne, who swears that she always used romaine lettuce instead of spinach.
@@ -144,7 +147,7 @@ Leftover spinach can be saved, but be sure to reseal it in the original packagin
 If you want to chop bacon very fine, freeze it for 10 minutes first.
 \end{quote}
 
-\end{multicols}
+\end{multicols*}
 
 \clearpage
 
@@ -162,14 +165,11 @@ If you want to chop bacon very fine, freeze it for 10 minutes first.
 
 \end{document}
 
+- separate tex files per recipe?
+- make macros (?) for images, lists, etc to reduce redundancy. DRY
+    create own package (sty file)
+- tips styling
 - custom title pages (section 7.2)
 - reduce chapter title height
 - image attribution
-- tips styling
-- no borders on columns
-- columns don't evenly distribute
 - better fonts
-- create own package (sty file)
-- separate tex files per recipe?
-- symlink to Dropbox + README
-- make macros (?) for images, lists, etc to reduce redundancy. DRY
