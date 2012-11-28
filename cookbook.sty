@@ -12,9 +12,11 @@
 }
 
 \newcommand\ingredients[1]{
+    \vspace{1em}
     \begin{tabular}{r@{ }l}
         #1
     \end{tabular}
+    \vspace{1em}
 }
 
 \newenvironment{recipe} {
@@ -24,3 +26,19 @@
     \clearpage
 }
 
+\newcommand\pre[1]{
+    \begin{framed}
+        #1
+    \end{framed}
+}
+
+\newcommand\tip[1]{
+    \vspace{1em}
+    \it{#1}
+}
+
+\let\oldcolumnbreak\columnbreak
+\renewcommand\columnbreak[0]{
+    \vfill
+    \oldcolumnbreak
+}
