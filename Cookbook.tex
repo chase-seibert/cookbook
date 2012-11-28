@@ -9,11 +9,12 @@
 \usepackage{framed}
 \usepackage{cookbook}
 
-\titlespacing*{\chapter}{0pt}{-50pt}{20pt}
-\titleformat{\chapter}[display]{\normalfont\huge\bfseries}{\chaptertitlename\
-\thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0em}{-3em}{1em}
+\titleformat{\chapter}{\normalfont\huge\bfseries}{\chaptertitlename\
+\thechapter:}{20pt}{\Huge}
 \renewcommand{\thesection}{}  % don't show the section numbers
-\titleformat{\section}[hang]{\scshape\large}{\thesection}{0pt}{}[]
+\titleformat{\section}[block]{\titlerule%
+\scshape\large\filcenter\vspace{2pt}}{\thesection}{0em}{}[\titlerule]
 \setlength{\parindent}{0pt}
 \setlength{\columnseprule}{0.4pt}
 \pagestyle{plain}
