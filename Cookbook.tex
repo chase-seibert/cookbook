@@ -8,7 +8,11 @@
 \usepackage{xfrac}
 \usepackage{framed}
 \usepackage{gensymb}
-\usepackage{cookbook}
+\usepackage[abs]{overpic}
+\setlength\unitlength{1in}
+\usepackage{color}
+
+\usepackage{cookbook}  % custom style
 
 \titlespacing*{\chapter}{0em}{-3em}{1em}
 \titleformat{\chapter}{\normalfont\huge\bfseries}{\chaptertitlename\
@@ -27,9 +31,14 @@
 
 \rmfamily
 
-\title{Cookbook}
-\author{Chase Seibert}
-\maketitle
+\begin{titlepage}
+    \newgeometry{margin=0in}
+    \begin{overpic}[height=\paperheight,tics=1]{cover.jpg}
+        \put(6,6){\Huge\bf\color{white} Cookbook 2013}
+        \put(6.85,5.5){\Large\bf\color{white} Chase Seibert}
+    \end{overpic}
+    \restoregeometry
+\end{titlepage}
 
 \columnsep=2em
 \setlength{\columnseprule}{0pt}.
@@ -47,5 +56,5 @@
 
 \end{document}
 
-- custom title pages (section 7.2)
+- title pages images no border, and scale to exactly 9inx7in
 - list of figures
