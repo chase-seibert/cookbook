@@ -1,21 +1,24 @@
 \ProvidesPackage{cookbook}
 
-\newcommand\fullpageimage[1]{
+\newcommand\fullpageimage[2]{
     \newgeometry{margin=0in}
     \begin{figure}[p]
         \centering
         \includegraphics[width=\paperwidth,height=\paperheight]{#1}
-        \caption{Caesar Salad}
+        \caption{#2}
     \end{figure}
     \restoregeometry
     \clearpage
 }
 
+\usepackage{array}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
 \newcommand\ingredients[1]{
     \sffamily
     \bfseries
     \vspace{1em}
-    \begin{tabular}{r@{ }l}
+    \begin{tabular}{ R{1.3em} l }
         #1
     \end{tabular}
     \vspace{1em}
@@ -23,9 +26,9 @@
 }
 
 \newenvironment{recipe} {
-    \begin{multicols*}{3}
+    \begin{multicols}{3}
 }{
-    \end{multicols*}
+    \end{multicols}
     \clearpage
 }
 
@@ -37,7 +40,7 @@
 
 \newcommand\tip[1]{
     \vspace{1em}
-    \it{#1}
+    {\it #1}
 }
 
 \let\oldcolumnbreak\columnbreak

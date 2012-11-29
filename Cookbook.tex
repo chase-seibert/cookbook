@@ -13,11 +13,12 @@
 \titleformat{\chapter}{\normalfont\huge\bfseries}{\chaptertitlename\
 \thechapter:}{20pt}{\Huge}
 \renewcommand{\thesection}{}  % don't show the section numbers
-\titleformat{\section}[block]{\titlerule%
-\scshape\large\filcenter\vspace{2pt}}{\thesection}{0em}{}[\titlerule]
-\setlength{\parindent}{0pt}
+\titleformat{\section}[block]{\titlerule\scshape\large\filcenter\vspace{2pt}}{}{0em}{}[\titlerule]
+\titleformat{\subsection}[block]{\scshape\large\filcenter}{}{0em}{}[\titlerule]
+\setlength{\parindent}{1em}
 \setlength{\columnseprule}{0.4pt}
 \pagestyle{plain}
+\raggedbottom
 
 \begin{document}
 
@@ -43,9 +44,8 @@
 \end{document}
 
 - custom title pages (section 7.2)
-- reduce chapter title height
-- image attribution
 - better fonts
     headers - small cap serif
     recipe text - sans serif
     ingredients - sans serif bold
+- list of figures
