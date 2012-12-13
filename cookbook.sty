@@ -25,6 +25,17 @@
     \mdseries
 }
 
+\newcommand\ingredientsLeft[1]{
+    \sffamily
+    \bfseries
+    \vspace{.5em}
+    \begin{tabularx}{2.5in}{ R{0em} X }
+        #1
+    \end{tabularx}
+    \vspace{0em}
+    \mdseries
+}
+
 \newenvironment{recipe} {
     \begin{multicols*}{3}
 }{
