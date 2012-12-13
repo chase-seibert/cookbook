@@ -7,7 +7,7 @@
 \usepackage[margin=.5in, paperwidth=9in, paperheight=7in]{geometry}
 \usepackage{titlesec}
 \usepackage{xfrac}
-\usepackage{framed}
+\usepackage{mdframed}
 \usepackage{gensymb}
 \usepackage[abs]{overpic}
 \setlength\unitlength{1in}
@@ -21,10 +21,9 @@
 \renewcommand{\thesection}{}  % don't show the section numbers
 \titleformat{\section}[block]{\titlerule\scshape\large\filcenter\vspace{2pt}}{}{0em}{}[\titlerule]
 \titleformat{\subsection}[block]{\scshape\large\filcenter}{}{0em}{}[\titlerule]
-\setlength{\parindent}{1em}
+\setlength{\parindent}{.75em}
 \setlength{\columnseprule}{0.4pt}
 \pagestyle{plain}
-\raggedbottom
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
@@ -39,6 +38,8 @@
 \small
 \tableofcontents
 \normalsize
+
+\setlength{\parskip}{.5em}
 
 \chapter{Salads}
 \input{caesar}
@@ -70,11 +71,9 @@
 \input{pulledpork}
 \input{potroast}
 
+\setlength{\parskip}{0pt}
 \listoffigures
 
 \end{document}
 
-some ingredients don't wrap - see buffalo/dandan
-some space between paraphraches
-back page
-look for three digit words - add degrees
+ingredients w/o numbers should flush left

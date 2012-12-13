@@ -17,11 +17,11 @@
 \newcommand\ingredients[1]{
     \sffamily
     \bfseries
-    \vspace{1em}
+    \vspace{.5em}
     \begin{tabularx}{2.5in}{ R{1.3em} X }
         #1
     \end{tabularx}
-    \vspace{.75em}
+    \vspace{0em}
     \mdseries
 }
 
@@ -33,9 +33,10 @@
 }
 
 \newcommand\pre[1]{
-    \begin{framed}
+    \begin{mdframed}
         #1
-    \end{framed}
+    \end{mdframed}
+    \vspace{.5em}
 }
 
 \newcommand\tip[1]{
