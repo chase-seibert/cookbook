@@ -14,4 +14,12 @@ This is a collection of recipes in LaTeX format that I use to print a hard-copy 
 
 If you get the error "the winder server could not be contacted", you need to run the script outside of tmux ;)
 
+# Editing
 
+- You can include a blank page with the following:
+
+```
+\newpage
+\thispagestyle{empty}
+\mbox{}
+```
