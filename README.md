@@ -23,3 +23,9 @@ If you get the error "the winder server could not be contacted", you need to run
 \thispagestyle{empty}
 \mbox{}
 ```
+
+- You can break a column manually with:
+
+```
+\columnbreak
+```
