@@ -1,1 +1,1 @@
-cp Cookbook.pdf ~/Dropbox/Public
+cp Cookbook.pdf ~/Dropbox\ \(Personal\)/Public/
