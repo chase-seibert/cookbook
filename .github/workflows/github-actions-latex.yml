@@ -15,8 +15,3 @@ jobs:
         with:
           name: Cookbook
           path: Cookbook.pdf
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag: release
-          files: Cookbook.pdf
