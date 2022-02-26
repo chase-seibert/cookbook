@@ -17,6 +17,6 @@ jobs:
           path: Cookbook.pdf
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/heads/master')
         with:
           files: Cookbook.pdf
