@@ -15,3 +15,15 @@ jobs:
         with:
           name: Cookbook
           path: Cookbook.pdf
+      - name: Upload file to bucket
+        uses: zdurham/s3-upload-github-action@master
+        # if: github.ref == 'refs/heads/master'
+        with:
+          args: --acl public-read
+        env:
+          FILE: ./Cookbook.pdf
+          AWS_REGION: 'us-west-2'
+          S3_BUCKET: ${{ secrets.AWS_BUCKET }}
+          S3_KEY: 'cookbook.pdf'
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
