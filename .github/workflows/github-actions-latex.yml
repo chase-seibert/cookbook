@@ -10,12 +10,12 @@ jobs:
         uses: xu-cheng/latex-action@v2
         with:
           root_file: Cookbook.tex
-      - name: Upload PDF
+      - name: Upload GitHub Artifact
         uses: actions/upload-artifact@v2
         with:
           name: Cookbook
           path: Cookbook.pdf
-      - name: Upload file to bucket
+      - name: Upload Final PDF to AWS S3
         uses: zdurham/s3-upload-github-action@master
         # if: github.ref == 'refs/heads/master'
         with:
