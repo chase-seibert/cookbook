@@ -11,7 +11,7 @@ jobs:
         with:
           root_file: Cookbook.tex
       - name: Upload GitHub Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Cookbook
           path: Cookbook.pdf
