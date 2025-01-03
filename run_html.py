@@ -4,6 +4,7 @@ import os
 import argparse
 import re
 from collections import OrderedDict
+from datetime import datetime
 
 
 def extract_tag_value(latex_string, latex_tag):
@@ -14,11 +15,6 @@ def extract_tag_value(latex_string, latex_tag):
 def has_tag(latex_string, latex_tag):
     match = re.search(r"\\" + latex_tag + r"\ ?{", latex_string)
     return True if match else False
-
-
-def slugify(text):
-    text = text.lower()
-    return re.sub(r'[\W_]+', '-', text)
 
 
 def parse_index_file(index_file):
@@ -42,12 +38,11 @@ def parse_index_file(index_file):
 def generate_index_html(data):
     output = ''
     for chapter, recipes in data.items():
-        output += '<h1>%s</h1>\n' % chapter
+        output += '<h2>%s</h2>\n' % chapter
         for recipe in recipes:
-            # the second value is a placeholder, won't know actual title until 
+            # the second value is a placeholder, won't know actual title until
             # we read every recipe (at the end)
-            output += '   <a href="#%s">%s-title</a><br>\n' % (
-                slugify(recipe), slugify(recipe))
+            output += '   <a href="#%s">#%s-title</a><br>\n' % (recipe, recipe)
     return output
 
 
@@ -61,7 +56,7 @@ def generate_recipe_html(recipe_slug, recipe_lines):
         subsection = extract_tag_value(line, "subsection")
         if section:
             recipe_title = section
-            output += "<h2 id='%s'>%s</h2>" % (slugify(recipe_slug), section)
+            output += "<h2 id='%s'>%s</h2>" % (recipe_slug, section)
         elif subsection:
             output += "<h3>%s</h3>" % (subsection)
         elif has_tag(line, "begin"):
@@ -133,11 +128,17 @@ if __name__ == "__main__":
                 # we put down a placeholder for this to replace now 
                 # that we know the real title of the recipe
                 index_html = index_html.replace(
-                    "%s-title" % slugify(recipe), recipe_title)
+                    "#%s-title" % recipe, recipe_title)
                 recipes_html += recipe_html
                 recipes_html += "\n\n"
     print('<meta charset="utf-8" />')
+    print("<title>Chase Seibert's Cookbook</title>")
     print('<div style="font-size: 200%">')
+    print("<h1>Chase Seibert's Cookbook</h1>")
+    print("""From <a href='https://github.com/chase-seibert/cookbook'>
+          https://github.com/chase-seibert/cookbook</a><br>""")
+    print("<i>Last updated: %s</i><br>" % datetime.now().strftime("%Y-%m-%d"))
     print(index_html)
+    print("<br><hr>")
     print(recipes_html)
     print('</div>')
