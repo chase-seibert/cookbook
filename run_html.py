@@ -136,5 +136,8 @@ if __name__ == "__main__":
                     "%s-title" % slugify(recipe), recipe_title)
                 recipes_html += recipe_html
                 recipes_html += "\n\n"
+    print('<meta charset="utf-8" />')
+    print('<div style="font-size: 200%">')
     print(index_html)
     print(recipes_html)
+    print('</div>')
