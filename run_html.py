@@ -112,7 +112,7 @@ def generate_recipe_html(recipe_slug, recipe_lines):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Convert LaTeX files HTML")
-    parser.add_argument("--index2", action="store", help="File containing the index *.tex file")
+    parser.add_argument("--index", action="store", help="File containing the index *.tex file")
     args = parser.parse_args()
     data = parse_index_file(args.index2)
     if not data:
