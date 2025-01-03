@@ -2,24 +2,8 @@
 
 This is a collection of recipes in LaTeX format.
 
-[PDF version](https://chase-cookbook.s3.us-west-2.amazonaws.com/cookbook.pdf)
-
-
-# Editing
-
-- You can include a blank page with the following:
-
-```
-\newpage
-\thispagestyle{empty}
-\mbox{}
-```
-
-- You can break a column manually with:
-
-```
-\columnbreak
-```
+- [PDF version](https://chase-cookbook.s3.us-west-2.amazonaws.com/cookbook.pdf)
+- [HTML version](https://chase-cookbook.s3.us-west-2.amazonaws.com/cookbook.html)
 
 # Printing
 
