@@ -13,7 +13,7 @@ def extract_tag_value(latex_string, latex_tag):
 
 
 def has_tag(latex_string, latex_tag):
-    match = re.search(r"\\" + latex_tag + r"\ ?{", latex_string)
+    match = re.search(r"\\" + latex_tag + r"\ ?{?", latex_string)
     return True if match else False
 
 
@@ -60,6 +60,8 @@ def generate_recipe_html(recipe_slug, recipe_lines):
         elif subsection:
             output += "<h3>%s</h3>" % (subsection)
         elif has_tag(line, "begin"):
+            continue
+        elif has_tag(line, "newpage"):
             continue
         elif has_tag(line, "pre"):
             indent = ''
