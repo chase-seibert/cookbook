@@ -23,6 +23,8 @@ Compiling HTML for local development:
 open Cookbook.html
 ```
 
+Recipe notes can use `\tip{...}` for general tips or `\healthierOption{...}` for healthier alternatives.
+
 # Printing
 
 I use [Lulu.com](http://lulu.com)

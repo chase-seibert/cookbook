@@ -51,6 +51,7 @@ def generate_recipe_html(recipe_slug, recipe_lines):
     output = ""
     indent = ''
     breaks = False
+    healthier_option = False
     for line in recipe_lines:
         section = extract_tag_value(line, "section")
         subsection = extract_tag_value(line, "subsection")
@@ -71,6 +72,12 @@ def generate_recipe_html(recipe_slug, recipe_lines):
             indent = ''
             breaks = False
             continue
+        elif has_tag(line, "healthierOption"):
+            indent = ''
+            breaks = False
+            healthier_option = True
+            output += "<br><br><i>Healthier option: "
+            continue
         elif has_tag(line, "ingredients") or has_tag(line, "ingredientsLeft"):
             indent = '   '
             breaks = True
@@ -78,6 +85,9 @@ def generate_recipe_html(recipe_slug, recipe_lines):
         elif has_tag(line, "end"):
             continue
         elif line.strip() == "}":
+            if healthier_option:
+                output += "</i>"
+                healthier_option = False
             indent = ''
             breaks = False
             continue
