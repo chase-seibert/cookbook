@@ -23,6 +23,21 @@ Compiling HTML for local development:
 open Cookbook.html
 ```
 
+## Docker
+
+The PDF Docker flow uses the same full TeX Live image as the GitHub Actions
+workflow (`xu-cheng/latex-action@v2`). This keeps local compilation isolated
+from macOS LaTeX installations:
+
+```bash
+make docker-pdf
+make docker-html
+```
+
+On Apple Silicon, the PDF image runs as `linux/amd64`, matching the GitHub
+Actions runner. The first PDF build downloads the TeX Live image and may take
+some time.
+
 Recipe notes can use `\tip{...}` for general tips or `\healthierOption{...}` for healthier alternatives.
 
 # Printing
