@@ -40,6 +40,21 @@ some time.
 
 Recipe notes can use `\tip{...}` for general tips or `\healthierOption{...}` for healthier alternatives.
 
+## iPhone app
+
+The `ios/` directory contains a native SwiftUI app and an offline recipe catalog
+generated from the LaTeX sources. Recipe files remain authoritative; do not edit
+`ios/Cookbook/Resources/recipes.json` by hand.
+
+```bash
+make catalog
+make catalog-check
+make sim-build
+make sim-launch
+```
+
+See [the mobile setup guide](docs/setup-install.md) and [the app architecture](docs/architecture.md).
+
 # Printing
 
 I use [Lulu.com](http://lulu.com)

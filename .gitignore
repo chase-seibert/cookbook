@@ -37,3 +37,5 @@ cookbook.html
 *.vrb
 *.xdy
 *.tdo
+
+/build/

@@ -1,4 +1,4 @@
-.PHONY: pdf html docker-build docker-pdf docker-html docker all
+.PHONY: pdf html docker-build docker-pdf docker-html docker all catalog catalog-check sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
 
 DOCKER_PLATFORM ?= linux/amd64
 DOCKER_IMAGE ?= cookbook-latex
@@ -24,3 +24,53 @@ docker-html:
 		python3 run_html.py --index Cookbook.tex > Cookbook.html
 
 docker: docker-pdf docker-html
+
+IOS_PROJECT := ios/Cookbook.xcodeproj
+IOS_SCHEME := Cookbook
+IOS_APP := Cookbook
+IOS_BUNDLE_ID := com.cseibert.Cookbook
+IOS_DERIVED_DATA := build/ios
+SIM_DEVICE_NAME ?= iPhone 17 Pro
+SIM_DESTINATION ?= platform=iOS Simulator,name=$(SIM_DEVICE_NAME)
+GENERIC_SIM_DESTINATION := generic/platform=iOS Simulator
+DEVICE_ID ?= 00008150-000E41422E40401C
+DEVELOPMENT_TEAM ?= 96NAC4VTEN
+
+catalog:
+	python3 scripts/generate_mobile_catalog.py
+
+catalog-check:
+	python3 scripts/generate_mobile_catalog.py --check
+
+sim-build: catalog-check
+	xcodebuild -project $(IOS_PROJECT) -scheme $(IOS_SCHEME) -configuration Debug \
+	  -destination '$(GENERIC_SIM_DESTINATION)' -derivedDataPath $(IOS_DERIVED_DATA) \
+	  CODE_SIGNING_ALLOWED=NO build
+
+sim-launch: sim-build
+	@set -eu; \
+	UDID=$$(xcrun simctl list devices available | awk -F '[()]' -v name="$(SIM_DEVICE_NAME)" '{ display=$$1; sub(/^[[:space:]]+/, "", display); sub(/[[:space:]]+$$/, "", display); if (display == name && $$0 !~ /unavailable/) { print $$2; exit } }'); \
+	if [ -z "$$UDID" ]; then echo "No available simulator named $(SIM_DEVICE_NAME)."; xcrun simctl list devices available; exit 1; fi; \
+	xcrun simctl boot "$$UDID" >/dev/null 2>&1 || true; xcrun simctl bootstatus "$$UDID" -b; \
+	open -a Simulator --args -CurrentDeviceUDID "$$UDID"; \
+	xcrun simctl install "$$UDID" "$(IOS_DERIVED_DATA)/Build/Products/Debug-iphonesimulator/$(IOS_APP).app"; \
+	xcrun simctl launch "$$UDID" $(IOS_BUNDLE_ID)
+
+phone-build: catalog-check
+	xcodebuild -project $(IOS_PROJECT) -scheme $(IOS_SCHEME) -configuration Debug \
+	  -destination 'platform=iOS,id=$(DEVICE_ID)' -derivedDataPath $(IOS_DERIVED_DATA) \
+	  CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=$(DEVELOPMENT_TEAM) \
+	  -allowProvisioningUpdates -allowProvisioningDeviceRegistration build
+
+phone-install:
+	xcrun devicectl device install app --device $(DEVICE_ID) "$(IOS_DERIVED_DATA)/Build/Products/Debug-iphoneos/$(IOS_APP).app"
+
+phone-launch:
+	xcrun devicectl device process launch --device $(DEVICE_ID) --terminate-existing $(IOS_BUNDLE_ID)
+
+phone-deploy: phone-build phone-install phone-launch
+
+test: catalog-check
+	xcodebuild -project $(IOS_PROJECT) -scheme $(IOS_SCHEME) -configuration Debug \
+	  -destination '$(GENERIC_SIM_DESTINATION)' -derivedDataPath $(IOS_DERIVED_DATA) \
+	  CODE_SIGNING_ALLOWED=NO test
