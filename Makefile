@@ -1,4 +1,4 @@
-.PHONY: pdf html docker-build docker-pdf docker-html docker all catalog catalog-check sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
+.PHONY: pdf html docker-build docker-pdf docker-html docker all catalog catalog-check thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
 
 DOCKER_PLATFORM ?= linux/amd64
 DOCKER_IMAGE ?= cookbook-latex
@@ -41,6 +41,14 @@ catalog:
 
 catalog-check:
 	python3 scripts/generate_mobile_catalog.py --check
+
+REMAINING_PERCENT ?=
+
+thumbnail-queue:
+	python3 scripts/recipe_thumbnails.py queue $(if $(REMAINING_PERCENT),--remaining-percent $(REMAINING_PERCENT),)
+
+thumbnail-validate:
+	python3 scripts/recipe_thumbnails.py validate
 
 sim-build: catalog-check
 	xcodebuild -project $(IOS_PROJECT) -scheme $(IOS_SCHEME) -configuration Debug \

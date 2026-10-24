@@ -15,6 +15,7 @@
 		A10000000000000000000007 /* recipes.json in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000007 /* recipes.json */; };
 		A10000000000000000000008 /* AIDinnerPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000009 /* AIDinnerPlanner.swift */; };
 		A10000000000000000000009 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000000A /* Assets.xcassets */; };
+		A10000000000000000000010 /* Thumbnails in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000010 /* Thumbnails */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		B10000000000000000000008 /* Cookbook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cookbook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B10000000000000000000009 /* AIDinnerPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIDinnerPlanner.swift; sourceTree = "<group>"; };
 		B1000000000000000000000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B10000000000000000000010 /* Thumbnails */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Thumbnails; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,7 +40,7 @@
 		D10000000000000000000001 = {isa = PBXGroup; children = (D10000000000000000000002 /* Cookbook */, D10000000000000000000003 /* Products */,); sourceTree = "<group>"; };
 		D10000000000000000000002 /* Cookbook */ = {isa = PBXGroup; path = Cookbook; sourceTree = "<group>"; children = (B10000000000000000000001, B10000000000000000000002, B10000000000000000000003, B10000000000000000000004, B10000000000000000000005, B10000000000000000000006, B10000000000000000000009, B1000000000000000000000A /* Assets.xcassets */, D10000000000000000000004 /* Resources */,); };
 		D10000000000000000000003 /* Products */ = {isa = PBXGroup; children = (B10000000000000000000008 /* Cookbook.app */,); name = Products; sourceTree = "<group>"; };
-		D10000000000000000000004 /* Resources */ = {isa = PBXGroup; path = Resources; sourceTree = "<group>"; children = (B10000000000000000000007 /* recipes.json */,); };
+		D10000000000000000000004 /* Resources */ = {isa = PBXGroup; path = Resources; sourceTree = "<group>"; children = (B10000000000000000000007 /* recipes.json */, B10000000000000000000010 /* Thumbnails */,); };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -50,7 +52,7 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		C10000000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000007 /* recipes.json in Resources */, A10000000000000000000009 /* Assets.xcassets in Resources */,); runOnlyForDeploymentPostprocessing = 0; };
+		C10000000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000007 /* recipes.json in Resources */, A10000000000000000000009 /* Assets.xcassets in Resources */, A10000000000000000000010 /* Thumbnails in Resources */,); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */

@@ -1,0 +1,253 @@
+{
+  "recipes": {
+    "aperto": {
+      "asset": "aperto.jpg",
+      "bytes": 298205,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "bd2d8d07a052f4b18ddb9113c398b0a900588bcb79f3e15cf52142ab83164dfc",
+      "width": 1024
+    },
+    "brownrice": {
+      "asset": "brownrice.jpg",
+      "bytes": 295903,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "7bfbde3171bb3c96287dd2ec1ff99861aaeef24ba217fd5635312e52d319dade",
+      "width": 1024
+    },
+    "burgers": {
+      "asset": "burgers.jpg",
+      "bytes": 263616,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "61e74c54ecb03fb5075538513b4c9aca033e5eb7ff6cb65ae43cd127497960b2",
+      "width": 1024
+    },
+    "caesar": {
+      "asset": "caesar.jpg",
+      "bytes": 286186,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "d395db77ec30bc7cac7a25043a1d870faf0e9081375d332e6a5e754a38a2a0a2",
+      "width": 1024
+    },
+    "chili": {
+      "asset": "chili.jpg",
+      "bytes": 282279,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "4e1ac26bf18f4fbfa03dd6655d76f48c02eb7d284ac8b68b57bfbb62e3e0a2bf",
+      "width": 1024
+    },
+    "couscous": {
+      "asset": "couscous.jpg",
+      "bytes": 292237,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "7a661d45c840ba6e903850f8f3c6f296d27e47869254e6eb465e4c65f23bf5fa",
+      "width": 1024
+    },
+    "creammushroom": {
+      "asset": "creammushroom.jpg",
+      "bytes": 286317,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "ed4f2ae1c8cf0f2975e9a381f1ee29f997ff1b3b0a38b8a3ef2b78d1920bda72",
+      "width": 1024
+    },
+    "deepdish": {
+      "asset": "deepdish.jpg",
+      "bytes": 298076,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "760a2c479a42a4212cdddbe2e90c40251fec0428545dd998b4031bb574eacac6",
+      "width": 1024
+    },
+    "enchilada": {
+      "asset": "enchilada.jpg",
+      "bytes": 286607,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "99653ec4765824f21448b0141c054bd71e1a301cccbcb9640af5b09570a6b249",
+      "width": 1024
+    },
+    "fiery_green_beans": {
+      "asset": "fiery_green_beans.jpg",
+      "bytes": 284541,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "eac16210848b4b2a84284398bebcdccf5af54cf7ad6619db3ec3020bb602b5f0",
+      "width": 1024
+    },
+    "garlicchilipasta": {
+      "asset": "garlicchilipasta.jpg",
+      "bytes": 286615,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "1c28b0941910334294ea26b18d7dbf1f6c7fec2920c1f580d89a205fd476733b",
+      "width": 1024
+    },
+    "kale": {
+      "asset": "kale.jpg",
+      "bytes": 278190,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "ed57224593b4dc372978fc9463789858492ee213470e065db4042e97c7545f95",
+      "width": 1024
+    },
+    "lasagna": {
+      "asset": "lasagna.jpg",
+      "bytes": 283577,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "b409a4d38a347cffd138cb1bf2ce49e43c9ad3b7a5e9ddf5c38713bcd4281a1a",
+      "width": 1024
+    },
+    "macandcheese": {
+      "asset": "macandcheese.jpg",
+      "bytes": 281896,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "fa2f7f4319f8d4994f02198b03eae7645ef1a9d7f4afafe0fde99f33580c118f",
+      "width": 1024
+    },
+    "orecchiette": {
+      "asset": "orecchiette.jpg",
+      "bytes": 282391,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "1fb416f38980a82b667d290abee32f904c7a18342239695f0c26429ea97e308d",
+      "width": 1024
+    },
+    "panzanella": {
+      "asset": "panzanella.jpg",
+      "bytes": 276532,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "ef9ddf77f3235e20050bb9b6da9a9e4024523c619a4d2e8ef53449e0e3c505fe",
+      "width": 1024
+    },
+    "pasta_e_ceci": {
+      "asset": "pasta_e_ceci.jpg",
+      "bytes": 297971,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "da3f5f1c93b92424e8ef04134de125bd02f88d1e72491e67e60d94e0a2af049d",
+      "width": 1024
+    },
+    "pizza": {
+      "asset": "pizza.jpg",
+      "bytes": 285510,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "d9f52c4eaff2fca721e2f86122930bf33a0c5b1d4173ebc936a6a3771cfc1240",
+      "width": 1024
+    },
+    "potatosalad": {
+      "asset": "potatosalad.jpg",
+      "bytes": 284862,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "1527aaa66ec09c8e2b71a768df25482b7e040ecebf7d474d8ce75cce98f4aaff",
+      "width": 1024
+    },
+    "quarantine_salad": {
+      "asset": "quarantine_salad.jpg",
+      "bytes": 290671,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "01db6b35013923c0126097dd6c98e14a39a1af9f08424b34e22860b845ce4608",
+      "width": 1024
+    },
+    "roastchicken": {
+      "asset": "roastchicken.jpg",
+      "bytes": 296891,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "981ce3078eca596f400ed49c553ca2a236a9cf860b7a3b8398c8d55cdef7990f",
+      "width": 1024
+    },
+    "saladdressings-lemon-vinaigrette": {
+      "asset": "saladdressings-lemon-vinaigrette.jpg",
+      "bytes": 288457,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "7133df978bddb3608d4058973aae7abd744fd74f14940befc873608c63a4dc07",
+      "width": 1024
+    },
+    "saladdressings-parmesan-peppercorn": {
+      "asset": "saladdressings-parmesan-peppercorn.jpg",
+      "bytes": 276311,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "4f316d26735ccb9ff3c3889ff16a40a94af5ba9c3375ffd607a9ae770a4c397f",
+      "width": 1024
+    },
+    "saladdressings-phil-s-famous": {
+      "asset": "saladdressings-phil-s-famous.jpg",
+      "bytes": 271807,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "97b28e30528ce7535f2b4b604e6af7e54c885c8861e4dccf2a888750a688e1a3",
+      "width": 1024
+    },
+    "sausage-lentils": {
+      "asset": "sausage-lentils.jpg",
+      "bytes": 296805,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "4cdb3a95b3d35e7f344709c09583d6815b5887462d79a4985ce38507969a2eef",
+      "width": 1024
+    },
+    "southwest": {
+      "asset": "southwest.jpg",
+      "bytes": 288780,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "167a8bcae146036c618aa7dcd98f2a80c0e6ce17291718e197ead70fb3576998",
+      "width": 1024
+    },
+    "spinach": {
+      "asset": "spinach.jpg",
+      "bytes": 292599,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "72898ce52ad952f6d393072c000bd271f0e25134cd1bac239245396d78b5eef1",
+      "width": 1024
+    },
+    "tacos": {
+      "asset": "tacos.jpg",
+      "bytes": 289915,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "8dbd00570c14dcf99dd2aa40814d8732c12647a390e3ed148f3b7e13c1b2d94c",
+      "width": 1024
+    },
+    "tomatillo-enchilada": {
+      "asset": "tomatillo-enchilada.jpg",
+      "bytes": 287640,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "30781fa986a05617c39a820fc748984fda0c186f646131f5790dc8c4562eb20d",
+      "width": 1024
+    },
+    "vermichli": {
+      "asset": "vermichli.jpg",
+      "bytes": 299561,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "f48f582b4030329a5c34820f8c30673bafecce13c7232fa93d1b4bc6e5fcb68d",
+      "width": 1024
+    },
+    "ziti": {
+      "asset": "ziti.jpg",
+      "bytes": 279504,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "40b8423bc99c7f7ac09b77404000165e1ebef15dbff621e59e1955fa592d9be9",
+      "width": 1024
+    }
+  },
+  "schemaVersion": 1
+}

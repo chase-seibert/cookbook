@@ -27,6 +27,7 @@ struct Recipe: Decodable, Identifiable, Hashable {
     let steps: [RecipeStep]
     let tips: [String]
     let healthierOptions: [String]
+    let thumbnailAsset: String?
 }
 
 struct RecipeIngredient: Decodable, Identifiable, Hashable {

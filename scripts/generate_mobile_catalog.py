@@ -12,6 +12,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 METADATA_PATH = ROOT / "data/mobile/metadata.json"
+THUMBNAIL_MANIFEST_PATH = ROOT / "data/mobile/thumbnail-manifest.json"
+THUMBNAIL_DIRECTORY = ROOT / "ios/Cookbook/Resources/Thumbnails"
 FRACTIONS = {
     ("1", "2"): "½", ("1", "4"): "¼", ("1", "8"): "⅛",
     ("3", "4"): "¾", ("1", "3"): "⅓", ("2", "3"): "⅔",
@@ -197,6 +199,17 @@ def build() -> dict:
             unresolved = set(step["ingredientIDs"]) - ingredient_ids
             if unresolved:
                 raise ValueError(f"{step['id']}: unknown ingredient IDs: {', '.join(sorted(unresolved))}")
+    if THUMBNAIL_MANIFEST_PATH.is_file():
+        manifest = json.loads(THUMBNAIL_MANIFEST_PATH.read_text(encoding="utf-8"))
+        from thumbnail_support import fingerprint
+
+        for recipe in recipes:
+            entry = manifest.get("recipes", {}).get(recipe["id"], {})
+            asset_name = f"{recipe['id']}.jpg"
+            if (entry.get("asset") == asset_name
+                    and entry.get("promptFingerprint") == fingerprint(recipe)
+                    and (THUMBNAIL_DIRECTORY / asset_name).is_file()):
+                recipe["thumbnailAsset"] = asset_name
     return {"schemaVersion": 1, "source": "Cookbook.tex", "categoryOrder": list(dict.fromkeys(category for _, category in index_entries())), "recipeFileCount": len(seen_files), "recipes": recipes}
 
 

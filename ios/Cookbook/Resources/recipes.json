@@ -198,7 +198,8 @@
         "A Caesar salad has so few components. You really need to make each one excellent. You can substitute anchovy paste."
       ],
       "healthierOptions": [],
-      "sourceHash": "442f6a0f28f2c1cbcda385ccdd8dbf55852a90327404bb4ae8fc8b715196becc"
+      "sourceHash": "442f6a0f28f2c1cbcda385ccdd8dbf55852a90327404bb4ae8fc8b715196becc",
+      "thumbnailAsset": "caesar.jpg"
     },
     {
       "id": "spinach",
@@ -401,7 +402,8 @@
         "To shell eggs easily, run under cold water, shaking pan to smash shells. The water will seep in. In 10 minutes, the shells will come off easily."
       ],
       "healthierOptions": [],
-      "sourceHash": "63ef4dacc4b6ee4515c928f544e5641f9e3b807cb6df738d7672d455305d4ffd"
+      "sourceHash": "63ef4dacc4b6ee4515c928f544e5641f9e3b807cb6df738d7672d455305d4ffd",
+      "thumbnailAsset": "spinach.jpg"
     },
     {
       "id": "kale",
@@ -536,7 +538,8 @@
         "Frozen Edamame is just fine, and so much more convenient than shelling pods. Just defrost ahead of time."
       ],
       "healthierOptions": [],
-      "sourceHash": "df4f9ff348902f9e06d612e4a6bfb5b6da45c9161b7d242d22b41302cf714b6c"
+      "sourceHash": "df4f9ff348902f9e06d612e4a6bfb5b6da45c9161b7d242d22b41302cf714b6c",
+      "thumbnailAsset": "kale.jpg"
     },
     {
       "id": "quarantine_salad",
@@ -619,7 +622,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "df2dd947e06c4988741f49cdd4458f07ffd6f043499d0d1740c0ac635f4e6b6e"
+      "sourceHash": "df2dd947e06c4988741f49cdd4458f07ffd6f043499d0d1740c0ac635f4e6b6e",
+      "thumbnailAsset": "quarantine_salad.jpg"
     },
     {
       "id": "couscous",
@@ -780,7 +784,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "acecfc9649a67c2c0e037aeca82d8be4381cc150b8d3013a08538276df0e17a6"
+      "sourceHash": "acecfc9649a67c2c0e037aeca82d8be4381cc150b8d3013a08538276df0e17a6",
+      "thumbnailAsset": "couscous.jpg"
     },
     {
       "id": "potatosalad",
@@ -971,7 +976,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "2636e80b66052e87849a71e3d670742492568c7537fe87ee4703bec49c268123"
+      "sourceHash": "2636e80b66052e87849a71e3d670742492568c7537fe87ee4703bec49c268123",
+      "thumbnailAsset": "potatosalad.jpg"
     },
     {
       "id": "panzanella",
@@ -1098,7 +1104,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "a8516c00f1ecb63db01531ffb7b84451e09a6029271296b8900a9c48bf8c6ae6"
+      "sourceHash": "a8516c00f1ecb63db01531ffb7b84451e09a6029271296b8900a9c48bf8c6ae6",
+      "thumbnailAsset": "panzanella.jpg"
     },
     {
       "id": "southwest",
@@ -1227,7 +1234,8 @@
         "Try adding frozen corn broiled with olive oil and salt for an Elote salad."
       ],
       "healthierOptions": [],
-      "sourceHash": "b2a1a4df93112b5af61c4aa1ba1b11be8b976db2e329b567ce31da13f3a1aaca"
+      "sourceHash": "b2a1a4df93112b5af61c4aa1ba1b11be8b976db2e329b567ce31da13f3a1aaca",
+      "thumbnailAsset": "southwest.jpg"
     },
     {
       "id": "brownrice",
@@ -1328,7 +1336,8 @@
         "Variations include adding sliced cherry tomatoes, cucumbers or preserved lemon."
       ],
       "healthierOptions": [],
-      "sourceHash": "980bb1c2159a9fce16cccf4d7013017869a7973836a5734a8df7c46a46992456"
+      "sourceHash": "980bb1c2159a9fce16cccf4d7013017869a7973836a5734a8df7c46a46992456",
+      "thumbnailAsset": "brownrice.jpg"
     },
     {
       "id": "saladdressings-phil-s-famous",
@@ -1399,7 +1408,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "006b40b7a7b1047467064a6a9c4025ba16abcab3103e3957ce83cb9b01db81f3"
+      "sourceHash": "006b40b7a7b1047467064a6a9c4025ba16abcab3103e3957ce83cb9b01db81f3",
+      "thumbnailAsset": "saladdressings-phil-s-famous.jpg"
     },
     {
       "id": "saladdressings-lemon-vinaigrette",
@@ -1471,7 +1481,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "6213317a8ef9eb00a65e30f30408ed271be7d2dfe1b852d931289e1b2999368e"
+      "sourceHash": "6213317a8ef9eb00a65e30f30408ed271be7d2dfe1b852d931289e1b2999368e",
+      "thumbnailAsset": "saladdressings-lemon-vinaigrette.jpg"
     },
     {
       "id": "saladdressings-parmesan-peppercorn",
@@ -1569,7 +1580,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "963175beb72618f887857be3faf7661c6f4fa63504d8f240d545ff3a19b9636e"
+      "sourceHash": "963175beb72618f887857be3faf7661c6f4fa63504d8f240d545ff3a19b9636e",
+      "thumbnailAsset": "saladdressings-parmesan-peppercorn.jpg"
     },
     {
       "id": "macandcheese",
@@ -1776,7 +1788,8 @@
         "If you need to reheat, try 3-4 minutes in the microwave at 30 percent power, so the sauce doesn't break."
       ],
       "healthierOptions": [],
-      "sourceHash": "00c5a8d05d6ad678063d2aae2e94301450ed9995e2f862c6e5c6d32c33b9483e"
+      "sourceHash": "00c5a8d05d6ad678063d2aae2e94301450ed9995e2f862c6e5c6d32c33b9483e",
+      "thumbnailAsset": "macandcheese.jpg"
     },
     {
       "id": "creammushroom",
@@ -1977,7 +1990,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "78b89baa36e27165dd127771576618167d4cf4271eeeb363e8c09f889d0d3453"
+      "sourceHash": "78b89baa36e27165dd127771576618167d4cf4271eeeb363e8c09f889d0d3453",
+      "thumbnailAsset": "creammushroom.jpg"
     },
     {
       "id": "burgers",
@@ -2182,7 +2196,8 @@
         "Best served with thinly sliced onions, and not much else."
       ],
       "healthierOptions": [],
-      "sourceHash": "5f9338a38bb5eeec89fbd05fb91108d7b175f6cf5cff57c305b1ce9d94b71f68"
+      "sourceHash": "5f9338a38bb5eeec89fbd05fb91108d7b175f6cf5cff57c305b1ce9d94b71f68",
+      "thumbnailAsset": "burgers.jpg"
     },
     {
       "id": "tacos",
@@ -2497,7 +2512,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "fb6e353f84d42fb71492ed923e2cbae2ca1270c528a8cc0e88b46096c18505b6"
+      "sourceHash": "fb6e353f84d42fb71492ed923e2cbae2ca1270c528a8cc0e88b46096c18505b6",
+      "thumbnailAsset": "tacos.jpg"
     },
     {
       "id": "ziti",
@@ -2770,7 +2786,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "a40a3d9a233c9ddf363dde69a88b96e22db95311ccf457aeb2cf12fc45e7f4ea"
+      "sourceHash": "a40a3d9a233c9ddf363dde69a88b96e22db95311ccf457aeb2cf12fc45e7f4ea",
+      "thumbnailAsset": "ziti.jpg"
     },
     {
       "id": "orecchiette",
@@ -2961,7 +2978,8 @@
         "Great with Sriracha."
       ],
       "healthierOptions": [],
-      "sourceHash": "2ec71dfcd5c3e9ebd1ad627856379aee40e709acdecc654f18734d7ee6cd949a"
+      "sourceHash": "2ec71dfcd5c3e9ebd1ad627856379aee40e709acdecc654f18734d7ee6cd949a",
+      "thumbnailAsset": "orecchiette.jpg"
     },
     {
       "id": "roastchicken",
@@ -3194,7 +3212,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "4bce71dad62e733973069edead55d20423586360b9483563c93d68ce8dc36181"
+      "sourceHash": "4bce71dad62e733973069edead55d20423586360b9483563c93d68ce8dc36181",
+      "thumbnailAsset": "roastchicken.jpg"
     },
     {
       "id": "vermichli",
@@ -3408,7 +3427,8 @@
         "You can also top with small amounts of protein. Crispy fried pork is a good pairing. Other potential additions are Romain lettuce, shallots and Thai basil."
       ],
       "healthierOptions": [],
-      "sourceHash": "49313e4f89895bf3fcde0068cbe3a50aa514e33c4063b9b8db78b5122fcb9231"
+      "sourceHash": "49313e4f89895bf3fcde0068cbe3a50aa514e33c4063b9b8db78b5122fcb9231",
+      "thumbnailAsset": "vermichli.jpg"
     },
     {
       "id": "garlicchilipasta",
@@ -3526,7 +3546,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "eff5e37e8495814c636c5ef80102203f5d0447d072f2a6851323dc38fd241e78"
+      "sourceHash": "eff5e37e8495814c636c5ef80102203f5d0447d072f2a6851323dc38fd241e78",
+      "thumbnailAsset": "garlicchilipasta.jpg"
     },
     {
       "id": "pasta_e_ceci",
@@ -3760,7 +3781,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "4612d621c83b5983febadc41145bc21cc94d4e09a9f0cd355eeefb4cca59490d"
+      "sourceHash": "4612d621c83b5983febadc41145bc21cc94d4e09a9f0cd355eeefb4cca59490d",
+      "thumbnailAsset": "pasta_e_ceci.jpg"
     },
     {
       "id": "pizza",
@@ -4008,7 +4030,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "9ebedee790f087d5cd9cfc1f15f800cc022a6ba920405a99b54fc6deee2a542d"
+      "sourceHash": "9ebedee790f087d5cd9cfc1f15f800cc022a6ba920405a99b54fc6deee2a542d",
+      "thumbnailAsset": "pizza.jpg"
     },
     {
       "id": "sausage-lentils",
@@ -4226,7 +4249,8 @@
         "Can also be made with Kielbasa, which Noel prefers."
       ],
       "healthierOptions": [],
-      "sourceHash": "33433b2264acce94619f29bef413741701b910bc66c5991534f8514baf09ed90"
+      "sourceHash": "33433b2264acce94619f29bef413741701b910bc66c5991534f8514baf09ed90",
+      "thumbnailAsset": "sausage-lentils.jpg"
     },
     {
       "id": "fiery_green_beans",
@@ -4462,7 +4486,8 @@
         "Using a large cast iron or carbon steel pan will help char the stir fry\n quickly. Finding the firmest tofu you can is the key to keeping the tofu\n intact as you cook it. This recipe is from Burma Superstar."
       ],
       "healthierOptions": [],
-      "sourceHash": "ee540d8bd793f4ebc950661606cd6065f063d224c7ccc2efb797dccd3057f72b"
+      "sourceHash": "ee540d8bd793f4ebc950661606cd6065f063d224c7ccc2efb797dccd3057f72b",
+      "thumbnailAsset": "fiery_green_beans.jpg"
     },
     {
       "id": "aperto",
@@ -4629,7 +4654,8 @@
         "Great use of home grown and in season tomatoes."
       ],
       "healthierOptions": [],
-      "sourceHash": "fe9a77cf10aa627ee5705bd5ee42bbedfbcaec1d827e543c17b08bb4e23edf2c"
+      "sourceHash": "fe9a77cf10aa627ee5705bd5ee42bbedfbcaec1d827e543c17b08bb4e23edf2c",
+      "thumbnailAsset": "aperto.jpg"
     },
     {
       "id": "deepdish",
@@ -4918,7 +4944,8 @@
         "For a variation, skip the sauce, and top with chopped bacon, caramelized onions and thyme. Onions can be caramelized by sautéeing on low for an hour with 3 tablespoons of butter, and a sprinkle of salt and sugar."
       ],
       "healthierOptions": [],
-      "sourceHash": "be1d46a720e31d2067e07fdf2adf5fc8e86d0abf5fcb6b34121f62eafd356b38"
+      "sourceHash": "be1d46a720e31d2067e07fdf2adf5fc8e86d0abf5fcb6b34121f62eafd356b38",
+      "thumbnailAsset": "deepdish.jpg"
     },
     {
       "id": "lasagna",
@@ -5146,7 +5173,8 @@
       "healthierOptions": [
         "Substitute ground turkey for the pork sausage. Because turkey has less fat, start with a lot more olive oil than usual. To mimic hot Italian sausage, season the turkey with paprika, red pepper flakes, garlic powder, and fennel seed."
       ],
-      "sourceHash": "4688e347cb6e4b047991e1b301b70039e3239456c3a31a3726090f408cb1bdf7"
+      "sourceHash": "4688e347cb6e4b047991e1b301b70039e3239456c3a31a3726090f408cb1bdf7",
+      "thumbnailAsset": "lasagna.jpg"
     },
     {
       "id": "enchilada",
@@ -5454,7 +5482,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "9d50b73380baafbde1592eea32ca09af54057806348e921a04e3cc206150141e"
+      "sourceHash": "9d50b73380baafbde1592eea32ca09af54057806348e921a04e3cc206150141e",
+      "thumbnailAsset": "enchilada.jpg"
     },
     {
       "id": "tomatillo-enchilada",
@@ -5688,7 +5717,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "19b4e15e95ea89ff6f76e2b0969a0a646ef1a383e5f15beda61f55f932a23eae"
+      "sourceHash": "19b4e15e95ea89ff6f76e2b0969a0a646ef1a383e5f15beda61f55f932a23eae",
+      "thumbnailAsset": "tomatillo-enchilada.jpg"
     },
     {
       "id": "chili",
@@ -5979,7 +6009,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "20bd995e24b46557eef1e4d979409b72c9a4e4922fe362c02a1c5a1747306723"
+      "sourceHash": "20bd995e24b46557eef1e4d979409b72c9a4e4922fe362c02a1c5a1747306723",
+      "thumbnailAsset": "chili.jpg"
     },
     {
       "id": "pulledpork",
