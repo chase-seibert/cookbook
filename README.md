@@ -34,6 +34,17 @@ make docker-pdf
 make docker-html
 ```
 
+For a one-recipe edit, compile only that recipe and enforce the one-page limit:
+
+```bash
+make recipe-pdf RECIPE=<recipe-id-or-source-slug>
+```
+
+The preview PDF is written to `build/recipe-pdf/`. Keep each recipe to one
+cookbook page in a single column by condensing its wording and headings; do not
+use side-by-side recipe columns. Do not deploy the iOS app as part of recipe
+work unless deployment is explicitly requested.
+
 On Apple Silicon, the PDF image runs as `linux/amd64`, matching the GitHub
 Actions runner. The first PDF build downloads the TeX Live image and may take
 some time.

@@ -8826,21 +8826,21 @@
       "collectionTitle": null,
       "sourceFile": "panko_mahi_mahi.tex",
       "sourceSection": "Crispy Panko Mahi-Mahi with Warm French Lentil and Roasted Carrot Salad",
-      "introduction": "Serves 5. About 45 minutes. Roast the carrots at 425°. Cook lentils and mix the vinaigrette up to 2 days ahead; refrigerate separately. For kids, keep some lentils and carrots undressed and serve the yogurt sauce as a dip.",
+      "introduction": "Serves 5. About 45 minutes. Roast at 425°. Cook lentils and mix vinaigrette up to 2 days ahead; refrigerate separately. For kids, serve some lentils and carrots undressed, with yogurt sauce for dipping.",
       "ingredients": [
         {
           "id": "panko_mahi_mahi-ingredient-1",
           "quantity": "1¾--2",
-          "name": "lb mahi-mahi, cut into 5 portions",
-          "groceryName": "Mahi-mahi, cut into 5 portions",
+          "name": "lb mahi-mahi, in 5 portions",
+          "groceryName": "Mahi-mahi, in 5 portions",
           "staple": false,
           "excludeFromGroceries": false
         },
         {
           "id": "panko_mahi_mahi-ingredient-2",
           "quantity": "1",
-          "name": "cup panko breadcrumbs",
-          "groceryName": "Panko breadcrumbs",
+          "name": "cup panko",
+          "groceryName": "Panko",
           "staple": false,
           "excludeFromGroceries": false
         },
@@ -8903,24 +8903,24 @@
         {
           "id": "panko_mahi_mahi-ingredient-10",
           "quantity": "",
-          "name": "pepper",
-          "groceryName": "Pepper",
+          "name": "black pepper",
+          "groceryName": "Black pepper",
           "staple": true,
           "excludeFromGroceries": false
         },
         {
           "id": "panko_mahi_mahi-ingredient-11",
           "quantity": "1¼",
-          "name": "cups dry French green lentils",
-          "groceryName": "Dry French green lentils",
+          "name": "cups French green lentils",
+          "groceryName": "French green lentils",
           "staple": false,
           "excludeFromGroceries": false
         },
         {
           "id": "panko_mahi_mahi-ingredient-12",
           "quantity": "1½",
-          "name": "lb carrots, cut into ½-inch pieces",
-          "groceryName": "Carrots, cut into ½-inch pieces",
+          "name": "lb carrots, in ½-inch pieces",
+          "groceryName": "Carrots, in ½-inch pieces",
           "staple": false,
           "excludeFromGroceries": false
         },
@@ -8935,16 +8935,16 @@
         {
           "id": "panko_mahi_mahi-ingredient-14",
           "quantity": "1",
-          "name": "small shallot, finely minced",
-          "groceryName": "Shallot, finely minced",
+          "name": "small shallot, minced",
+          "groceryName": "Shallot, minced",
           "staple": false,
           "excludeFromGroceries": false
         },
         {
           "id": "panko_mahi_mahi-ingredient-15",
           "quantity": "⅓",
-          "name": "cup fresh parsley, chopped",
-          "groceryName": "Fresh parsley, chopped",
+          "name": "cup chopped parsley",
+          "groceryName": "Chopped parsley",
           "staple": false,
           "excludeFromGroceries": false
         },
@@ -9031,10 +9031,10 @@
         {
           "id": "panko_mahi_mahi-ingredient-26",
           "quantity": "1--2",
-          "name": "tablespoons water, to thin",
-          "groceryName": "Water, to thin",
+          "name": "tablespoons water",
+          "groceryName": "Water",
           "staple": false,
-          "excludeFromGroceries": false
+          "excludeFromGroceries": true
         },
         {
           "id": "panko_mahi_mahi-ingredient-27",
@@ -9048,9 +9048,9 @@
       "steps": [
         {
           "id": "panko_mahi_mahi-step-1",
-          "sectionTitle": "Roast the carrots",
-          "instruction": "Heat the oven to 425°. Toss the carrots with 2 tablespoons olive oil, salt, and pepper. Spread on a sheet pan and roast for 25--30 minutes, turning once, until browned and tender.",
-          "originalInstruction": "Heat the oven to 425°. Toss the carrots with 2 tablespoons olive oil, salt, and pepper. Spread on a sheet pan and roast for 25--30 minutes, turning once, until browned and tender.",
+          "sectionTitle": "",
+          "instruction": "[block]0pt\n0pt.35em.1em\n.82\n2pt\n.25em",
+          "originalInstruction": "[block]0pt\n0pt.35em.1em\n.82\n2pt\n.25em",
           "ingredientIDs": [
             "panko_mahi_mahi-ingredient-12",
             "panko_mahi_mahi-ingredient-13",
@@ -9061,9 +9061,9 @@
         },
         {
           "id": "panko_mahi_mahi-step-2",
-          "sectionTitle": "Simmer the lentils",
-          "instruction": "Rinse the lentils. Add them to a saucepan with 4 cups water and ½ teaspoon salt. Bring to a boil, then gently simmer for 20--30 minutes, until just tender. Drain well.",
-          "originalInstruction": "Rinse the lentils. Add them to a saucepan with 4 cups water and ½ teaspoon salt. Bring to a boil, then gently simmer for 20--30 minutes, until just tender. Drain well.",
+          "sectionTitle": "",
+          "instruction": "R3em X \n #1",
+          "originalInstruction": "R3em X \n #1",
           "ingredientIDs": [
             "panko_mahi_mahi-ingredient-11",
             "panko_mahi_mahi-ingredient-21"
@@ -9073,9 +9073,9 @@
         },
         {
           "id": "panko_mahi_mahi-step-3",
-          "sectionTitle": "Coat the fish",
-          "instruction": "Mix the panko, Parmesan, 2 tablespoons olive oil, lemon zest, garlic powder, salt, and pepper. Stir the mayonnaise and Dijon together. Pat the fish dry, spread the mayonnaise-Dijon mixture on top, and press on the crumbs. Set on a lightly oiled second pan.",
-          "originalInstruction": "Mix the panko, Parmesan, 2 tablespoons olive oil, lemon zest, garlic powder, salt, and pepper. Stir the mayonnaise and Dijon together. Pat the fish dry, spread the mayonnaise-Dijon mixture on top, and press on the crumbs. Set on a lightly oiled second pan.",
+          "sectionTitle": "",
+          "instruction": ".2em",
+          "originalInstruction": ".2em",
           "ingredientIDs": [
             "panko_mahi_mahi-ingredient-1",
             "panko_mahi_mahi-ingredient-2",
@@ -9093,9 +9093,9 @@
         },
         {
           "id": "panko_mahi_mahi-step-4",
-          "sectionTitle": "Bake the mahi-mahi",
-          "instruction": "When the carrots have about 15 minutes left, add the fish to the oven. Bake for 12--16 minutes (start checking early for thin pieces), until the thickest part reaches 145°. Optionally broil for 30--60 seconds to brown the crust.",
-          "originalInstruction": "When the carrots have about 15 minutes left, add the fish to the oven. Bake for 12--16 minutes (start checking early for thin pieces), until the thickest part reaches 145°. Optionally broil for 30--60 seconds to brown the crust.",
+          "sectionTitle": "Roast and simmer",
+          "instruction": "Heat oven to 425°. Toss carrots with 2 tablespoons oil, salt, and pepper; roast on a sheet pan 25--30 minutes, turning once. Rinse lentils; simmer in 4 cups water with ½ teaspoon salt for 20--30 minutes, until just tender. Drain well.",
+          "originalInstruction": "Heat oven to 425°. Toss carrots with 2 tablespoons oil, salt, and pepper; roast on a sheet pan 25--30 minutes, turning once. Rinse lentils; simmer in 4 cups water with ½ teaspoon salt for 20--30 minutes, until just tender. Drain well.",
           "ingredientIDs": [
             "panko_mahi_mahi-ingredient-1",
             "panko_mahi_mahi-ingredient-2",
@@ -9113,9 +9113,9 @@
         },
         {
           "id": "panko_mahi_mahi-step-5",
-          "sectionTitle": "Dress the warm salad",
-          "instruction": "Whisk together the lemon juice, vinegar, extra-virgin olive oil, 2 teaspoons Dijon, and 2 teaspoons honey. Toss with the warm lentils, roasted carrots, shallot, and parsley. Season to taste.",
-          "originalInstruction": "Whisk together the lemon juice, vinegar, extra-virgin olive oil, 2 teaspoons Dijon, and 2 teaspoons honey. Toss with the warm lentils, roasted carrots, shallot, and parsley. Season to taste.",
+          "sectionTitle": "Coat and bake fish",
+          "instruction": "Mix panko, Parmesan, 2 tablespoons oil, lemon zest, garlic powder, salt, and pepper. Stir mayonnaise with Dijon. Pat fish dry, spread mixture on top, and press on crumbs. Put on a lightly oiled pan. When carrots have about 15 minutes left, bake fish 12--16 minutes, until the thickest part reaches 145° (check thin pieces early). Broil 30--60 seconds to brown, if desired.",
+          "originalInstruction": "Mix panko, Parmesan, 2 tablespoons oil, lemon zest, garlic powder, salt, and pepper. Stir mayonnaise with Dijon. Pat fish dry, spread mixture on top, and press on crumbs. Put on a lightly oiled pan. When carrots have about 15 minutes left, bake fish 12--16 minutes, until the thickest part reaches 145° (check thin pieces early). Broil 30--60 seconds to brown, if desired.",
           "ingredientIDs": [
             "panko_mahi_mahi-ingredient-11",
             "panko_mahi_mahi-ingredient-12",
@@ -9134,9 +9134,9 @@
         },
         {
           "id": "panko_mahi_mahi-step-6",
-          "sectionTitle": "Sauce and serve",
-          "instruction": "Mix the yogurt, lemon juice, honey, optional garlic, salt, and enough water to make the sauce spoonable. Serve the fish with the warm salad and sauce on the side.",
-          "originalInstruction": "Mix the yogurt, lemon juice, honey, optional garlic, salt, and enough water to make the sauce spoonable. Serve the fish with the warm salad and sauce on the side.",
+          "sectionTitle": "Finish salad and sauce",
+          "instruction": "Whisk lemon juice, vinegar, extra-virgin olive oil, Dijon, and honey. Toss with warm lentils, roasted carrots, shallot, and parsley; season. Thin yogurt with lemon juice, honey, optional garlic, salt, and enough water to spoon. Serve with fish.",
+          "originalInstruction": "Whisk lemon juice, vinegar, extra-virgin olive oil, Dijon, and honey. Toss with warm lentils, roasted carrots, shallot, and parsley; season. Thin yogurt with lemon juice, honey, optional garlic, salt, and enough water to spoon. Serve with fish.",
           "ingredientIDs": [
             "panko_mahi_mahi-ingredient-22",
             "panko_mahi_mahi-ingredient-23",
@@ -9149,12 +9149,9 @@
           "active": true
         }
       ],
-      "tips": [
-        "Cooking order: 0--10 minutes, prep and roast carrots; 10--15, start lentils; 15--25, coat fish and mix sauces; 25--30, add fish to oven; 30--40, drain lentils and finish carrots; 40--45, toss and serve."
-      ],
+      "tips": [],
       "healthierOptions": [],
-      "sourceHash": "9357a85512f4bc21c9557526cae9c3913a74c7f333fa6258770b8bff1f3cf140",
-      "thumbnailAsset": "panko_mahi_mahi.jpg"
+      "sourceHash": "6dcec895b75488383f2e4404dc0760577a4a7478b4771fa35c0e2cbf50bcd9d8"
     },
     {
       "id": "chicken_kebabs",

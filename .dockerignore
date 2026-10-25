@@ -1,5 +1,7 @@
 .git
 .github
+.build/
+build/
 .DS_Store
 *.aux
 *.fdb_latexmk

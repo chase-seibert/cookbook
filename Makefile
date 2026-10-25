@@ -1,4 +1,4 @@
-.PHONY: pdf html docker-build docker-pdf docker-html docker all catalog catalog-check thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
+.PHONY: pdf html docker-build docker-pdf docker-html docker recipe-pdf all catalog catalog-check thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
 
 DOCKER_PLATFORM ?= linux/amd64
 DOCKER_IMAGE ?= cookbook-latex
@@ -24,6 +24,18 @@ docker-html:
 		python3 run_html.py --index Cookbook.tex > Cookbook.html
 
 docker: docker-pdf docker-html
+
+RECIPE ?=
+
+recipe-pdf:
+	@test -n "$(RECIPE)" || { echo "Usage: make recipe-pdf RECIPE=<recipe-id-or-source-slug>" >&2; exit 2; }
+	python3 scripts/recipe_pdf.py prepare "$(RECIPE)"
+	$(MAKE) docker-build
+	docker run --rm --platform "$(DOCKER_PLATFORM)" --volume "$(PWD):/work" --workdir /work \
+		--user "$(shell id -u):$(shell id -g)" --env HOME=/tmp "$(DOCKER_IMAGE)" \
+		latexmk -pdf -interaction=nonstopmode -halt-on-error -outdir=build/recipe-pdf \
+		build/recipe-pdf/$(RECIPE)-preview.tex
+	python3 scripts/recipe_pdf.py check "$(RECIPE)"
 
 IOS_PROJECT := ios/Cookbook.xcodeproj
 IOS_SCHEME := Cookbook
