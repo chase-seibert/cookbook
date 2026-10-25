@@ -23,6 +23,7 @@ from thumbnail_support import HEIGHT, MAX_BYTES, MIN_BYTES, WIDTH, fingerprint, 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "ios/Cookbook/Resources/recipes.json"
 MANIFEST = ROOT / "data/mobile/thumbnail-manifest.json"
+METADATA = ROOT / "data/mobile/metadata.json"
 THUMBNAILS = ROOT / "ios/Cookbook/Resources/Thumbnails"
 
 
@@ -60,9 +61,13 @@ Style/medium: polished, natural-light cookbook food photography with realistic t
 Constraints: no text, lettering, labels, logos, watermark, unrelated dishes, or ingredients contradicted by the recipe. Do not present raw ingredients as the finished dish."""
 
 
-def pending(recipes: list[dict], manifest: dict) -> list[dict]:
+def pending(recipes: list[dict], manifest: dict, reviewed_overrides: dict | None = None) -> list[dict]:
     result = []
+    reviewed_overrides = reviewed_overrides or {}
     for recipe in recipes:
+        reviewed_asset = reviewed_overrides.get(recipe["id"])
+        if isinstance(reviewed_asset, str) and Path(reviewed_asset).name == reviewed_asset and valid_asset(THUMBNAILS / reviewed_asset):
+            continue
         asset = THUMBNAILS / f"{recipe['id']}.jpg"
         entry = manifest.get("recipes", {}).get(recipe["id"], {})
         current = entry.get("promptFingerprint") == fingerprint(recipe) and entry.get("asset") == f"{recipe['id']}.jpg" and valid_asset(asset)
@@ -130,7 +135,8 @@ def main() -> int:
     manifest = read_json(MANIFEST, {"schemaVersion": 1, "recipes": {}})
     recipes = catalog.get("recipes", [])
     if args.command == "queue":
-        work = pending(recipes, manifest)
+        reviewed_overrides = read_json(METADATA, {}).get("reviewedThumbnailOverrides", {})
+        work = pending(recipes, manifest, reviewed_overrides)
         if not work:
             print(json.dumps({"status": "complete", "pending": 0}))
             return 0

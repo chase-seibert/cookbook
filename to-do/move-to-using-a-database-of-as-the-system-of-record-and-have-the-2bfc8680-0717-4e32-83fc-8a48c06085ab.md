@@ -1,0 +1,33 @@
+## User requirements
+
+- As a cookbook maintainer, I want a database to be the system of record for recipes, so that recipe content has one structured, authoritative source.
+- As a reader, I want the PDF to be generated as a build artifact alongside the HTML output, so that both formats stay available from the same recipe data.
+- Assume the database is stored with the repository and can be built without a hosted database service. SQLite is a proposed fit for the current local and GitHub Actions workflows; confirm this choice before implementation.
+- Preserve current recipe content, chapter and collection order, stable recipe IDs, the mobile catalog's generated-data contract, and existing GitHub artifact and S3 publication behavior unless the implementation identifies a concrete incompatibility.
+
+## Architecture and data model
+
+- Replace the current authority of `Cookbook.tex` and per-recipe LaTeX files with a versioned SQLite database in the repository. Model recipes, ordered chapters/collections, ingredient groups and ordered ingredients, ordered instruction steps and subsection labels, introductions, tips, and healthier options. Keep stable recipe IDs and represent collection entries such as Cocktails as distinct recipes under their collection heading.
+- Add explicit schema-version tracking and ordered migrations. Keep app-specific metadata (stable IDs, ingredient overrides, recipe collections, and step-to-ingredient assignments) in the canonical model or a clearly linked database table so it is not lost during import or export.
+- Provide a one-time importer from the existing LaTeX sources and index, with a reviewable report for content the importer cannot represent. Do not silently discard formatting, quantities, temperatures, safety cues, or recipe ordering. After migration, treat LaTeX and generated output files as derived artifacts rather than editable authorities.
+- Generate the HTML and the cookbook LaTeX/PDF from database records. Retain the existing TeX toolchain for pagination if that is the least disruptive PDF renderer; ensure each recipe remains one page and preserve one-column ingredient and instruction layouts. Generate the iOS JSON catalog from the database too, retaining its current schema and stable identifiers.
+- Update the Makefile and GitHub Actions build inputs so validation and both renderers consume the same database revision. Keep the PDF and HTML as downloadable GitHub Actions artifacts and retain the current `master` S3 publication destinations and conditions.
+
+## Basic test cases
+
+- Import the current cookbook into a fresh database; verify the imported recipe IDs, recipe count, chapter order, collection members, ingredient quantities, instructions, tips, and optional metadata match the reviewed source inventory.
+- Reject a missing or unsupported schema version, a migration failure, duplicate IDs, dangling ingredient references, or invalid ordering without producing publishable outputs.
+- Add, edit, and remove a recipe and verify the database remains authoritative and the generated HTML, PDF, and mobile catalog reflect the same change without manual edits to generated files.
+- Include a collection entry and a recipe with multiple ingredient groups, subsections, fractions, temperatures, and special characters; verify they render correctly in HTML and PDF and preserve collection navigation and stable mobile IDs.
+- Before switching builds to database-backed data, preserve baseline PDF and HTML outputs from the current source revision. Regenerate both from the imported database and compare recipe by recipe using stable IDs and HTML anchors/PDF page boundaries. Use normalized HTML text/content comparison as a fast first pass, and report missing, extra, reordered, or substantively changed recipe content. Check ingredient names and quantities, instructions, temperatures, food-safety cues, HTML structure/links, and one-page PDF layout. Treat expected HTML whitespace or PDF typography/spacing changes as review items, and accept substantial deltas only after each is explained and approved.
+- Build outputs from the same database snapshot; verify the HTML and PDF contain the same recipe set and ordering, every recipe occupies exactly one PDF page, and both files are uploaded as GitHub artifacts. On `master`, verify the existing S3 keys still receive the matching outputs.
+- Change no recipe data and rerun generation; verify outputs and catalog remain reproducible, and validation reports no stale generated data.
+
+## High-level implementation details
+
+1. Confirm SQLite as the committed source format and decide how maintainers will make routine recipe edits (database CLI/import workflow versus an editable interchange format). Document backup, migration, and rollback expectations before replacing the current authority.
+2. Inventory the LaTeX grammar, index ordering, collection conventions, and `data/mobile/metadata.json`; design the schema and importer around the actual content and report ambiguous or unsupported constructs for manual review.
+3. Import all existing recipes, compare the imported records against the current LaTeX and mobile catalog, resolve discrepancies, and establish database constraints plus migration and validation commands.
+4. Implement deterministic database-backed exporters for HTML, PDF input, and the existing mobile JSON shape. Preserve HTML escaping, recipe ordering, PDF pagination/readability, and mobile stable-ID compatibility.
+5. Update Makefile targets, README and architecture docs, and GitHub Actions to validate the database before generating both outputs and artifacts. Keep S3 upload conditions and keys intact; make a failed validation or render block publication.
+6. Pin and retain the pre-migration PDF and HTML before changing the authoritative input. After database import and both exporters are ready, regenerate both outputs. Compare normalized HTML recipe sections first, keyed by stable IDs/anchors, for exact text, recipe set, ordering, and links; compare PDF extracted content and rendered pages against the baseline by recipe ID and page boundaries. Produce a delta report for reviewers; investigate every substantive change to recipe identity/order, ingredients or amounts, steps, temperatures, safety cues, HTML structure/links, and PDF pagination, and record the disposition of any accepted change. Then verify a clean build from a fresh checkout and database, run importer/exporter and migration coverage, inspect representative HTML and PDF pages, and confirm CI artifact and S3 configuration. Main risks are lossy parsing of LaTeX constructs, binary database review/editability, and accidental recipe-ID or mobile-catalog changes.

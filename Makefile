@@ -1,4 +1,4 @@
-.PHONY: pdf html docker-build docker-pdf docker-html docker recipe-pdf all catalog catalog-check thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
+.PHONY: pdf html docker-build docker-pdf docker-html docker recipe-pdf all catalog catalog-check label-test thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
 
 DOCKER_PLATFORM ?= linux/amd64
 DOCKER_IMAGE ?= cookbook-latex
@@ -54,6 +54,11 @@ catalog:
 catalog-check:
 	python3 scripts/generate_mobile_catalog.py --check
 
+label-test: catalog-check
+	@set -eu; binary=$$(mktemp /tmp/cookbook-label-tests.XXXXXX); trap 'rm -f "$$binary"' EXIT; \
+	  CLANG_MODULE_CACHE_PATH=/private/tmp/cookbook-label-module-cache swiftc ios/Cookbook/Catalog.swift tests/RecipeLabelTests.swift -o "$$binary"; \
+	  "$$binary"
+
 REMAINING_PERCENT ?=
 QUOTA_CHECKED_AT ?=
 
@@ -91,7 +96,7 @@ phone-launch:
 
 phone-deploy: phone-build phone-install phone-launch
 
-test: catalog-check
+test: catalog-check label-test
 	xcodebuild -project $(IOS_PROJECT) -scheme $(IOS_SCHEME) -configuration Debug \
 	  -destination '$(GENERIC_SIM_DESTINATION)' -derivedDataPath $(IOS_DERIVED_DATA) \
 	  CODE_SIGNING_ALLOWED=NO test

@@ -165,5 +165,759 @@
     "\\b(?:olive|vegetable|canola|neutral|avocado|sesame|coconut) oil\\b",
     "\\b(?:better than bouillon|bouillon)\\b",
     "\\b(?:salt|pepper|cumin|cayenne|paprika|oregano|cinnamon|nutmeg|allspice|turmeric|coriander|curry|chili powder|chile powder|chili flakes|chile flakes|red pepper flakes|garlic powder|onion powder|mustard powder|ginger powder|cloves|bay leaves|thyme|rosemary|sage|dried basil|dried parsley)\\b"
-  ]
+  ],
+  "labelGroups": [
+    {
+      "id": "protein",
+      "displayName": "Protein",
+      "order": 1,
+      "menuRole": "protein",
+      "wizardStep": 1,
+      "optional": false,
+      "allowsMultiple": false
+    },
+    {
+      "id": "meal-style",
+      "displayName": "Meal Style",
+      "order": 2,
+      "menuRole": "meal_style",
+      "wizardStep": 2,
+      "optional": true,
+      "allowsMultiple": true
+    },
+    {
+      "id": "ingredient",
+      "displayName": "Ingredients",
+      "order": 3,
+      "menuRole": "ingredient",
+      "wizardStep": 3,
+      "optional": true,
+      "allowsMultiple": true
+    },
+    {
+      "id": "browse-type",
+      "displayName": "More to browse",
+      "order": 4,
+      "menuRole": "browse_type",
+      "wizardStep": null,
+      "optional": true,
+      "allowsMultiple": true
+    }
+  ],
+  "labels": [
+    {
+      "id": "chicken",
+      "displayName": "Chicken",
+      "groupID": "protein",
+      "order": 1,
+      "aliases": []
+    },
+    {
+      "id": "beef",
+      "displayName": "Beef",
+      "groupID": "protein",
+      "order": 2,
+      "aliases": []
+    },
+    {
+      "id": "pork",
+      "displayName": "Pork",
+      "groupID": "protein",
+      "order": 3,
+      "aliases": []
+    },
+    {
+      "id": "fish-seafood",
+      "displayName": "Fish & seafood",
+      "groupID": "protein",
+      "order": 4,
+      "aliases": [
+        "fish",
+        "seafood"
+      ]
+    },
+    {
+      "id": "turkey",
+      "displayName": "Turkey",
+      "groupID": "protein",
+      "order": 5,
+      "aliases": []
+    },
+    {
+      "id": "eggs",
+      "displayName": "Eggs",
+      "groupID": "protein",
+      "order": 6,
+      "aliases": [
+        "egg"
+      ]
+    },
+    {
+      "id": "beans-lentils",
+      "displayName": "Beans & lentils",
+      "groupID": "protein",
+      "order": 7,
+      "aliases": [
+        "pulses"
+      ]
+    },
+    {
+      "id": "pasta",
+      "displayName": "Pasta",
+      "groupID": "meal-style",
+      "order": 1,
+      "aliases": []
+    },
+    {
+      "id": "salad",
+      "displayName": "Salad",
+      "groupID": "meal-style",
+      "order": 2,
+      "aliases": []
+    },
+    {
+      "id": "soup-stew",
+      "displayName": "Soup & stew",
+      "groupID": "meal-style",
+      "order": 3,
+      "aliases": [
+        "soup",
+        "stew"
+      ]
+    },
+    {
+      "id": "casserole",
+      "displayName": "Casserole",
+      "groupID": "meal-style",
+      "order": 4,
+      "aliases": []
+    },
+    {
+      "id": "pizza-flatbread",
+      "displayName": "Pizza & flatbread",
+      "groupID": "meal-style",
+      "order": 5,
+      "aliases": [
+        "pizza",
+        "flatbread"
+      ]
+    },
+    {
+      "id": "rice-grains",
+      "displayName": "Rice & grains",
+      "groupID": "meal-style",
+      "order": 6,
+      "aliases": [
+        "rice",
+        "grains",
+        "couscous"
+      ]
+    },
+    {
+      "id": "noodles",
+      "displayName": "Noodles",
+      "groupID": "meal-style",
+      "order": 7,
+      "aliases": [
+        "ramen",
+        "rice noodles",
+        "vermicelli"
+      ]
+    },
+    {
+      "id": "sandwich",
+      "displayName": "Sandwich",
+      "groupID": "meal-style",
+      "order": 8,
+      "aliases": [
+        "sandwiches"
+      ]
+    },
+    {
+      "id": "side-dish",
+      "displayName": "Side dish",
+      "groupID": "meal-style",
+      "order": 9,
+      "aliases": [
+        "side dishes"
+      ]
+    },
+    {
+      "id": "broccoli",
+      "displayName": "Broccoli",
+      "groupID": "ingredient",
+      "order": 1,
+      "aliases": [
+        "broccoli rabe"
+      ]
+    },
+    {
+      "id": "carrots",
+      "displayName": "Carrots",
+      "groupID": "ingredient",
+      "order": 2,
+      "aliases": [
+        "carrot"
+      ]
+    },
+    {
+      "id": "tomatoes",
+      "displayName": "Tomatoes",
+      "groupID": "ingredient",
+      "order": 3,
+      "aliases": [
+        "tomato"
+      ]
+    },
+    {
+      "id": "mushrooms",
+      "displayName": "Mushrooms",
+      "groupID": "ingredient",
+      "order": 4,
+      "aliases": [
+        "mushroom"
+      ]
+    },
+    {
+      "id": "potatoes",
+      "displayName": "Potatoes",
+      "groupID": "ingredient",
+      "order": 5,
+      "aliases": [
+        "potato"
+      ]
+    },
+    {
+      "id": "peppers",
+      "displayName": "Peppers",
+      "groupID": "ingredient",
+      "order": 6,
+      "aliases": [
+        "pepper"
+      ]
+    },
+    {
+      "id": "lentils",
+      "displayName": "Lentils",
+      "groupID": "ingredient",
+      "order": 7,
+      "aliases": [
+        "lentil"
+      ]
+    },
+    {
+      "id": "chickpeas",
+      "displayName": "Chickpeas",
+      "groupID": "ingredient",
+      "order": 8,
+      "aliases": [
+        "chickpea",
+        "garbanzo beans"
+      ]
+    },
+    {
+      "id": "cheese",
+      "displayName": "Cheese",
+      "groupID": "ingredient",
+      "order": 9,
+      "aliases": [
+        "cheeses"
+      ]
+    },
+    {
+      "id": "lemon",
+      "displayName": "Lemon",
+      "groupID": "ingredient",
+      "order": 10,
+      "aliases": [
+        "lemons"
+      ]
+    },
+    {
+      "id": "green-beans",
+      "displayName": "Green beans",
+      "groupID": "ingredient",
+      "order": 11,
+      "aliases": [
+        "green bean"
+      ]
+    },
+    {
+      "id": "breakfast",
+      "displayName": "Breakfast",
+      "groupID": "browse-type",
+      "order": 1,
+      "aliases": []
+    },
+    {
+      "id": "baked-goods",
+      "displayName": "Baked goods",
+      "groupID": "browse-type",
+      "order": 2,
+      "aliases": [
+        "baking"
+      ]
+    },
+    {
+      "id": "dessert",
+      "displayName": "Dessert",
+      "groupID": "browse-type",
+      "order": 3,
+      "aliases": [
+        "desserts"
+      ]
+    },
+    {
+      "id": "beverage",
+      "displayName": "Beverage",
+      "groupID": "browse-type",
+      "order": 4,
+      "aliases": [
+        "drink",
+        "drinks"
+      ]
+    },
+    {
+      "id": "cocktail",
+      "displayName": "Cocktail",
+      "groupID": "browse-type",
+      "order": 5,
+      "aliases": [
+        "cocktails"
+      ]
+    },
+    {
+      "id": "snack",
+      "displayName": "Snack",
+      "groupID": "browse-type",
+      "order": 6,
+      "aliases": [
+        "snacks"
+      ]
+    },
+    {
+      "id": "condiment",
+      "displayName": "Condiment",
+      "groupID": "browse-type",
+      "order": 7,
+      "aliases": [
+        "condiments"
+      ]
+    },
+    {
+      "id": "preserve",
+      "displayName": "Preserve",
+      "groupID": "browse-type",
+      "order": 8,
+      "aliases": [
+        "preserves"
+      ]
+    },
+    {
+      "id": "stock-broth",
+      "displayName": "Stock & broth",
+      "groupID": "browse-type",
+      "order": 9,
+      "aliases": [
+        "stock",
+        "broth"
+      ]
+    }
+  ],
+  "recipeLabels": {
+    "panko_mahi_mahi": [
+      "fish-seafood",
+      "salad",
+      "carrots",
+      "lentils",
+      "cheese",
+      "lemon"
+    ],
+    "yelllow_cake": [
+      "baked-goods",
+      "dessert"
+    ],
+    "pork_ramen": [
+      "pork",
+      "soup-stew",
+      "noodles"
+    ],
+    "cinnamon_bun": [
+      "breakfast",
+      "baked-goods"
+    ],
+    "roastchicken": [
+      "chicken",
+      "lemon",
+      "green-beans"
+    ],
+    "enchilada": [
+      "chicken",
+      "casserole",
+      "tomatoes",
+      "peppers",
+      "cheese"
+    ],
+    "braised_chicken_thighs": [
+      "chicken",
+      "beans-lentils",
+      "rice-grains"
+    ],
+    "cheesecake": [
+      "dessert"
+    ],
+    "cocktails-margarita": [
+      "cocktail",
+      "lemon"
+    ],
+    "panzanella": [
+      "salad",
+      "side-dish",
+      "tomatoes"
+    ],
+    "omelet": [
+      "eggs",
+      "breakfast"
+    ],
+    "plums-plum-mixer": [
+      "beverage"
+    ],
+    "chicken_piccata": [
+      "chicken",
+      "lemon"
+    ],
+    "garlicchilipasta": [
+      "pasta",
+      "lemon",
+      "cheese"
+    ],
+    "lasagna": [
+      "pork",
+      "pasta",
+      "casserole",
+      "tomatoes",
+      "cheese"
+    ],
+    "bread": [
+      "baked-goods"
+    ],
+    "cocktails-whiskey-sour": [
+      "cocktail",
+      "lemon"
+    ],
+    "pancakes": [
+      "breakfast",
+      "baked-goods"
+    ],
+    "sausage-lentils": [
+      "pork",
+      "beans-lentils",
+      "lentils",
+      "lemon"
+    ],
+    "chili_oil": [
+      "condiment"
+    ],
+    "turkey": [
+      "turkey",
+      "mushrooms",
+      "potatoes",
+      "green-beans"
+    ],
+    "ham": [
+      "pork",
+      "casserole",
+      "potatoes",
+      "cheese"
+    ],
+    "pizza": [
+      "pizza-flatbread",
+      "cheese"
+    ],
+    "cashew_chicken": [
+      "chicken",
+      "peppers"
+    ],
+    "stock": [
+      "stock-broth",
+      "carrots"
+    ],
+    "pickles": [
+      "preserve"
+    ],
+    "pot_pie": [
+      "chicken",
+      "casserole",
+      "carrots",
+      "potatoes"
+    ],
+    "chili": [
+      "beef",
+      "beans-lentils",
+      "soup-stew",
+      "tomatoes",
+      "peppers",
+      "cheese"
+    ],
+    "saladdressings-parmesan-peppercorn": [
+      "condiment",
+      "cheese"
+    ],
+    "plums-plum-preserves": [
+      "preserve"
+    ],
+    "chicken_parmesan": [
+      "chicken",
+      "pasta",
+      "cheese"
+    ],
+    "quarantine_salad": [
+      "salad",
+      "side-dish",
+      "cheese"
+    ],
+    "pasta_e_ceci": [
+      "beans-lentils",
+      "pasta",
+      "tomatoes",
+      "lentils",
+      "chickpeas",
+      "lemon",
+      "cheese"
+    ],
+    "beef_stew": [
+      "beef",
+      "soup-stew",
+      "carrots",
+      "potatoes"
+    ],
+    "adobo-green-adobo": [
+      "condiment"
+    ],
+    "beef_tenderloin": [
+      "beef",
+      "potatoes",
+      "cheese"
+    ],
+    "pasta_ouva": [
+      "pasta",
+      "cheese"
+    ],
+    "potatosalad": [
+      "salad",
+      "side-dish",
+      "potatoes"
+    ],
+    "popcorn": [
+      "snack"
+    ],
+    "deepdish": [
+      "casserole",
+      "pizza-flatbread",
+      "peppers",
+      "cheese"
+    ],
+    "raspberry_lime_rickey": [
+      "beverage"
+    ],
+    "caesar": [
+      "salad",
+      "side-dish",
+      "cheese",
+      "lemon"
+    ],
+    "chicken_kebabs": [
+      "chicken",
+      "lemon"
+    ],
+    "orange_chicken": [
+      "chicken"
+    ],
+    "couscous": [
+      "salad",
+      "rice-grains",
+      "side-dish",
+      "tomatoes",
+      "peppers",
+      "cheese",
+      "lemon"
+    ],
+    "southwest": [
+      "beef",
+      "salad",
+      "side-dish",
+      "peppers"
+    ],
+    "fiery_green_beans": [
+      "peppers",
+      "green-beans"
+    ],
+    "christmas": [
+      "pork",
+      "eggs",
+      "casserole",
+      "breakfast",
+      "tomatoes",
+      "cheese"
+    ],
+    "flatbread": [
+      "pizza-flatbread",
+      "sandwich",
+      "baked-goods",
+      "cheese"
+    ],
+    "adobo-red-adobo": [
+      "condiment"
+    ],
+    "brownrice": [
+      "salad",
+      "rice-grains",
+      "side-dish",
+      "cheese"
+    ],
+    "plums-plum-jam": [
+      "preserve"
+    ],
+    "ham_and_cheese_italian": [
+      "pork",
+      "sandwich",
+      "tomatoes",
+      "peppers",
+      "cheese"
+    ],
+    "creammushroom": [
+      "chicken",
+      "soup-stew",
+      "mushrooms"
+    ],
+    "pho": [
+      "soup-stew",
+      "rice-grains",
+      "noodles",
+      "carrots"
+    ],
+    "pad_see_ew": [
+      "chicken",
+      "noodles",
+      "broccoli"
+    ],
+    "cocktails-paloma": [
+      "cocktail"
+    ],
+    "tacos": [
+      "beef",
+      "rice-grains",
+      "peppers",
+      "cheese"
+    ],
+    "saladdressings-lemon-vinaigrette": [
+      "condiment",
+      "lemon"
+    ],
+    "aperto": [
+      "pasta",
+      "tomatoes",
+      "peppers",
+      "cheese"
+    ],
+    "cocktails-negroni": [
+      "cocktail"
+    ],
+    "prosciutto_cheese_bread": [
+      "side-dish",
+      "baked-goods",
+      "cheese"
+    ],
+    "burgers": [
+      "beef",
+      "sandwich",
+      "cheese"
+    ],
+    "spinach": [
+      "salad",
+      "side-dish",
+      "mushrooms",
+      "lemon"
+    ],
+    "pulledpork": [
+      "pork"
+    ],
+    "saladdressings-phil-s-famous": [
+      "condiment"
+    ],
+    "vermichli": [
+      "rice-grains",
+      "noodles",
+      "carrots",
+      "peppers"
+    ],
+    "ziti": [
+      "pasta",
+      "casserole",
+      "tomatoes",
+      "cheese"
+    ],
+    "tomatillo-enchilada": [
+      "beans-lentils",
+      "casserole",
+      "peppers",
+      "cheese"
+    ],
+    "kale": [
+      "beans-lentils",
+      "salad",
+      "side-dish",
+      "lentils",
+      "cheese",
+      "lemon"
+    ],
+    "macandcheese": [
+      "pasta",
+      "side-dish",
+      "cheese"
+    ],
+    "banana_muffins": [
+      "baked-goods"
+    ],
+    "orecchiette": [
+      "pork",
+      "pasta",
+      "broccoli",
+      "cheese"
+    ],
+    "potroast": [
+      "beef"
+    ],
+    "biscuits": [
+      "side-dish",
+      "baked-goods"
+    ],
+    "yellow_curry": [
+      "chicken",
+      "rice-grains",
+      "carrots",
+      "potatoes"
+    ]
+  },
+  "menuCopy": {
+    "cashew_chicken": {
+      "description": "Tender chicken and crisp vegetables meet a savory Thai-style sauce, finished with toasted cashews for a little crunch in every bite.",
+      "pairings": ["Steamed jasmine rice", "Cucumber salad with lime"]
+    },
+    "chicken_piccata": {
+      "description": "Golden chicken in a bright lemon and caper pan sauce, with fresh parsley and just enough butter to bring the flavors together.",
+      "pairings": ["Angel hair pasta", "Roasted asparagus"]
+    },
+    "chicken_kebabs": {
+      "description": "Juicy, seasoned chicken grilled with colorful vegetables until lightly charred, then served with a cool, tangy sauce.",
+      "pairings": ["Warm pita", "Tomato and cucumber salad"]
+    },
+    "panko_mahi_mahi": {
+      "description": "Golden Parmesan-panko crust over tender mahi-mahi, served with warm French lentils, sweet roasted carrots, and bright lemon-herb yogurt.",
+      "pairings": ["Lemon-herb yogurt", "Warm French lentil and carrot salad"]
+    }
+  },
+  "reviewedThumbnailOverrides": {
+    "panko_mahi_mahi": "panko_mahi_mahi.jpg"
+  }
 }
