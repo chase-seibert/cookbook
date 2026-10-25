@@ -93,7 +93,8 @@
     "popcorn": "popcorn",
     "raspberry_lime_rickey": "raspberry_lime_rickey",
     "ham_and_cheese_italian": "ham_and_cheese_italian",
-    "chili_oil": "chili_oil"
+    "chili_oil": "chili_oil",
+    "panko_mahi_mahi": "panko_mahi_mahi"
   },
   "recipeCollections": [
     "adobo",
@@ -101,6 +102,62 @@
     "plums",
     "saladdressings"
   ],
+  "stepIngredientIDs": {
+    "panko_mahi_mahi-step-1": [
+      "panko_mahi_mahi-ingredient-12",
+      "panko_mahi_mahi-ingredient-13",
+      "panko_mahi_mahi-ingredient-21"
+    ],
+    "panko_mahi_mahi-step-2": [
+      "panko_mahi_mahi-ingredient-11",
+      "panko_mahi_mahi-ingredient-21"
+    ],
+    "panko_mahi_mahi-step-3": [
+      "panko_mahi_mahi-ingredient-1",
+      "panko_mahi_mahi-ingredient-2",
+      "panko_mahi_mahi-ingredient-3",
+      "panko_mahi_mahi-ingredient-4",
+      "panko_mahi_mahi-ingredient-5",
+      "panko_mahi_mahi-ingredient-6",
+      "panko_mahi_mahi-ingredient-7",
+      "panko_mahi_mahi-ingredient-8",
+      "panko_mahi_mahi-ingredient-9",
+      "panko_mahi_mahi-ingredient-10"
+    ],
+    "panko_mahi_mahi-step-4": [
+      "panko_mahi_mahi-ingredient-1",
+      "panko_mahi_mahi-ingredient-2",
+      "panko_mahi_mahi-ingredient-3",
+      "panko_mahi_mahi-ingredient-4",
+      "panko_mahi_mahi-ingredient-5",
+      "panko_mahi_mahi-ingredient-6",
+      "panko_mahi_mahi-ingredient-7",
+      "panko_mahi_mahi-ingredient-8",
+      "panko_mahi_mahi-ingredient-9",
+      "panko_mahi_mahi-ingredient-10"
+    ],
+    "panko_mahi_mahi-step-5": [
+      "panko_mahi_mahi-ingredient-11",
+      "panko_mahi_mahi-ingredient-12",
+      "panko_mahi_mahi-ingredient-13",
+      "panko_mahi_mahi-ingredient-14",
+      "panko_mahi_mahi-ingredient-15",
+      "panko_mahi_mahi-ingredient-16",
+      "panko_mahi_mahi-ingredient-17",
+      "panko_mahi_mahi-ingredient-18",
+      "panko_mahi_mahi-ingredient-19",
+      "panko_mahi_mahi-ingredient-20",
+      "panko_mahi_mahi-ingredient-21"
+    ],
+    "panko_mahi_mahi-step-6": [
+      "panko_mahi_mahi-ingredient-22",
+      "panko_mahi_mahi-ingredient-23",
+      "panko_mahi_mahi-ingredient-24",
+      "panko_mahi_mahi-ingredient-25",
+      "panko_mahi_mahi-ingredient-26",
+      "panko_mahi_mahi-ingredient-27"
+    ]
+  },
   "excludedGroceryNames": [
     "water"
   ],

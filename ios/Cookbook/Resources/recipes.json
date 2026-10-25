@@ -8,7 +8,7 @@
     "Baking",
     "Odds and Ends"
   ],
-  "recipeFileCount": 67,
+  "recipeFileCount": 68,
   "recipes": [
     {
       "id": "caesar",
@@ -8818,6 +8818,343 @@
       "healthierOptions": [],
       "sourceHash": "d157245d94c177a81af9fe2c9026d4e4580b8183d67c7cd2aa622681ac4cd522",
       "thumbnailAsset": "chicken_parmesan.jpg"
+    },
+    {
+      "id": "panko_mahi_mahi",
+      "title": "Crispy Panko Mahi-Mahi with Warm French Lentil and Roasted Carrot Salad",
+      "category": "Main Dishes: Every Day",
+      "collectionTitle": null,
+      "sourceFile": "panko_mahi_mahi.tex",
+      "sourceSection": "Crispy Panko Mahi-Mahi with Warm French Lentil and Roasted Carrot Salad",
+      "introduction": "Serves 5. About 45 minutes. Roast the carrots at 425°. Cook lentils and mix the vinaigrette up to 2 days ahead; refrigerate separately. For kids, keep some lentils and carrots undressed and serve the yogurt sauce as a dip.",
+      "ingredients": [
+        {
+          "id": "panko_mahi_mahi-ingredient-1",
+          "quantity": "1¾--2",
+          "name": "lb mahi-mahi, cut into 5 portions",
+          "groceryName": "Mahi-mahi, cut into 5 portions",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-2",
+          "quantity": "1",
+          "name": "cup panko breadcrumbs",
+          "groceryName": "Panko breadcrumbs",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-3",
+          "quantity": "⅓",
+          "name": "cup finely grated Parmesan",
+          "groceryName": "Finely grated Parmesan",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-4",
+          "quantity": "2",
+          "name": "tablespoons olive oil",
+          "groceryName": "Olive oil",
+          "staple": true,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-5",
+          "quantity": "2",
+          "name": "tablespoons mayonnaise",
+          "groceryName": "Mayonnaise",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-6",
+          "quantity": "1",
+          "name": "tablespoon Dijon mustard",
+          "groceryName": "Dijon mustard",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-7",
+          "quantity": "",
+          "name": "zest of 1 lemon",
+          "groceryName": "Zest of 1 lemon",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-8",
+          "quantity": "½",
+          "name": "teaspoon garlic powder",
+          "groceryName": "Garlic powder",
+          "staple": true,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-9",
+          "quantity": "½",
+          "name": "teaspoon kosher salt",
+          "groceryName": "Kosher salt",
+          "staple": true,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-10",
+          "quantity": "",
+          "name": "pepper",
+          "groceryName": "Pepper",
+          "staple": true,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-11",
+          "quantity": "1¼",
+          "name": "cups dry French green lentils",
+          "groceryName": "Dry French green lentils",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-12",
+          "quantity": "1½",
+          "name": "lb carrots, cut into ½-inch pieces",
+          "groceryName": "Carrots, cut into ½-inch pieces",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-13",
+          "quantity": "2",
+          "name": "tablespoons olive oil, for roasting",
+          "groceryName": "Olive oil, for roasting",
+          "staple": true,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-14",
+          "quantity": "1",
+          "name": "small shallot, finely minced",
+          "groceryName": "Shallot, finely minced",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-15",
+          "quantity": "⅓",
+          "name": "cup fresh parsley, chopped",
+          "groceryName": "Fresh parsley, chopped",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-16",
+          "quantity": "2",
+          "name": "tablespoons lemon juice",
+          "groceryName": "Lemon juice",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-17",
+          "quantity": "1",
+          "name": "tablespoon red wine vinegar",
+          "groceryName": "Red wine vinegar",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-18",
+          "quantity": "1",
+          "name": "tablespoon extra-virgin olive oil",
+          "groceryName": "Extra-virgin olive oil",
+          "staple": true,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-19",
+          "quantity": "2",
+          "name": "teaspoons Dijon mustard",
+          "groceryName": "Dijon mustard",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-20",
+          "quantity": "2",
+          "name": "teaspoons honey",
+          "groceryName": "Honey",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-21",
+          "quantity": "",
+          "name": "salt and black pepper",
+          "groceryName": "Salt and black pepper",
+          "staple": true,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-22",
+          "quantity": "¾",
+          "name": "cup plain Greek yogurt",
+          "groceryName": "Plain Greek yogurt",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-23",
+          "quantity": "1",
+          "name": "tablespoon lemon juice",
+          "groceryName": "Lemon juice",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-24",
+          "quantity": "1",
+          "name": "teaspoon honey",
+          "groceryName": "Honey",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-25",
+          "quantity": "1",
+          "name": "small garlic clove, grated (optional)",
+          "groceryName": "Garlic clove, grated (optional)",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-26",
+          "quantity": "1--2",
+          "name": "tablespoons water, to thin",
+          "groceryName": "Water, to thin",
+          "staple": false,
+          "excludeFromGroceries": false
+        },
+        {
+          "id": "panko_mahi_mahi-ingredient-27",
+          "quantity": "",
+          "name": "salt",
+          "groceryName": "Salt",
+          "staple": true,
+          "excludeFromGroceries": false
+        }
+      ],
+      "steps": [
+        {
+          "id": "panko_mahi_mahi-step-1",
+          "sectionTitle": "Roast the carrots",
+          "instruction": "Heat the oven to 425°. Toss the carrots with 2 tablespoons olive oil, salt, and pepper. Spread on a sheet pan and roast for 25--30 minutes, turning once, until browned and tender.",
+          "originalInstruction": "Heat the oven to 425°. Toss the carrots with 2 tablespoons olive oil, salt, and pepper. Spread on a sheet pan and roast for 25--30 minutes, turning once, until browned and tender.",
+          "ingredientIDs": [
+            "panko_mahi_mahi-ingredient-12",
+            "panko_mahi_mahi-ingredient-13",
+            "panko_mahi_mahi-ingredient-21"
+          ],
+          "durationMinutes": null,
+          "active": true
+        },
+        {
+          "id": "panko_mahi_mahi-step-2",
+          "sectionTitle": "Simmer the lentils",
+          "instruction": "Rinse the lentils. Add them to a saucepan with 4 cups water and ½ teaspoon salt. Bring to a boil, then gently simmer for 20--30 minutes, until just tender. Drain well.",
+          "originalInstruction": "Rinse the lentils. Add them to a saucepan with 4 cups water and ½ teaspoon salt. Bring to a boil, then gently simmer for 20--30 minutes, until just tender. Drain well.",
+          "ingredientIDs": [
+            "panko_mahi_mahi-ingredient-11",
+            "panko_mahi_mahi-ingredient-21"
+          ],
+          "durationMinutes": null,
+          "active": true
+        },
+        {
+          "id": "panko_mahi_mahi-step-3",
+          "sectionTitle": "Coat the fish",
+          "instruction": "Mix the panko, Parmesan, 2 tablespoons olive oil, lemon zest, garlic powder, salt, and pepper. Stir the mayonnaise and Dijon together. Pat the fish dry, spread the mayonnaise-Dijon mixture on top, and press on the crumbs. Set on a lightly oiled second pan.",
+          "originalInstruction": "Mix the panko, Parmesan, 2 tablespoons olive oil, lemon zest, garlic powder, salt, and pepper. Stir the mayonnaise and Dijon together. Pat the fish dry, spread the mayonnaise-Dijon mixture on top, and press on the crumbs. Set on a lightly oiled second pan.",
+          "ingredientIDs": [
+            "panko_mahi_mahi-ingredient-1",
+            "panko_mahi_mahi-ingredient-2",
+            "panko_mahi_mahi-ingredient-3",
+            "panko_mahi_mahi-ingredient-4",
+            "panko_mahi_mahi-ingredient-5",
+            "panko_mahi_mahi-ingredient-6",
+            "panko_mahi_mahi-ingredient-7",
+            "panko_mahi_mahi-ingredient-8",
+            "panko_mahi_mahi-ingredient-9",
+            "panko_mahi_mahi-ingredient-10"
+          ],
+          "durationMinutes": null,
+          "active": true
+        },
+        {
+          "id": "panko_mahi_mahi-step-4",
+          "sectionTitle": "Bake the mahi-mahi",
+          "instruction": "When the carrots have about 15 minutes left, add the fish to the oven. Bake for 12--16 minutes (start checking early for thin pieces), until the thickest part reaches 145°. Optionally broil for 30--60 seconds to brown the crust.",
+          "originalInstruction": "When the carrots have about 15 minutes left, add the fish to the oven. Bake for 12--16 minutes (start checking early for thin pieces), until the thickest part reaches 145°. Optionally broil for 30--60 seconds to brown the crust.",
+          "ingredientIDs": [
+            "panko_mahi_mahi-ingredient-1",
+            "panko_mahi_mahi-ingredient-2",
+            "panko_mahi_mahi-ingredient-3",
+            "panko_mahi_mahi-ingredient-4",
+            "panko_mahi_mahi-ingredient-5",
+            "panko_mahi_mahi-ingredient-6",
+            "panko_mahi_mahi-ingredient-7",
+            "panko_mahi_mahi-ingredient-8",
+            "panko_mahi_mahi-ingredient-9",
+            "panko_mahi_mahi-ingredient-10"
+          ],
+          "durationMinutes": null,
+          "active": true
+        },
+        {
+          "id": "panko_mahi_mahi-step-5",
+          "sectionTitle": "Dress the warm salad",
+          "instruction": "Whisk together the lemon juice, vinegar, extra-virgin olive oil, 2 teaspoons Dijon, and 2 teaspoons honey. Toss with the warm lentils, roasted carrots, shallot, and parsley. Season to taste.",
+          "originalInstruction": "Whisk together the lemon juice, vinegar, extra-virgin olive oil, 2 teaspoons Dijon, and 2 teaspoons honey. Toss with the warm lentils, roasted carrots, shallot, and parsley. Season to taste.",
+          "ingredientIDs": [
+            "panko_mahi_mahi-ingredient-11",
+            "panko_mahi_mahi-ingredient-12",
+            "panko_mahi_mahi-ingredient-13",
+            "panko_mahi_mahi-ingredient-14",
+            "panko_mahi_mahi-ingredient-15",
+            "panko_mahi_mahi-ingredient-16",
+            "panko_mahi_mahi-ingredient-17",
+            "panko_mahi_mahi-ingredient-18",
+            "panko_mahi_mahi-ingredient-19",
+            "panko_mahi_mahi-ingredient-20",
+            "panko_mahi_mahi-ingredient-21"
+          ],
+          "durationMinutes": null,
+          "active": true
+        },
+        {
+          "id": "panko_mahi_mahi-step-6",
+          "sectionTitle": "Sauce and serve",
+          "instruction": "Mix the yogurt, lemon juice, honey, optional garlic, salt, and enough water to make the sauce spoonable. Serve the fish with the warm salad and sauce on the side.",
+          "originalInstruction": "Mix the yogurt, lemon juice, honey, optional garlic, salt, and enough water to make the sauce spoonable. Serve the fish with the warm salad and sauce on the side.",
+          "ingredientIDs": [
+            "panko_mahi_mahi-ingredient-22",
+            "panko_mahi_mahi-ingredient-23",
+            "panko_mahi_mahi-ingredient-24",
+            "panko_mahi_mahi-ingredient-25",
+            "panko_mahi_mahi-ingredient-26",
+            "panko_mahi_mahi-ingredient-27"
+          ],
+          "durationMinutes": null,
+          "active": true
+        }
+      ],
+      "tips": [
+        "Cooking order: 0--10 minutes, prep and roast carrots; 10--15, start lentils; 15--25, coat fish and mix sauces; 25--30, add fish to oven; 30--40, drain lentils and finish carrots; 40--45, toss and serve."
+      ],
+      "healthierOptions": [],
+      "sourceHash": "9357a85512f4bc21c9557526cae9c3913a74c7f333fa6258770b8bff1f3cf140",
+      "thumbnailAsset": "panko_mahi_mahi.jpg"
     },
     {
       "id": "chicken_kebabs",

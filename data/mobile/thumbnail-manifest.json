@@ -336,6 +336,14 @@
       "promptFingerprint": "4cb1efd6b23e134ff5b0abf5aa290042727603190cc2cbd402247bb326bd6686",
       "width": 1024
     },
+    "panko_mahi_mahi": {
+      "asset": "panko_mahi_mahi.jpg",
+      "bytes": 284071,
+      "format": "jpeg",
+      "height": 768,
+      "promptFingerprint": "57d62b542dbd48e3627e2c8ea7cb739091e710cb0892f080c6ce90da6938ba81",
+      "width": 1024
+    },
     "panzanella": {
       "asset": "panzanella.jpg",
       "bytes": 276532,
