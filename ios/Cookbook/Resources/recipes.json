@@ -6322,7 +6322,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "6b2cbea780be670b9d3415a0781f67a10b6ad92a0a8af938aee189722531a1be"
+      "sourceHash": "6b2cbea780be670b9d3415a0781f67a10b6ad92a0a8af938aee189722531a1be",
+      "thumbnailAsset": "pulledpork.jpg"
     },
     {
       "id": "potroast",
@@ -6502,7 +6503,8 @@
         "At the end, blend the sauce and root vegetables for a thicker sauce."
       ],
       "healthierOptions": [],
-      "sourceHash": "62004ab7e811ccdaf58763cdcc4556641a90442dc1cd5b38faf35f01417086af"
+      "sourceHash": "62004ab7e811ccdaf58763cdcc4556641a90442dc1cd5b38faf35f01417086af",
+      "thumbnailAsset": "potroast.jpg"
     },
     {
       "id": "pho",
@@ -6715,7 +6717,8 @@
         "Other ingredients to try are minced garlic fried in oil, dried shrimp, sliced beef or chicken."
       ],
       "healthierOptions": [],
-      "sourceHash": "84eadde27a9eeec9ec4ee88a71c56056a7dfbeced19f39942e754269757744bc"
+      "sourceHash": "84eadde27a9eeec9ec4ee88a71c56056a7dfbeced19f39942e754269757744bc",
+      "thumbnailAsset": "pho.jpg"
     },
     {
       "id": "pork_ramen",
@@ -6969,7 +6972,8 @@
         "Home made chicken stock is best."
       ],
       "healthierOptions": [],
-      "sourceHash": "b61189abe1df7490c7dba53b25dc5c56b25f9eac0c9d367f274b2cf74249d25b"
+      "sourceHash": "b61189abe1df7490c7dba53b25dc5c56b25f9eac0c9d367f274b2cf74249d25b",
+      "thumbnailAsset": "pork_ramen.jpg"
     },
     {
       "id": "pot_pie",
@@ -7307,7 +7311,8 @@
         "You can either use a rotisserie chicken, or chicken breasts that you\n bake or boil. Shredded chicken is better in the dish than chopped."
       ],
       "healthierOptions": [],
-      "sourceHash": "1d677840f45ce64c6c1cd254e5f155ae92f3fe0094a22d5b503f423f7d309c0b"
+      "sourceHash": "1d677840f45ce64c6c1cd254e5f155ae92f3fe0094a22d5b503f423f7d309c0b",
+      "thumbnailAsset": "pot_pie.jpg"
     },
     {
       "id": "yellow_curry",
@@ -7580,7 +7585,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "7589d4ae436399db6ba15951946177d6570641132924b8866575335b70376f4b"
+      "sourceHash": "7589d4ae436399db6ba15951946177d6570641132924b8866575335b70376f4b",
+      "thumbnailAsset": "yellow_curry.jpg"
     },
     {
       "id": "beef_stew",
@@ -7801,7 +7807,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "3d4ea4f3b90083180821910f197ef8b985bfe1e9d25e0417489ca9dcb2148cf2"
+      "sourceHash": "3d4ea4f3b90083180821910f197ef8b985bfe1e9d25e0417489ca9dcb2148cf2",
+      "thumbnailAsset": "beef_stew.jpg"
     },
     {
       "id": "pasta_ouva",
@@ -7913,7 +7920,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "a3c1879a8d84a367ff29b0b1e258b47575bc2065fc88a00f0a42946532486357"
+      "sourceHash": "a3c1879a8d84a367ff29b0b1e258b47575bc2065fc88a00f0a42946532486357",
+      "thumbnailAsset": "pasta_ouva.jpg"
     },
     {
       "id": "cashew_chicken",
@@ -8204,7 +8212,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "6462291614f3b43670b250e064f7c030c452cc2bc77bcee7f739298e5ef924c4"
+      "sourceHash": "6462291614f3b43670b250e064f7c030c452cc2bc77bcee7f739298e5ef924c4",
+      "thumbnailAsset": "cashew_chicken.jpg"
     },
     {
       "id": "pad_see_ew",
@@ -8426,7 +8435,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "e6554fec90d974262646240d9fefbba8a0130022fa25021a4c264bcc801164c4"
+      "sourceHash": "e6554fec90d974262646240d9fefbba8a0130022fa25021a4c264bcc801164c4",
+      "thumbnailAsset": "pad_see_ew.jpg"
     },
     {
       "id": "braised_chicken_thighs",
@@ -8607,7 +8617,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "199d56f50823b2c11bc63e84116c7a463ae6842a1b2430ea72ef1133acb9cd22"
+      "sourceHash": "199d56f50823b2c11bc63e84116c7a463ae6842a1b2430ea72ef1133acb9cd22",
+      "thumbnailAsset": "braised_chicken_thighs.jpg"
     },
     {
       "id": "chicken_parmesan",
@@ -8805,7 +8816,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "d157245d94c177a81af9fe2c9026d4e4580b8183d67c7cd2aa622681ac4cd522"
+      "sourceHash": "d157245d94c177a81af9fe2c9026d4e4580b8183d67c7cd2aa622681ac4cd522",
+      "thumbnailAsset": "chicken_parmesan.jpg"
     },
     {
       "id": "chicken_kebabs",
@@ -9070,7 +9082,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "ca2cecf1f62d5d17458edfd27fd4212935e5cb5887fc29854a23dc6cf196f7e4"
+      "sourceHash": "ca2cecf1f62d5d17458edfd27fd4212935e5cb5887fc29854a23dc6cf196f7e4",
+      "thumbnailAsset": "chicken_kebabs.jpg"
     },
     {
       "id": "chicken_piccata",
@@ -9242,7 +9255,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "e2242c1f94e9ed5d0de530e3b1932c6a87ebc40596e8cb723c649c2484125a8e"
+      "sourceHash": "e2242c1f94e9ed5d0de530e3b1932c6a87ebc40596e8cb723c649c2484125a8e",
+      "thumbnailAsset": "chicken_piccata.jpg"
     },
     {
       "id": "orange_chicken",
@@ -9434,7 +9448,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "9ad7d344dcfc292752fa83eb06511403ed9e3be787b7bbd01722e18678b0d6ff"
+      "sourceHash": "9ad7d344dcfc292752fa83eb06511403ed9e3be787b7bbd01722e18678b0d6ff",
+      "thumbnailAsset": "orange_chicken.jpg"
     },
     {
       "id": "turkey",
@@ -10142,7 +10157,8 @@
         "5 pounds of mashed potatoes is fine for 18 people. 10 pounds is a ridiculous amount. Low fat buttermilk doesn't work, it will curdle. Substitute sour cream instead."
       ],
       "healthierOptions": [],
-      "sourceHash": "686bf489eb67889c91df5b69e633beb30c70edaee293d5563e6072f996f3fbfc"
+      "sourceHash": "686bf489eb67889c91df5b69e633beb30c70edaee293d5563e6072f996f3fbfc",
+      "thumbnailAsset": "turkey.jpg"
     },
     {
       "id": "ham",
@@ -10463,7 +10479,8 @@
         "I like a strong garlic flavor in these which is non-traditional. Use a larger baking dish for quicker cooking and more browning. The whole thing takes about 2 hours. If you add the cheese initially it will break and eat greasey."
       ],
       "healthierOptions": [],
-      "sourceHash": "9f76466811d0805e63769163de4fdb7b3051c706f82135a05e93db857c944295"
+      "sourceHash": "9f76466811d0805e63769163de4fdb7b3051c706f82135a05e93db857c944295",
+      "thumbnailAsset": "ham.jpg"
     },
     {
       "id": "beef_tenderloin",
@@ -10700,7 +10717,8 @@
         "A good sauce to serve with is another jar of horseradish, enough heavy cream to loosen, and \n salt and pepper to taste. Optional minced green apple and red onion."
       ],
       "healthierOptions": [],
-      "sourceHash": "2198ae1e0327e2d45d497b64654a424e09ec0a80971643f5818216e4f578d923"
+      "sourceHash": "2198ae1e0327e2d45d497b64654a424e09ec0a80971643f5818216e4f578d923",
+      "thumbnailAsset": "beef_tenderloin.jpg"
     },
     {
       "id": "christmas",
@@ -10875,7 +10893,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "4916093b4d53de6ae9329512d8cec9159ccc98fcf17fd029623feaa8d645fe06"
+      "sourceHash": "4916093b4d53de6ae9329512d8cec9159ccc98fcf17fd029623feaa8d645fe06",
+      "thumbnailAsset": "christmas.jpg"
     },
     {
       "id": "cheesecake",
@@ -11015,7 +11034,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "342ecec8628baf221376c963f91c5689cb3f329ea9ad19d313d70498ea7d41ba"
+      "sourceHash": "342ecec8628baf221376c963f91c5689cb3f329ea9ad19d313d70498ea7d41ba",
+      "thumbnailAsset": "cheesecake.jpg"
     },
     {
       "id": "pancakes",
@@ -11172,7 +11192,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "d5b8826f55bbdac55202033d399c436430e58fad7fd220ade27cbc59c4e8adf1"
+      "sourceHash": "d5b8826f55bbdac55202033d399c436430e58fad7fd220ade27cbc59c4e8adf1",
+      "thumbnailAsset": "pancakes.jpg"
     },
     {
       "id": "bread",
@@ -11376,7 +11397,8 @@
         "You can increase the speed of the rising step by placing the loaf in a very low oven at 100°. Many home ovens do not go that low. In that case, you can preheat to a low heat, turn the oven off, and leave the door open.\n Either way, place a very wet paper towel on top of the loaf to keep the surface from drying out."
       ],
       "healthierOptions": [],
-      "sourceHash": "8f8016f7b5b8800a1043eaca96dccb2c8be733967a4d10e3ba87e837a40f262a"
+      "sourceHash": "8f8016f7b5b8800a1043eaca96dccb2c8be733967a4d10e3ba87e837a40f262a",
+      "thumbnailAsset": "bread.jpg"
     },
     {
       "id": "flatbread",
@@ -11572,7 +11594,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "af4e27e3c0d7f5c091ee3b3fbd244d7f9de4dfc52481b3ed1697232b64911b0f"
+      "sourceHash": "af4e27e3c0d7f5c091ee3b3fbd244d7f9de4dfc52481b3ed1697232b64911b0f",
+      "thumbnailAsset": "flatbread.jpg"
     },
     {
       "id": "prosciutto_cheese_bread",
@@ -11764,7 +11787,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "a950e0a5831500982c206128f8e16177e5a9f06c54fa54868a06e3b3e56009a6"
+      "sourceHash": "a950e0a5831500982c206128f8e16177e5a9f06c54fa54868a06e3b3e56009a6",
+      "thumbnailAsset": "prosciutto_cheese_bread.jpg"
     },
     {
       "id": "banana_muffins",
@@ -11875,7 +11899,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "00ad4eae51715e232adca6a86f594739a2f70b21fb6467462d9fd6900c981239"
+      "sourceHash": "00ad4eae51715e232adca6a86f594739a2f70b21fb6467462d9fd6900c981239",
+      "thumbnailAsset": "banana_muffins.jpg"
     },
     {
       "id": "cinnamon_bun",
@@ -12168,7 +12193,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "e4557964e23f9cfabbe858d1ce3ed6a67f6c59682ad8063b1378275f0668b60a"
+      "sourceHash": "e4557964e23f9cfabbe858d1ce3ed6a67f6c59682ad8063b1378275f0668b60a",
+      "thumbnailAsset": "cinnamon_bun.jpg"
     },
     {
       "id": "biscuits",
@@ -12330,7 +12356,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "fab1e99cc9a9cb71bca2741d36d39e7a9bb20c600f97679fe11451f0cc323ad9"
+      "sourceHash": "fab1e99cc9a9cb71bca2741d36d39e7a9bb20c600f97679fe11451f0cc323ad9",
+      "thumbnailAsset": "biscuits.jpg"
     },
     {
       "id": "yelllow_cake",
@@ -12592,7 +12619,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "3e598594d4e1c3a0882cd61339644003ca4e706913c27d78f96ebe80d4f04a9a"
+      "sourceHash": "3e598594d4e1c3a0882cd61339644003ca4e706913c27d78f96ebe80d4f04a9a",
+      "thumbnailAsset": "yelllow_cake.jpg"
     },
     {
       "id": "omelet",
@@ -12700,7 +12728,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "6501abdea024e88e800348771e1018102eb1e28ebb428f2f9e154a0929bec7bf"
+      "sourceHash": "6501abdea024e88e800348771e1018102eb1e28ebb428f2f9e154a0929bec7bf",
+      "thumbnailAsset": "omelet.jpg"
     },
     {
       "id": "stock",
@@ -12883,7 +12912,8 @@
         "The gelatin serves to give the stock a better mouth feel. You can get the same effect by using a lot of bones; gelatin will naturally be extracted from the bone marrow."
       ],
       "healthierOptions": [],
-      "sourceHash": "bdb725cae5c2cffb550b6167a41076ce5eabfcd1c687542ba15c8228499be099"
+      "sourceHash": "bdb725cae5c2cffb550b6167a41076ce5eabfcd1c687542ba15c8228499be099",
+      "thumbnailAsset": "stock.jpg"
     },
     {
       "id": "pickles",
@@ -13016,7 +13046,8 @@
         "You will know if your pickles are good by smell. It should smell strong, but pleasant. It should not smell spoiled or rotten."
       ],
       "healthierOptions": [],
-      "sourceHash": "62b180940189db552fb407e0f79d1fcd14c83bd829c660906dd02da0ed03d258"
+      "sourceHash": "62b180940189db552fb407e0f79d1fcd14c83bd829c660906dd02da0ed03d258",
+      "thumbnailAsset": "pickles.jpg"
     },
     {
       "id": "adobo-green-adobo",
@@ -13128,7 +13159,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "8e55dd8c57175f24aaae4413c1e3e887d5cde7561c11f0f51ad218a2b7a5baea"
+      "sourceHash": "8e55dd8c57175f24aaae4413c1e3e887d5cde7561c11f0f51ad218a2b7a5baea",
+      "thumbnailAsset": "adobo-green-adobo.jpg"
     },
     {
       "id": "adobo-red-adobo",
@@ -13232,7 +13264,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "8adccb51d26d0bb41d5978832d3c442ed4a9afd6ac19e5a2ab0e884087325a62"
+      "sourceHash": "8adccb51d26d0bb41d5978832d3c442ed4a9afd6ac19e5a2ab0e884087325a62",
+      "thumbnailAsset": "adobo-red-adobo.jpg"
     },
     {
       "id": "plums-plum-jam",
@@ -13298,7 +13331,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "1d259ee7bdb69d41575367e789e14a839f6c697e0e266008e620d0c998ea4d90"
+      "sourceHash": "1d259ee7bdb69d41575367e789e14a839f6c697e0e266008e620d0c998ea4d90",
+      "thumbnailAsset": "plums-plum-jam.jpg"
     },
     {
       "id": "plums-plum-preserves",
@@ -13342,7 +13376,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "192b5799339cfcdb808a955f486e70c0c84349369803975851f101d993f0b434"
+      "sourceHash": "192b5799339cfcdb808a955f486e70c0c84349369803975851f101d993f0b434",
+      "thumbnailAsset": "plums-plum-preserves.jpg"
     },
     {
       "id": "plums-plum-mixer",
@@ -13386,7 +13421,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "fa6bb71ecfed7b117c7c15118f7aa6e7472778b6e924b17cd2cf607ba167c9fc"
+      "sourceHash": "fa6bb71ecfed7b117c7c15118f7aa6e7472778b6e924b17cd2cf607ba167c9fc",
+      "thumbnailAsset": "plums-plum-mixer.jpg"
     },
     {
       "id": "cocktails-whiskey-sour",
@@ -13457,7 +13493,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "a75fad986d8eb92a1329c2188eeb02af6b930eb337da0eac9a9ab303c050b804"
+      "sourceHash": "a75fad986d8eb92a1329c2188eeb02af6b930eb337da0eac9a9ab303c050b804",
+      "thumbnailAsset": "cocktails-whiskey-sour.jpg"
     },
     {
       "id": "cocktails-paloma",
@@ -13519,7 +13556,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "699eddb8088a24419823e690c619e80929f908b48fb96b0621b9feec001ab0de"
+      "sourceHash": "699eddb8088a24419823e690c619e80929f908b48fb96b0621b9feec001ab0de",
+      "thumbnailAsset": "cocktails-paloma.jpg"
     },
     {
       "id": "cocktails-margarita",
@@ -13581,7 +13619,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "52c1841c3f10332184c21d2b0a863de3139e1935b07162250e8739df83f54395"
+      "sourceHash": "52c1841c3f10332184c21d2b0a863de3139e1935b07162250e8739df83f54395",
+      "thumbnailAsset": "cocktails-margarita.jpg"
     },
     {
       "id": "cocktails-negroni",
@@ -13643,7 +13682,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "c0f467d88976c672b8f4582bbc3cb1c7551ed497d1bc5636dc09a4b0594737a9"
+      "sourceHash": "c0f467d88976c672b8f4582bbc3cb1c7551ed497d1bc5636dc09a4b0594737a9",
+      "thumbnailAsset": "cocktails-negroni.jpg"
     },
     {
       "id": "popcorn",
@@ -13735,7 +13775,8 @@
         "You can put all kinds of toppings on popcorn. Some of my favorites are\n Zahtar spice, nutritional yeast, and white cheddar powder."
       ],
       "healthierOptions": [],
-      "sourceHash": "b9047996127a0de062a6d23461366e25641e423d51f4c056d41adbd577b8b842"
+      "sourceHash": "b9047996127a0de062a6d23461366e25641e423d51f4c056d41adbd577b8b842",
+      "thumbnailAsset": "popcorn.jpg"
     },
     {
       "id": "raspberry_lime_rickey",
@@ -13834,7 +13875,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "723172e756e3924e3102b05aec592a3bf7a0e0919f42dccfe212023522032a9f"
+      "sourceHash": "723172e756e3924e3102b05aec592a3bf7a0e0919f42dccfe212023522032a9f",
+      "thumbnailAsset": "raspberry_lime_rickey.jpg"
     },
     {
       "id": "ham_and_cheese_italian",
@@ -14056,7 +14098,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "76477c00aad80190ca3a1aed3918a584f27f286cc26e212c2f090c71a56bc0ed"
+      "sourceHash": "76477c00aad80190ca3a1aed3918a584f27f286cc26e212c2f090c71a56bc0ed",
+      "thumbnailAsset": "ham_and_cheese_italian.jpg"
     },
     {
       "id": "chili_oil",
@@ -14262,7 +14305,8 @@
       ],
       "tips": [],
       "healthierOptions": [],
-      "sourceHash": "a08fc48b41268f4f27b91d7ac93ae71b1b23fe07e6dd41311905d66f10a78f4e"
+      "sourceHash": "a08fc48b41268f4f27b91d7ac93ae71b1b23fe07e6dd41311905d66f10a78f4e",
+      "thumbnailAsset": "chili_oil.jpg"
     }
   ]
 }

@@ -43,9 +43,10 @@ catalog-check:
 	python3 scripts/generate_mobile_catalog.py --check
 
 REMAINING_PERCENT ?=
+QUOTA_CHECKED_AT ?=
 
 thumbnail-queue:
-	python3 scripts/recipe_thumbnails.py queue $(if $(REMAINING_PERCENT),--remaining-percent $(REMAINING_PERCENT),)
+	python3 scripts/recipe_thumbnails.py queue $(if $(REMAINING_PERCENT),--remaining-percent $(REMAINING_PERCENT),) $(if $(QUOTA_CHECKED_AT),--quota-checked-at '$(QUOTA_CHECKED_AT)',)
 
 thumbnail-validate:
 	python3 scripts/recipe_thumbnails.py validate

@@ -8,14 +8,15 @@ checkpoint manifest is `data/mobile/thumbnail-manifest.json`.
 
 Use Codex's built-in image-generation tool for one recipe at a time. Before
 every image request, read the current Codex usage limits and use the primary
-window only when its duration is 300 minutes. If usage is missing, stale, or
-the remaining percentage is 50 or lower, stop without starting an image
-request. The next run can continue from the manifest.
+window only when its duration is 300 minutes. If usage is missing, older than
+60 seconds, or the remaining percentage is 50 or lower, stop without starting
+an image request. The next run can continue from the manifest.
 
-Run `make thumbnail-queue REMAINING_PERCENT=<live value>` after the quota read.
-The command returns the next missing or stale recipe, a fingerprint, and a
-prompt containing its title, introduction, ingredients, complete instructions,
-tips, and healthier options. Generate that image, then run:
+After each fresh quota read, run `make thumbnail-queue
+REMAINING_PERCENT=<live value> QUOTA_CHECKED_AT=<UTC ISO timestamp>`. The command
+returns the next missing or stale recipe, a fingerprint, and a prompt
+containing its title, introduction, ingredients, complete instructions, tips,
+and healthier options. Generate that image, then run:
 
 ```sh
 python3 scripts/recipe_thumbnails.py commit <recipe-id> <generated-image-path>

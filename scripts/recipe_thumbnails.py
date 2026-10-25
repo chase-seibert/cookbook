@@ -15,6 +15,7 @@ import os
 import subprocess
 import sys
 import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
 
 from thumbnail_support import HEIGHT, MAX_BYTES, MIN_BYTES, WIDTH, fingerprint, image_info, valid_asset
@@ -118,6 +119,7 @@ def main() -> int:
     commands = parser.add_subparsers(dest="command", required=True)
     queue = commands.add_parser("queue", help="print the next missing or stale recipe prompt as JSON")
     queue.add_argument("--remaining-percent", type=float, help="live Codex five-hour quota remaining; generation stays blocked if absent or <= 50")
+    queue.add_argument("--quota-checked-at", help="UTC ISO timestamp when the live Codex usage limit was read; values older than 60 seconds are rejected")
     commit = commands.add_parser("commit", help="optimize a generated image and checkpoint it")
     commit.add_argument("recipe_id")
     commit.add_argument("image", type=Path)
@@ -132,8 +134,14 @@ def main() -> int:
         if not work:
             print(json.dumps({"status": "complete", "pending": 0}))
             return 0
-        if args.remaining_percent is None:
-            print(json.dumps({"status": "quotaUnavailable", "pending": len(work), "message": "Read current Codex usage limits before requesting an image."}))
+        checked_at = None
+        try:
+            checked_at = datetime.fromisoformat(args.quota_checked_at.replace("Z", "+00:00")) if args.quota_checked_at else None
+        except ValueError:
+            pass
+        age = (datetime.now(timezone.utc) - checked_at.astimezone(timezone.utc)).total_seconds() if checked_at and checked_at.tzinfo else None
+        if args.remaining_percent is None or age is None or age < 0 or age > 60:
+            print(json.dumps({"status": "quotaUnavailable", "pending": len(work), "message": "Read current Codex usage limits and provide its observation time; quota observations expire after 60 seconds."}))
             return 0
         if args.remaining_percent <= 50:
             print(json.dumps({"status": "quotaBoundary", "pending": len(work), "remainingPercent": args.remaining_percent, "message": "Resume when the live five-hour quota is above 50%."}))
