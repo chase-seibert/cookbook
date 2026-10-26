@@ -102,7 +102,7 @@ struct RecipeBrowserView: View {
                         .accessibilityHidden(!isLandscape)
                 }
                 .navigationTitle(isLandscape ? "" : "Cookbook")
-                .searchable(text: $query, prompt: "Recipes or ingredients")
+                .modifier(PortraitRecipeSearch(query: $query, isLandscape: isLandscape))
                 .toolbar {
                     if !isLandscape {
                         ToolbarItem(placement: .topBarLeading) {
@@ -208,6 +208,19 @@ struct RecipeBrowserView: View {
             }
             .scrollIndicators(.hidden)
             .background(Color(.systemGroupedBackground))
+        }
+    }
+}
+
+private struct PortraitRecipeSearch: ViewModifier {
+    @Binding var query: String
+    let isLandscape: Bool
+
+    @ViewBuilder func body(content: Content) -> some View {
+        if isLandscape {
+            content
+        } else {
+            content.searchable(text: $query, prompt: "Recipes or ingredients")
         }
     }
 }
@@ -333,36 +346,55 @@ private struct DinnerIdeasLayoutView: View {
 
     private func landscapeLayout(size: CGSize, recipe: Recipe) -> some View {
         let compact = size.height < 390
+        let verticalPadding: CGFloat = compact ? 2 : 18
         let horizontalPadding: CGFloat = compact ? 14 : 24
+        let leadingPadding = horizontalPadding + (compact ? 8 : 12)
+        let trailingPadding = horizontalPadding
         let columnSpacing: CGFloat = compact ? 16 : 28
-        return HStack(spacing: columnSpacing) {
-            VStack(alignment: .leading, spacing: compact ? 11 : 20) {
-                Text("\(recipe.category.uppercased())  /  DINNER IDEAS")
-                    .font(.system(size: compact ? 8 : 12, weight: .bold)).tracking(compact ? 1 : 2).foregroundStyle(Color(red: 0.35, green: 0.40, blue: 0.27))
-                Text(recipe.title)
-                    .font(.system(size: min(compact ? 24 : 44, size.height * (compact ? 0.07 : 0.09)), weight: .semibold, design: .serif))
-                    .lineLimit(compact ? 3 : nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                if let description {
-                    Text(description)
-                        .font(.system(size: compact ? 13 : 18))
-                        .lineSpacing(compact ? 0 : 5)
-                        .lineLimit(compact ? 4 : nil)
+        let panelHeight = max(0, size.height - verticalPadding * 2)
+        let contentInset = compact ? CGFloat(10) : 26
+        let columnWidth = max(0, (size.width - leadingPadding - trailingPadding - columnSpacing) * (compact ? 0.45 : 0.38))
+        return HStack(alignment: .top, spacing: columnSpacing) {
+            VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: compact ? 11 : 20) {
+                    Text("\(recipe.category.uppercased())  /  DINNER IDEAS")
+                        .font(.system(size: compact ? 8 : 12, weight: .bold)).tracking(compact ? 1 : 2).foregroundStyle(Color(red: 0.35, green: 0.40, blue: 0.27))
+                    Text(recipe.title)
+                        .font(.system(size: min(compact ? 24 : 44, size.height * (compact ? 0.07 : 0.09)), weight: .semibold, design: .serif))
+                        .lineLimit(compact ? 3 : nil)
                         .fixedSize(horizontal: false, vertical: true)
-                        .foregroundStyle(.primary.opacity(0.82))
+                    if let description {
+                        Text(description)
+                            .font(.system(size: compact ? 13 : 18))
+                            .lineSpacing(compact ? 0 : 5)
+                            .lineLimit(compact ? 4 : nil)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .foregroundStyle(.primary.opacity(0.82))
+                    }
+                    landscapePairingSection(compact: compact, recipe: recipe)
                 }
-                landscapePairingSection(compact: compact, recipe: recipe)
+                Spacer(minLength: compact ? 8 : 16)
                 eatButton(compact: compact)
             }
-            .frame(width: max(0, (size.width - horizontalPadding * 2 - columnSpacing) * (compact ? 0.45 : 0.38)), alignment: .leading)
-            RecipeArtwork(recipe: recipe, height: max(0, size.height - (compact ? 16 : 40)))
+            .padding(.vertical, contentInset)
+            .frame(width: columnWidth, height: panelHeight, alignment: .topLeading)
+            RecipeArtwork(recipe: recipe, height: panelHeight)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .clipShape(RoundedRectangle(cornerRadius: 22))
                 .overlay(alignment: .leading) { pageArrow(previous: true).padding(.leading, 12) }
                 .overlay(alignment: .trailing) { pageArrow(previous: false).padding(.trailing, 12) }
         }
-        .padding(.horizontal, horizontalPadding).padding(.vertical, compact ? 2 : 18)
+        .padding(.leading, leadingPadding)
+        .padding(.trailing, trailingPadding)
+        .padding(.vertical, verticalPadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 35).onEnded { value in
+                let horizontal = value.translation.width
+                guard abs(horizontal) > abs(value.translation.height) else { return }
+                move(by: horizontal < 0 ? 1 : -1)
+            }
+        )
     }
 
     private func eatButton(compact: Bool) -> some View {
