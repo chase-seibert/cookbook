@@ -27,7 +27,7 @@ struct RecipeBrowserView: View {
     @State private var query = ""
     @State private var category = "All"
     @State private var selectedLabelIDs: Set<String> = []
-    @State private var showDinnerDiscovery = false
+    @State private var selectedDinnerRecipeID: String?
     private let recipes = CookbookCatalog.bundled.recipes
     private var labelGroups: [RecipeLabelGroup] { (CookbookCatalog.bundled.labelGroups ?? []).sorted { $0.order < $1.order } }
     private var labels: [RecipeLabel] { CookbookCatalog.bundled.labels ?? [] }
@@ -84,67 +84,80 @@ struct RecipeBrowserView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                labelFilterBar
-                Group {
-                    if filtered.isEmpty {
-                        ContentUnavailableView {
-                            Label("No matching recipes", systemImage: "line.3.horizontal.decrease.circle")
-                        } description: {
-                            Text("Try changing a label, category, or search.")
-                        } actions: {
-                            Button("Clear filters") { selectedLabelIDs.removeAll(); category = "All"; query = "" }
-                                .buttonStyle(.borderedProminent)
+        GeometryReader { geometry in
+            let isLandscape = geometry.size.width > geometry.size.height
+            NavigationStack {
+                ZStack {
+                    VStack(spacing: 0) {
+                        labelFilterBar
+                        browserContent
+                    }
+                    .opacity(isLandscape ? 0 : 1)
+                    .allowsHitTesting(!isLandscape)
+                    .accessibilityHidden(isLandscape)
+
+                    DinnerIdeasLayoutView(recipes: filtered, selectedRecipeID: $selectedDinnerRecipeID)
+                        .opacity(isLandscape ? 1 : 0)
+                        .allowsHitTesting(isLandscape)
+                        .accessibilityHidden(!isLandscape)
+                }
+                .navigationTitle(isLandscape ? "" : "Cookbook")
+                .searchable(text: $query, prompt: "Recipes or ingredients")
+                .toolbar {
+                    if !isLandscape {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Menu { ForEach(categories, id: \.self) { value in Button(value) { category = value } } } label: { Label(category, systemImage: "line.3.horizontal.decrease") }
                         }
-                    } else if browseMode == "grid" {
-                        ScrollView {
-                            VStack(alignment: .leading, spacing: 24) {
-                                ForEach(visibleCategories, id: \.self) { sectionName in
-                                    VStack(alignment: .leading, spacing: 16) {
-                                        Text(sectionName).font(.system(.title2, design: .serif).weight(.semibold))
-                                        ForEach(browserGroups(in: sectionName)) { group in
-                                            VStack(alignment: .leading, spacing: 10) {
-                                                if let title = group.title { Text(title).font(.headline) }
-                                                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 14)], spacing: 14) {
-                                                    ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe) }.buttonStyle(.plain) }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }.padding()
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button { browseMode = browseMode == "list" ? "grid" : "list" } label: { Image(systemName: browseMode == "list" ? "square.grid.2x2" : "list.bullet") }.accessibilityLabel("Switch browse layout")
                         }
-                    } else {
-                        List {
-                            ForEach(visibleCategories, id: \.self) { sectionName in
-                                Section(sectionName) {
-                                    ForEach(browserGroups(in: sectionName)) { group in
-                                        if let title = group.title { Text(title).font(.headline).padding(.top, 6) }
-                                        ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeRow(recipe: recipe) } }
-                                    }
-                                }
-                            }
-                        }.listStyle(.insetGrouped)
                     }
                 }
             }
-            .navigationTitle("Cookbook")
-            .searchable(text: $query, prompt: "Recipes or ingredients")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Menu { ForEach(categories, id: \.self) { value in Button(value) { category = value } } } label: { Label(category, systemImage: "line.3.horizontal.decrease") }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { browseMode = browseMode == "list" ? "grid" : "list" } label: { Image(systemName: browseMode == "list" ? "square.grid.2x2" : "list.bullet") }.accessibilityLabel("Switch browse layout")
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { showDinnerDiscovery = true } label: { Label("Dinner ideas", systemImage: "sparkles") }
-                }
+            .toolbar(isLandscape ? .hidden : .visible, for: .navigationBar)
+            .toolbar(isLandscape ? .hidden : .visible, for: .tabBar)
+        }
+    }
+
+    @ViewBuilder private var browserContent: some View {
+        if filtered.isEmpty {
+            ContentUnavailableView {
+                Label("No matching recipes", systemImage: "line.3.horizontal.decrease.circle")
+            } description: {
+                Text("Try changing a label, category, or search.")
+            } actions: {
+                Button("Clear filters") { selectedLabelIDs.removeAll(); category = "All"; query = "" }
+                    .buttonStyle(.borderedProminent)
             }
-            .sheet(isPresented: $showDinnerDiscovery) {
-                DinnerLabelDiscoveryView(catalog: CookbookCatalog.bundled)
+        } else if browseMode == "grid" {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    ForEach(visibleCategories, id: \.self) { sectionName in
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text(sectionName).font(.system(.title2, design: .serif).weight(.semibold))
+                            ForEach(browserGroups(in: sectionName)) { group in
+                                VStack(alignment: .leading, spacing: 10) {
+                                    if let title = group.title { Text(title).font(.headline) }
+                                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 14)], spacing: 14) {
+                                        ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe) }.buttonStyle(.plain) }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }.padding()
             }
+        } else {
+            List {
+                ForEach(visibleCategories, id: \.self) { sectionName in
+                    Section(sectionName) {
+                        ForEach(browserGroups(in: sectionName)) { group in
+                            if let title = group.title { Text(title).font(.headline).padding(.top, 6) }
+                            ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeRow(recipe: recipe) } }
+                        }
+                    }
+                }
+            }.listStyle(.insetGrouped)
         }
     }
 
@@ -172,7 +185,7 @@ struct RecipeBrowserView: View {
                         } label: {
                             HStack(spacing: 5) {
                                 if let selected = selectedLabel(in: group) {
-                                    Text(String(selected.displayName.prefix(1)).uppercased()).fontWeight(.semibold)
+                                    Text(selected.displayName).fontWeight(.semibold)
                                 } else {
                                     Text(group.displayName)
                                 }
@@ -195,208 +208,6 @@ struct RecipeBrowserView: View {
             }
             .scrollIndicators(.hidden)
             .background(Color(.systemGroupedBackground))
-        }
-    }
-}
-
-private struct DinnerLabelDiscoveryView: View {
-    let catalog: CookbookCatalog
-    @Environment(\.dismiss) private var dismiss
-    @State private var selectedLabelIDs: Set<String> = []
-    @State private var showingResults = false
-    @State private var browsingAll = false
-    @State private var selectedRecipe: Recipe?
-
-    private var groups: [RecipeLabelGroup] { (catalog.labelGroups ?? []).filter { $0.wizardStep != nil }.sorted { $0.order < $1.order } }
-    private var labels: [RecipeLabel] { catalog.labels ?? [] }
-    private func labels(in groupIndex: Int) -> [RecipeLabel] {
-        guard groups.indices.contains(groupIndex) else { return [] }
-        let group = groups[groupIndex]
-        return labels.filter { $0.groupID == group.id }.sorted { $0.order < $1.order }
-    }
-    private func eligibleLabels(in groupIndex: Int) -> [RecipeLabel] {
-        RecipeLabelFilter.eligibleLabels(forGroupAt: groupIndex, recipes: catalog.recipes, selectedLabelIDs: selectedLabelIDs, groups: groups, labels: labels)
-    }
-    private var dinnerRecipeIDs: Set<String> {
-        let dinnerLabelIDs = Set(labels.filter { label in groups.contains { $0.id == label.groupID } }.map(\.id))
-        return Set(catalog.recipes.filter { !Set($0.browseLabelIDs).isDisjoint(with: dinnerLabelIDs) }.map(\.id))
-    }
-    private var results: [Recipe] {
-        catalog.recipes.filter { recipe in
-            dinnerRecipeIDs.contains(recipe.id) && RecipeLabelFilter.matches(recipe, selectedLabelIDs: selectedLabelIDs, groups: groups, labels: labels)
-        }
-    }
-    private var visibleResults: [Recipe] { browsingAll ? results : Array(results.prefix(10)) }
-    private var hasProtein: Bool {
-        guard let proteinGroup = groups.first else { return false }
-        return labels.contains { $0.groupID == proteinGroup.id && selectedLabelIDs.contains($0.id) }
-    }
-
-    var body: some View {
-        NavigationStack {
-            Group {
-                if showingResults {
-                    recipeIdeas
-                } else {
-                    wizardStep
-                }
-            }
-            .navigationTitle("Dinner ideas")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) { Button("Close") { dismiss() } }
-                if showingResults {
-                    ToolbarItem(placement: .topBarTrailing) { Button("Edit choices") { showingResults = false } }
-                }
-            }
-        }
-        .fullScreenCover(item: $selectedRecipe) { recipe in
-            MenuModeRecipeView(recipes: results, recipeID: recipe.id)
-        }
-    }
-
-    private var wizardStep: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Let’s find tonight’s dinner.")
-                        .font(.system(size: 34, weight: .semibold, design: .serif))
-                    Text("Start with a protein. Add a meal style or ingredient to narrow the ideas.")
-                        .font(.subheadline).foregroundStyle(.secondary)
-                }
-                choiceSection(at: 0)
-                if hasProtein {
-                    if !eligibleLabels(in: 1).isEmpty { choiceSection(at: 1) }
-                    if !eligibleLabels(in: 2).isEmpty { choiceSection(at: 2) }
-                }
-            }
-            .padding(20)
-        }
-        .background(Color(.systemGroupedBackground))
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            recipeCountButton
-                .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 8)
-                .background(.ultraThinMaterial)
-        }
-        .animation(.easeInOut(duration: 0.2), value: selectedLabelIDs)
-    }
-
-    @ViewBuilder private func choiceSection(at groupIndex: Int) -> some View {
-        if groups.indices.contains(groupIndex) {
-            let group = groups[groupIndex]
-            let available = eligibleLabels(in: groupIndex)
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(group.displayName)
-                        .font(.system(.title2, design: .serif).weight(.semibold))
-                    if groupIndex == 0 { Text("Choose one").font(.caption).foregroundStyle(.secondary) }
-                    else { Text("Optional").font(.caption).foregroundStyle(.secondary) }
-                }
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 132), spacing: 10)], spacing: 10) {
-                    ForEach(available) { label in
-                        let selected = selectedLabelIDs.contains(label.id)
-                        Button { choose(label, in: groupIndex) } label: {
-                            HStack(spacing: 8) {
-                                if selected { Image(systemName: "checkmark") }
-                                Text(label.displayName).lineLimit(2)
-                            }
-                            .font(.body.weight(.medium))
-                            .frame(maxWidth: .infinity, minHeight: 48)
-                            .padding(.horizontal, 12)
-                            .background(selected ? Color(red: 0.16, green: 0.31, blue: 0.19) : Color(.secondarySystemGroupedBackground), in: Capsule())
-                            .foregroundStyle(selected ? Color.white : Color.primary)
-                            .overlay(Capsule().stroke(selected ? Color.clear : Color(red: 0.39, green: 0.42, blue: 0.31), lineWidth: 1))
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-            }
-        }
-    }
-
-    private var recipeCountButton: some View {
-        Button {
-            browsingAll = false
-            showingResults = true
-        } label: {
-            HStack(spacing: 14) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(hasProtein ? "See \(results.count) available recipes" : "Choose a protein to begin")
-                        .font(.headline.weight(.semibold))
-                    Text(hasProtein ? "Your ideas update as you choose." : "We’ll narrow the menu around your pick.")
-                        .font(.caption).foregroundStyle(.white.opacity(0.8))
-                }
-                Spacer()
-                Image(systemName: "arrow.right").font(.headline.weight(.bold))
-            }
-            .foregroundStyle(.white)
-            .padding(.horizontal, 20)
-            .frame(maxWidth: .infinity, minHeight: 60)
-            .background(Color(red: 0.12, green: 0.27, blue: 0.16), in: Capsule())
-        }
-        .disabled(!hasProtein || results.isEmpty)
-        .opacity(!hasProtein || results.isEmpty ? 0.6 : 1)
-    }
-
-    private var recipeIdeas: some View {
-        Group {
-            if results.isEmpty {
-                ContentUnavailableView {
-                    Label("No recipe ideas yet", systemImage: "fork.knife")
-                } description: {
-                    Text("Edit your choices to see more recipes.")
-                } actions: {
-                    Button("Edit choices") { showingResults = false }
-                        .buttonStyle(.borderedProminent)
-                }
-            } else {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("A few ideas with \(selectedProteinName)")
-                            .font(.system(.title, design: .serif).weight(.semibold))
-                        Text("Choose a recipe to open its menu page.")
-                            .font(.subheadline).foregroundStyle(.secondary)
-                        ForEach(visibleResults) { recipe in
-                            Button { selectedRecipe = recipe } label: {
-                                HStack(spacing: 0) {
-                                    RecipeArtwork(recipe: recipe, height: 112)
-                                        .frame(width: 145)
-                                    Text(recipe.title)
-                                        .font(.system(.title3, design: .serif).weight(.semibold))
-                                        .multilineTextAlignment(.leading)
-                                        .foregroundStyle(.primary)
-                                        .padding(.horizontal, 16)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    Image(systemName: "chevron.right").foregroundStyle(.secondary).padding(.trailing, 16)
-                                }
-                                .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
-                                .clipShape(RoundedRectangle(cornerRadius: 16))
-                                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.primary.opacity(0.08)))
-                            }.buttonStyle(.plain)
-                        }
-                        if results.count > 10 {
-                            Button(browsingAll ? "Show fewer recipes" : "Browse all \(results.count) recipes") { browsingAll.toggle() }
-                                .font(.subheadline.weight(.semibold))
-                                .frame(maxWidth: .infinity, minHeight: 48)
-                                .background(Color(red: 0.16, green: 0.31, blue: 0.19), in: Capsule())
-                                .foregroundStyle(.white)
-                        }
-                    }
-                    .padding(20)
-                }
-            }
-        }
-    }
-
-    private var selectedProteinName: String {
-        guard let proteinGroup = groups.first, let label = labels.first(where: { $0.groupID == proteinGroup.id && selectedLabelIDs.contains($0.id) }) else { return "tonight" }
-        return label.displayName
-    }
-
-    private func choose(_ label: RecipeLabel, in groupIndex: Int) {
-        selectedLabelIDs = RecipeLabelFilter.togglingSingle(label, selectedLabelIDs: selectedLabelIDs, labels: labels)
-        for laterIndex in groups.indices where laterIndex > groupIndex {
-            selectedLabelIDs.subtract(labels(in: laterIndex).map(\.id))
         }
     }
 }
@@ -465,17 +276,22 @@ private struct RecipeArtwork: View {
     }
 }
 
-private struct MenuModeRecipeView: View {
+private struct DinnerIdeasLayoutView: View {
     let recipes: [Recipe]
-    let recipeID: String
-    @Environment(\.dismiss) private var dismiss
-    @State private var index = 0
+    @Binding var selectedRecipeID: String?
     @State private var showDinner = false
     @State private var dinnerWasSaved = false
     @State private var showGroceries = false
 
-    private var recipe: Recipe { recipes.indices.contains(index) ? recipes[index] : (recipes.first ?? emptyRecipe) }
+    init(recipes: [Recipe], selectedRecipeID: Binding<String?>) {
+        self.recipes = recipes
+        _selectedRecipeID = selectedRecipeID
+    }
+
+    private var index: Int { recipes.firstIndex(where: { $0.id == selectedRecipeID }) ?? 0 }
+    private var recipe: Recipe? { recipes.first(where: { $0.id == selectedRecipeID }) ?? recipes.first }
     private var description: String? {
+        guard let recipe else { return nil }
         let value = (recipe.menuDescription ?? recipe.introduction)
             .split(whereSeparator: \.isWhitespace)
             .joined(separator: " ")
@@ -486,50 +302,42 @@ private struct MenuModeRecipeView: View {
         GeometryReader { geometry in
             ZStack {
                 Color(red: 0.98, green: 0.97, blue: 0.94).ignoresSafeArea()
-                if geometry.size.width > geometry.size.height {
-                    landscapeLayout(size: geometry.size)
+                if let recipe {
+                    landscapeLayout(size: geometry.size, recipe: recipe)
                 } else {
-                    portraitLayout(size: geometry.size)
+                    ContentUnavailableView {
+                        Label("No matching recipes", systemImage: "line.3.horizontal.decrease.circle")
+                    } description: {
+                        Text("Rotate to portrait to change or clear your filters.")
+                    }
                 }
             }
             .foregroundStyle(Color(red: 0.07, green: 0.12, blue: 0.09))
-            .safeAreaInset(edge: .top, spacing: 0) { header }
         }
-        .onAppear { index = max(0, recipes.firstIndex(where: { $0.id == recipeID }) ?? 0) }
+        .onAppear { reconcileSelection(with: recipes.map(\.id)) }
+        .onChange(of: recipes.map(\.id)) { _, newIDs in reconcileSelection(with: newIDs) }
         .sheet(isPresented: $showDinner, onDismiss: {
             if dinnerWasSaved { showGroceries = true; dinnerWasSaved = false }
         }) {
-            AddRecipeToDinnerView(recipe: recipe) { dinnerWasSaved = true }
+            if let recipe { AddRecipeToDinnerView(recipe: recipe) { dinnerWasSaved = true } }
         }
-        .sheet(isPresented: $showGroceries) { GroceryReviewView(recipe: recipe) }
+        .sheet(isPresented: $showGroceries) {
+            if let recipe { GroceryReviewView(recipe: recipe) }
+        }
     }
 
-    private var header: some View {
-        HStack(spacing: 8) {
-            HStack(spacing: 8) {
-                Image(systemName: "leaf.fill").foregroundStyle(Color(red: 0.36, green: 0.43, blue: 0.29))
-                Text("COOKBOOK").font(.system(.subheadline, design: .rounded).weight(.semibold)).tracking(2)
-            }
-            Spacer()
-            Text("MENU MODE · AIRPLAY")
-                .font(.system(size: 9, weight: .semibold)).tracking(0.8)
-                .lineLimit(1).fixedSize(horizontal: true, vertical: false)
-                .padding(.horizontal, 8).padding(.vertical, 6)
-                .background(Color(red: 0.91, green: 0.90, blue: 0.85), in: Capsule())
-            Button { dismiss() } label: { Image(systemName: "xmark").font(.subheadline.weight(.semibold)).padding(8).background(.black.opacity(0.06), in: Circle()) }
-                .accessibilityLabel("Close menu mode")
-        }
-        .padding(.horizontal, 16).padding(.vertical, 8)
-        .background(Color(red: 0.98, green: 0.97, blue: 0.94))
+    private func reconcileSelection(with recipeIDs: [String]) {
+        guard !recipeIDs.contains(selectedRecipeID ?? "") else { return }
+        selectedRecipeID = recipeIDs.first
     }
 
-    private func landscapeLayout(size: CGSize) -> some View {
+    private func landscapeLayout(size: CGSize, recipe: Recipe) -> some View {
         let compact = size.height < 390
         let horizontalPadding: CGFloat = compact ? 14 : 24
         let columnSpacing: CGFloat = compact ? 16 : 28
         return HStack(spacing: columnSpacing) {
             VStack(alignment: .leading, spacing: compact ? 11 : 20) {
-                Text("\(recipe.category.uppercased())  /  MENU MODE")
+                Text("\(recipe.category.uppercased())  /  DINNER IDEAS")
                     .font(.system(size: compact ? 8 : 12, weight: .bold)).tracking(compact ? 1 : 2).foregroundStyle(Color(red: 0.35, green: 0.40, blue: 0.27))
                 Text(recipe.title)
                     .font(.system(size: min(compact ? 24 : 44, size.height * (compact ? 0.07 : 0.09)), weight: .semibold, design: .serif))
@@ -543,7 +351,7 @@ private struct MenuModeRecipeView: View {
                         .fixedSize(horizontal: false, vertical: true)
                         .foregroundStyle(.primary.opacity(0.82))
                 }
-                landscapePairingSection(compact: compact)
+                landscapePairingSection(compact: compact, recipe: recipe)
                 eatButton(compact: compact)
             }
             .frame(width: max(0, (size.width - horizontalPadding * 2 - columnSpacing) * (compact ? 0.45 : 0.38)), alignment: .leading)
@@ -557,44 +365,6 @@ private struct MenuModeRecipeView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func portraitLayout(size: CGSize) -> some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
-                Text("\(recipe.category.uppercased())  /  MENU MODE")
-                    .font(.caption.weight(.bold)).tracking(2).foregroundStyle(Color(red: 0.35, green: 0.40, blue: 0.27))
-                Text(recipe.title)
-                    .font(.system(size: min(34, size.width * 0.08), weight: .semibold, design: .serif))
-                    .fixedSize(horizontal: false, vertical: true)
-                RecipeArtwork(recipe: recipe, height: min(238, max(180, size.height * 0.29)))
-                    .frame(maxWidth: .infinity)
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
-                    .overlay(alignment: .leading) { pageArrow(previous: true).padding(.leading, 10) }
-                    .overlay(alignment: .trailing) { pageArrow(previous: false).padding(.trailing, 10) }
-                if let description {
-                    Text(description).font(.system(size: 15)).lineSpacing(2).lineLimit(3)
-                        .fixedSize(horizontal: false, vertical: true).foregroundStyle(.primary.opacity(0.82))
-                }
-                pairingSection(compact: true)
-                eatButton(compact: true)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 22).padding(.bottom, 22)
-        }
-    }
-
-    private func pairingSection(compact: Bool) -> some View {
-        let pairings = recipe.menuPairings ?? ["A crisp green salad", "Seasonal vegetables"]
-        return VStack(alignment: .leading, spacing: compact ? 4 : 8) {
-            Rectangle().fill(Color.primary.opacity(0.16)).frame(height: 1)
-            Text("SERVE IT WITH").font(.system(size: compact ? 10 : 12, weight: .bold)).tracking(compact ? 1.2 : 2).foregroundStyle(Color(red: 0.25, green: 0.34, blue: 0.24))
-            Text(pairings.joined(separator: "  ·  ")).font(.system(size: compact ? 14 : 17)).lineLimit(compact ? 2 : nil).fixedSize(horizontal: false, vertical: true)
-        }
-    }
-
-    private var eatButton: some View {
-        eatButton(compact: false)
-    }
-
     private func eatButton(compact: Bool) -> some View {
         Button { showDinner = true } label: {
             Text("LET’S EAT").font(.system(size: compact ? 14 : 17, weight: .bold)).tracking(compact ? 1.6 : 3)
@@ -604,7 +374,7 @@ private struct MenuModeRecipeView: View {
         }
     }
 
-    private func landscapePairingSection(compact: Bool) -> some View {
+    private func landscapePairingSection(compact: Bool, recipe: Recipe) -> some View {
         let pairings = recipe.menuPairings ?? ["A crisp green salad", "Seasonal vegetables"]
         return VStack(alignment: .leading, spacing: compact ? 4 : 8) {
             Rectangle().fill(Color.primary.opacity(0.16)).frame(height: 1)
@@ -622,18 +392,15 @@ private struct MenuModeRecipeView: View {
                 .font(.title2.weight(.bold)).foregroundStyle(.white)
                 .frame(width: 48, height: 54).background(Color.black.opacity(0.58), in: Capsule())
         }
-        .disabled(previous ? index == 0 : index >= recipes.count - 1)
-        .opacity((previous ? index == 0 : index >= recipes.count - 1) ? 0.35 : 1)
+        .disabled(recipes.count < 2 || (previous ? index == 0 : index >= recipes.count - 1))
+        .opacity(recipes.count < 2 || (previous ? index == 0 : index >= recipes.count - 1) ? 0.35 : 1)
         .accessibilityLabel(previous ? "Previous recipe" : "Next recipe")
     }
 
     private func move(by offset: Int) {
         let target = min(max(index + offset, 0), recipes.count - 1)
-        withAnimation(.easeInOut(duration: 0.2)) { index = target }
-    }
-
-    private var emptyRecipe: Recipe {
-        Recipe(id: "", title: "Recipe", category: "", collectionTitle: nil, sourceFile: "", sourceSection: "", introduction: "", ingredients: [], steps: [], tips: [], healthierOptions: [], thumbnailAsset: nil, labelIDs: nil, menuDescription: nil, menuPairings: nil)
+        guard recipes.indices.contains(target) else { return }
+        withAnimation(.easeInOut(duration: 0.2)) { selectedRecipeID = recipes[target].id }
     }
 }
 
