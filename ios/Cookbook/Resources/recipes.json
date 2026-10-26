@@ -35,15 +35,6 @@
       "wizardStep": 3,
       "optional": true,
       "allowsMultiple": true
-    },
-    {
-      "id": "browse-type",
-      "displayName": "More to browse",
-      "order": 4,
-      "menuRole": "browse_type",
-      "wizardStep": null,
-      "optional": true,
-      "allowsMultiple": true
     }
   ],
   "labels": [
@@ -51,21 +42,21 @@
       "id": "chicken",
       "displayName": "Chicken",
       "groupID": "protein",
-      "order": 1,
+      "order": 2,
       "aliases": []
     },
     {
       "id": "beef",
       "displayName": "Beef",
       "groupID": "protein",
-      "order": 2,
+      "order": 1,
       "aliases": []
     },
     {
       "id": "pork",
       "displayName": "Pork",
       "groupID": "protein",
-      "order": 3,
+      "order": 5,
       "aliases": []
     },
     {
@@ -82,46 +73,44 @@
       "id": "turkey",
       "displayName": "Turkey",
       "groupID": "protein",
-      "order": 5,
+      "order": 6,
       "aliases": []
     },
     {
       "id": "eggs",
       "displayName": "Eggs",
       "groupID": "protein",
-      "order": 6,
+      "order": 3,
       "aliases": [
         "egg"
       ]
     },
     {
-      "id": "beans-lentils",
-      "displayName": "Beans & lentils",
+      "id": "vegetarian",
+      "displayName": "Vegetarian",
       "groupID": "protein",
       "order": 7,
-      "aliases": [
-        "pulses"
-      ]
+      "aliases": []
     },
     {
       "id": "pasta",
       "displayName": "Pasta",
       "groupID": "meal-style",
-      "order": 1,
+      "order": 9,
       "aliases": []
     },
     {
       "id": "salad",
       "displayName": "Salad",
       "groupID": "meal-style",
-      "order": 2,
+      "order": 13,
       "aliases": []
     },
     {
       "id": "soup-stew",
       "displayName": "Soup & stew",
       "groupID": "meal-style",
-      "order": 3,
+      "order": 17,
       "aliases": [
         "soup",
         "stew"
@@ -138,7 +127,7 @@
       "id": "pizza-flatbread",
       "displayName": "Pizza & flatbread",
       "groupID": "meal-style",
-      "order": 5,
+      "order": 10,
       "aliases": [
         "pizza",
         "flatbread"
@@ -148,7 +137,7 @@
       "id": "rice-grains",
       "displayName": "Rice & grains",
       "groupID": "meal-style",
-      "order": 6,
+      "order": 12,
       "aliases": [
         "rice",
         "grains",
@@ -159,7 +148,7 @@
       "id": "noodles",
       "displayName": "Noodles",
       "groupID": "meal-style",
-      "order": 7,
+      "order": 8,
       "aliases": [
         "ramen",
         "rice noodles",
@@ -170,7 +159,7 @@
       "id": "sandwich",
       "displayName": "Sandwich",
       "groupID": "meal-style",
-      "order": 8,
+      "order": 14,
       "aliases": [
         "sandwiches"
       ]
@@ -179,7 +168,7 @@
       "id": "side-dish",
       "displayName": "Side dish",
       "groupID": "meal-style",
-      "order": 9,
+      "order": 15,
       "aliases": [
         "side dishes"
       ]
@@ -206,7 +195,7 @@
       "id": "tomatoes",
       "displayName": "Tomatoes",
       "groupID": "ingredient",
-      "order": 3,
+      "order": 13,
       "aliases": [
         "tomato"
       ]
@@ -215,7 +204,7 @@
       "id": "mushrooms",
       "displayName": "Mushrooms",
       "groupID": "ingredient",
-      "order": 4,
+      "order": 9,
       "aliases": [
         "mushroom"
       ]
@@ -224,7 +213,7 @@
       "id": "potatoes",
       "displayName": "Potatoes",
       "groupID": "ingredient",
-      "order": 5,
+      "order": 12,
       "aliases": [
         "potato"
       ]
@@ -233,7 +222,7 @@
       "id": "peppers",
       "displayName": "Peppers",
       "groupID": "ingredient",
-      "order": 6,
+      "order": 11,
       "aliases": [
         "pepper"
       ]
@@ -242,7 +231,7 @@
       "id": "lentils",
       "displayName": "Lentils",
       "groupID": "ingredient",
-      "order": 7,
+      "order": 8,
       "aliases": [
         "lentil"
       ]
@@ -251,7 +240,7 @@
       "id": "chickpeas",
       "displayName": "Chickpeas",
       "groupID": "ingredient",
-      "order": 8,
+      "order": 4,
       "aliases": [
         "chickpea",
         "garbanzo beans"
@@ -261,7 +250,7 @@
       "id": "cheese",
       "displayName": "Cheese",
       "groupID": "ingredient",
-      "order": 9,
+      "order": 3,
       "aliases": [
         "cheeses"
       ]
@@ -270,7 +259,7 @@
       "id": "lemon",
       "displayName": "Lemon",
       "groupID": "ingredient",
-      "order": 10,
+      "order": 7,
       "aliases": [
         "lemons"
       ]
@@ -279,7 +268,7 @@
       "id": "green-beans",
       "displayName": "Green beans",
       "groupID": "ingredient",
-      "order": 11,
+      "order": 6,
       "aliases": [
         "green bean"
       ]
@@ -287,82 +276,112 @@
     {
       "id": "breakfast",
       "displayName": "Breakfast",
-      "groupID": "browse-type",
-      "order": 1,
+      "groupID": "meal-style",
+      "order": 3,
       "aliases": []
     },
     {
       "id": "baked-goods",
       "displayName": "Baked goods",
-      "groupID": "browse-type",
-      "order": 2,
+      "groupID": "meal-style",
+      "order": 1,
       "aliases": [
         "baking"
       ]
     },
     {
       "id": "dessert",
-      "displayName": "Dessert",
-      "groupID": "browse-type",
-      "order": 3,
+      "displayName": "Desserts",
+      "groupID": "meal-style",
+      "order": 7,
       "aliases": [
-        "desserts"
+        "dessert"
       ]
     },
     {
       "id": "beverage",
-      "displayName": "Beverage",
-      "groupID": "browse-type",
-      "order": 4,
+      "displayName": "Beverages",
+      "groupID": "meal-style",
+      "order": 2,
       "aliases": [
+        "beverage",
         "drink",
         "drinks"
       ]
     },
     {
       "id": "cocktail",
-      "displayName": "Cocktail",
-      "groupID": "browse-type",
+      "displayName": "Cocktails",
+      "groupID": "meal-style",
       "order": 5,
       "aliases": [
-        "cocktails"
+        "cocktail"
       ]
     },
     {
       "id": "snack",
-      "displayName": "Snack",
-      "groupID": "browse-type",
-      "order": 6,
+      "displayName": "Snacks",
+      "groupID": "meal-style",
+      "order": 16,
       "aliases": [
-        "snacks"
+        "snack"
       ]
     },
     {
       "id": "condiment",
-      "displayName": "Condiment",
-      "groupID": "browse-type",
-      "order": 7,
+      "displayName": "Condiments",
+      "groupID": "meal-style",
+      "order": 6,
       "aliases": [
-        "condiments"
+        "condiment"
       ]
     },
     {
       "id": "preserve",
-      "displayName": "Preserve",
-      "groupID": "browse-type",
-      "order": 8,
+      "displayName": "Preserves",
+      "groupID": "meal-style",
+      "order": 11,
       "aliases": [
-        "preserves"
+        "preserve"
       ]
     },
     {
       "id": "stock-broth",
       "displayName": "Stock & broth",
-      "groupID": "browse-type",
-      "order": 9,
+      "groupID": "meal-style",
+      "order": 18,
       "aliases": [
         "stock",
         "broth"
+      ]
+    },
+    {
+      "id": "garlic",
+      "displayName": "Garlic",
+      "groupID": "ingredient",
+      "order": 5,
+      "aliases": [
+        "garlic clove",
+        "garlic cloves"
+      ]
+    },
+    {
+      "id": "onions",
+      "displayName": "Onions",
+      "groupID": "ingredient",
+      "order": 10,
+      "aliases": [
+        "onion"
+      ]
+    },
+    {
+      "id": "wine",
+      "displayName": "Wine",
+      "groupID": "ingredient",
+      "order": 14,
+      "aliases": [
+        "red wine",
+        "white wine"
       ]
     }
   ],
@@ -561,7 +580,9 @@
         "salad",
         "side-dish",
         "cheese",
-        "lemon"
+        "lemon",
+        "fish-seafood",
+        "garlic"
       ],
       "thumbnailAsset": "caesar.jpg"
     },
@@ -771,7 +792,10 @@
         "salad",
         "side-dish",
         "mushrooms",
-        "lemon"
+        "lemon",
+        "pork",
+        "fish-seafood",
+        "garlic"
       ],
       "thumbnailAsset": "spinach.jpg"
     },
@@ -910,12 +934,13 @@
       "healthierOptions": [],
       "sourceHash": "df4f9ff348902f9e06d612e4a6bfb5b6da45c9161b7d242d22b41302cf714b6c",
       "labelIDs": [
-        "beans-lentils",
         "salad",
         "side-dish",
         "lentils",
         "cheese",
-        "lemon"
+        "lemon",
+        "vegetarian",
+        "garlic"
       ],
       "thumbnailAsset": "kale.jpg"
     },
@@ -1004,7 +1029,8 @@
       "labelIDs": [
         "salad",
         "side-dish",
-        "cheese"
+        "cheese",
+        "vegetarian"
       ],
       "thumbnailAsset": "quarantine_salad.jpg"
     },
@@ -1175,7 +1201,9 @@
         "tomatoes",
         "peppers",
         "cheese",
-        "lemon"
+        "lemon",
+        "vegetarian",
+        "onions"
       ],
       "thumbnailAsset": "couscous.jpg"
     },
@@ -1372,7 +1400,9 @@
       "labelIDs": [
         "salad",
         "side-dish",
-        "potatoes"
+        "potatoes",
+        "vegetarian",
+        "onions"
       ],
       "thumbnailAsset": "potatosalad.jpg"
     },
@@ -1505,7 +1535,8 @@
       "labelIDs": [
         "salad",
         "side-dish",
-        "tomatoes"
+        "tomatoes",
+        "vegetarian"
       ],
       "thumbnailAsset": "panzanella.jpg"
     },
@@ -1749,7 +1780,8 @@
         "salad",
         "rice-grains",
         "side-dish",
-        "cheese"
+        "cheese",
+        "vegetarian"
       ],
       "thumbnailAsset": "brownrice.jpg"
     },
@@ -1824,7 +1856,9 @@
       "healthierOptions": [],
       "sourceHash": "006b40b7a7b1047467064a6a9c4025ba16abcab3103e3957ce83cb9b01db81f3",
       "labelIDs": [
-        "condiment"
+        "condiment",
+        "vegetarian",
+        "garlic"
       ],
       "thumbnailAsset": "saladdressings-phil-s-famous.jpg"
     },
@@ -1901,7 +1935,9 @@
       "sourceHash": "6213317a8ef9eb00a65e30f30408ed271be7d2dfe1b852d931289e1b2999368e",
       "labelIDs": [
         "condiment",
-        "lemon"
+        "lemon",
+        "vegetarian",
+        "garlic"
       ],
       "thumbnailAsset": "saladdressings-lemon-vinaigrette.jpg"
     },
@@ -2004,7 +2040,8 @@
       "sourceHash": "963175beb72618f887857be3faf7661c6f4fa63504d8f240d545ff3a19b9636e",
       "labelIDs": [
         "condiment",
-        "cheese"
+        "cheese",
+        "vegetarian"
       ],
       "thumbnailAsset": "saladdressings-parmesan-peppercorn.jpg"
     },
@@ -2217,7 +2254,9 @@
       "labelIDs": [
         "pasta",
         "side-dish",
-        "cheese"
+        "cheese",
+        "vegetarian",
+        "onions"
       ],
       "thumbnailAsset": "macandcheese.jpg"
     },
@@ -2424,7 +2463,8 @@
       "labelIDs": [
         "chicken",
         "soup-stew",
-        "mushrooms"
+        "mushrooms",
+        "garlic"
       ],
       "thumbnailAsset": "creammushroom.jpg"
     },
@@ -2957,7 +2997,9 @@
         "beef",
         "rice-grains",
         "peppers",
-        "cheese"
+        "cheese",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "tacos.jpg"
     },
@@ -3237,7 +3279,10 @@
         "pasta",
         "casserole",
         "tomatoes",
-        "cheese"
+        "cheese",
+        "vegetarian",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "ziti.jpg"
     },
@@ -3435,7 +3480,8 @@
         "pork",
         "pasta",
         "broccoli",
-        "cheese"
+        "cheese",
+        "garlic"
       ],
       "thumbnailAsset": "orecchiette.jpg"
     },
@@ -3895,7 +3941,8 @@
         "rice-grains",
         "noodles",
         "carrots",
-        "peppers"
+        "peppers",
+        "fish-seafood"
       ],
       "thumbnailAsset": "vermichli.jpg"
     },
@@ -4019,7 +4066,9 @@
       "labelIDs": [
         "pasta",
         "lemon",
-        "cheese"
+        "cheese",
+        "vegetarian",
+        "garlic"
       ],
       "thumbnailAsset": "garlicchilipasta.jpg"
     },
@@ -4257,13 +4306,15 @@
       "healthierOptions": [],
       "sourceHash": "4612d621c83b5983febadc41145bc21cc94d4e09a9f0cd355eeefb4cca59490d",
       "labelIDs": [
-        "beans-lentils",
         "pasta",
         "tomatoes",
         "lentils",
         "chickpeas",
         "lemon",
-        "cheese"
+        "cheese",
+        "fish-seafood",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "pasta_e_ceci.jpg"
     },
@@ -4516,7 +4567,8 @@
       "sourceHash": "9ebedee790f087d5cd9cfc1f15f800cc022a6ba920405a99b54fc6deee2a542d",
       "labelIDs": [
         "pizza-flatbread",
-        "cheese"
+        "cheese",
+        "pork"
       ],
       "thumbnailAsset": "pizza.jpg"
     },
@@ -4739,9 +4791,10 @@
       "sourceHash": "33433b2264acce94619f29bef413741701b910bc66c5991534f8514baf09ed90",
       "labelIDs": [
         "pork",
-        "beans-lentils",
         "lentils",
-        "lemon"
+        "lemon",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "sausage-lentils.jpg"
     },
@@ -4982,7 +5035,9 @@
       "sourceHash": "ee540d8bd793f4ebc950661606cd6065f063d224c7ccc2efb797dccd3057f72b",
       "labelIDs": [
         "peppers",
-        "green-beans"
+        "green-beans",
+        "vegetarian",
+        "garlic"
       ],
       "thumbnailAsset": "fiery_green_beans.jpg"
     },
@@ -5156,7 +5211,9 @@
         "pasta",
         "tomatoes",
         "peppers",
-        "cheese"
+        "cheese",
+        "pork",
+        "garlic"
       ],
       "thumbnailAsset": "aperto.jpg"
     },
@@ -5452,7 +5509,10 @@
         "casserole",
         "pizza-flatbread",
         "peppers",
-        "cheese"
+        "cheese",
+        "pork",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "deepdish.jpg"
     },
@@ -5688,7 +5748,9 @@
         "pasta",
         "casserole",
         "tomatoes",
-        "cheese"
+        "cheese",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "lasagna.jpg"
     },
@@ -6004,7 +6066,9 @@
         "casserole",
         "tomatoes",
         "peppers",
-        "cheese"
+        "cheese",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "enchilada.jpg"
     },
@@ -6242,10 +6306,12 @@
       "healthierOptions": [],
       "sourceHash": "19b4e15e95ea89ff6f76e2b0969a0a646ef1a383e5f15beda61f55f932a23eae",
       "labelIDs": [
-        "beans-lentils",
         "casserole",
         "peppers",
-        "cheese"
+        "cheese",
+        "chicken",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "tomatillo-enchilada.jpg"
     },
@@ -6541,11 +6607,12 @@
       "sourceHash": "20bd995e24b46557eef1e4d979409b72c9a4e4922fe362c02a1c5a1747306723",
       "labelIDs": [
         "beef",
-        "beans-lentils",
         "soup-stew",
         "tomatoes",
         "peppers",
-        "cheese"
+        "cheese",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "chili.jpg"
     },
@@ -7045,7 +7112,10 @@
       "healthierOptions": [],
       "sourceHash": "62004ab7e811ccdaf58763cdcc4556641a90442dc1cd5b38faf35f01417086af",
       "labelIDs": [
-        "beef"
+        "beef",
+        "wine",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "potroast.jpg"
     },
@@ -7265,7 +7335,10 @@
         "soup-stew",
         "rice-grains",
         "noodles",
-        "carrots"
+        "carrots",
+        "chicken",
+        "turkey",
+        "onions"
       ],
       "thumbnailAsset": "pho.jpg"
     },
@@ -7525,7 +7598,9 @@
       "labelIDs": [
         "pork",
         "soup-stew",
-        "noodles"
+        "noodles",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "pork_ramen.jpg"
     },
@@ -7870,7 +7945,8 @@
         "chicken",
         "casserole",
         "carrots",
-        "potatoes"
+        "potatoes",
+        "onions"
       ],
       "thumbnailAsset": "pot_pie.jpg"
     },
@@ -8150,7 +8226,8 @@
         "chicken",
         "rice-grains",
         "carrots",
-        "potatoes"
+        "potatoes",
+        "onions"
       ],
       "thumbnailAsset": "yellow_curry.jpg"
     },
@@ -8378,7 +8455,9 @@
         "beef",
         "soup-stew",
         "carrots",
-        "potatoes"
+        "potatoes",
+        "wine",
+        "onions"
       ],
       "thumbnailAsset": "beef_stew.jpg"
     },
@@ -8495,7 +8574,9 @@
       "sourceHash": "a3c1879a8d84a367ff29b0b1e258b47575bc2065fc88a00f0a42946532486357",
       "labelIDs": [
         "pasta",
-        "cheese"
+        "cheese",
+        "vegetarian",
+        "garlic"
       ],
       "thumbnailAsset": "pasta_ouva.jpg"
     },
@@ -8791,7 +8872,9 @@
       "sourceHash": "6462291614f3b43670b250e064f7c030c452cc2bc77bcee7f739298e5ef924c4",
       "labelIDs": [
         "chicken",
-        "peppers"
+        "peppers",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "cashew_chicken.jpg",
       "menuDescription": "Tender chicken and crisp vegetables meet a savory Thai-style sauce, finished with toasted cashews for a little crunch in every bite.",
@@ -9024,7 +9107,8 @@
       "labelIDs": [
         "chicken",
         "noodles",
-        "broccoli"
+        "broccoli",
+        "garlic"
       ],
       "thumbnailAsset": "pad_see_ew.jpg"
     },
@@ -9210,8 +9294,9 @@
       "sourceHash": "199d56f50823b2c11bc63e84116c7a463ae6842a1b2430ea72ef1133acb9cd22",
       "labelIDs": [
         "chicken",
-        "beans-lentils",
-        "rice-grains"
+        "rice-grains",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "braised_chicken_thighs.jpg"
     },
@@ -9415,7 +9500,8 @@
       "labelIDs": [
         "chicken",
         "pasta",
-        "cheese"
+        "cheese",
+        "garlic"
       ],
       "thumbnailAsset": "chicken_parmesan.jpg"
     },
@@ -9758,7 +9844,8 @@
         "carrots",
         "lentils",
         "cheese",
-        "lemon"
+        "lemon",
+        "garlic"
       ],
       "thumbnailAsset": "panko_mahi_mahi.jpg",
       "menuDescription": "Golden Parmesan-panko crust over tender mahi-mahi, served with warm French lentils, sweet roasted carrots, and bright lemon-herb yogurt.",
@@ -10033,7 +10120,9 @@
       "sourceHash": "ca2cecf1f62d5d17458edfd27fd4212935e5cb5887fc29854a23dc6cf196f7e4",
       "labelIDs": [
         "chicken",
-        "lemon"
+        "lemon",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "chicken_kebabs.jpg",
       "menuDescription": "Juicy, seasoned chicken grilled with colorful vegetables until lightly charred, then served with a cool, tangy sauce.",
@@ -10416,7 +10505,9 @@
       "healthierOptions": [],
       "sourceHash": "9ad7d344dcfc292752fa83eb06511403ed9e3be787b7bbd01722e18678b0d6ff",
       "labelIDs": [
-        "chicken"
+        "chicken",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "orange_chicken.jpg"
     },
@@ -11131,7 +11222,9 @@
         "turkey",
         "mushrooms",
         "potatoes",
-        "green-beans"
+        "green-beans",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "turkey.jpg"
     },
@@ -11459,7 +11552,9 @@
         "pork",
         "casserole",
         "potatoes",
-        "cheese"
+        "cheese",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "ham.jpg"
     },
@@ -11702,7 +11797,8 @@
       "labelIDs": [
         "beef",
         "potatoes",
-        "cheese"
+        "cheese",
+        "garlic"
       ],
       "thumbnailAsset": "beef_tenderloin.jpg"
     },
@@ -11886,7 +11982,8 @@
         "casserole",
         "breakfast",
         "tomatoes",
-        "cheese"
+        "cheese",
+        "onions"
       ],
       "thumbnailAsset": "christmas.jpg"
     },
@@ -12030,7 +12127,8 @@
       "healthierOptions": [],
       "sourceHash": "342ecec8628baf221376c963f91c5689cb3f329ea9ad19d313d70498ea7d41ba",
       "labelIDs": [
-        "dessert"
+        "dessert",
+        "vegetarian"
       ],
       "thumbnailAsset": "cheesecake.jpg"
     },
@@ -12192,7 +12290,8 @@
       "sourceHash": "d5b8826f55bbdac55202033d399c436430e58fad7fd220ade27cbc59c4e8adf1",
       "labelIDs": [
         "breakfast",
-        "baked-goods"
+        "baked-goods",
+        "vegetarian"
       ],
       "thumbnailAsset": "pancakes.jpg"
     },
@@ -12400,7 +12499,8 @@
       "healthierOptions": [],
       "sourceHash": "8f8016f7b5b8800a1043eaca96dccb2c8be733967a4d10e3ba87e837a40f262a",
       "labelIDs": [
-        "baked-goods"
+        "baked-goods",
+        "vegetarian"
       ],
       "thumbnailAsset": "bread.jpg"
     },
@@ -12603,7 +12703,8 @@
         "pizza-flatbread",
         "sandwich",
         "baked-goods",
-        "cheese"
+        "cheese",
+        "vegetarian"
       ],
       "thumbnailAsset": "flatbread.jpg"
     },
@@ -12801,7 +12902,8 @@
       "labelIDs": [
         "side-dish",
         "baked-goods",
-        "cheese"
+        "cheese",
+        "pork"
       ],
       "thumbnailAsset": "prosciutto_cheese_bread.jpg"
     },
@@ -12916,7 +13018,8 @@
       "healthierOptions": [],
       "sourceHash": "00ad4eae51715e232adca6a86f594739a2f70b21fb6467462d9fd6900c981239",
       "labelIDs": [
-        "baked-goods"
+        "baked-goods",
+        "vegetarian"
       ],
       "thumbnailAsset": "banana_muffins.jpg"
     },
@@ -13214,7 +13317,8 @@
       "sourceHash": "e4557964e23f9cfabbe858d1ce3ed6a67f6c59682ad8063b1378275f0668b60a",
       "labelIDs": [
         "breakfast",
-        "baked-goods"
+        "baked-goods",
+        "vegetarian"
       ],
       "thumbnailAsset": "cinnamon_bun.jpg"
     },
@@ -13381,7 +13485,8 @@
       "sourceHash": "fab1e99cc9a9cb71bca2741d36d39e7a9bb20c600f97679fe11451f0cc323ad9",
       "labelIDs": [
         "side-dish",
-        "baked-goods"
+        "baked-goods",
+        "vegetarian"
       ],
       "thumbnailAsset": "biscuits.jpg"
     },
@@ -13648,7 +13753,8 @@
       "sourceHash": "3e598594d4e1c3a0882cd61339644003ca4e706913c27d78f96ebe80d4f04a9a",
       "labelIDs": [
         "baked-goods",
-        "dessert"
+        "dessert",
+        "vegetarian"
       ],
       "thumbnailAsset": "yelllow_cake.jpg"
     },
@@ -13761,7 +13867,8 @@
       "sourceHash": "6501abdea024e88e800348771e1018102eb1e28ebb428f2f9e154a0929bec7bf",
       "labelIDs": [
         "eggs",
-        "breakfast"
+        "breakfast",
+        "vegetarian"
       ],
       "thumbnailAsset": "omelet.jpg"
     },
@@ -13949,7 +14056,9 @@
       "sourceHash": "bdb725cae5c2cffb550b6167a41076ce5eabfcd1c687542ba15c8228499be099",
       "labelIDs": [
         "stock-broth",
-        "carrots"
+        "carrots",
+        "vegetarian",
+        "onions"
       ],
       "thumbnailAsset": "stock.jpg"
     },
@@ -14086,7 +14195,9 @@
       "healthierOptions": [],
       "sourceHash": "62b180940189db552fb407e0f79d1fcd14c83bd829c660906dd02da0ed03d258",
       "labelIDs": [
-        "preserve"
+        "preserve",
+        "vegetarian",
+        "garlic"
       ],
       "thumbnailAsset": "pickles.jpg"
     },
@@ -14202,7 +14313,9 @@
       "healthierOptions": [],
       "sourceHash": "8e55dd8c57175f24aaae4413c1e3e887d5cde7561c11f0f51ad218a2b7a5baea",
       "labelIDs": [
-        "condiment"
+        "condiment",
+        "vegetarian",
+        "garlic"
       ],
       "thumbnailAsset": "adobo-green-adobo.jpg"
     },
@@ -14310,7 +14423,9 @@
       "healthierOptions": [],
       "sourceHash": "8adccb51d26d0bb41d5978832d3c442ed4a9afd6ac19e5a2ab0e884087325a62",
       "labelIDs": [
-        "condiment"
+        "condiment",
+        "vegetarian",
+        "garlic"
       ],
       "thumbnailAsset": "adobo-red-adobo.jpg"
     },
@@ -14380,7 +14495,8 @@
       "healthierOptions": [],
       "sourceHash": "1d259ee7bdb69d41575367e789e14a839f6c697e0e266008e620d0c998ea4d90",
       "labelIDs": [
-        "preserve"
+        "preserve",
+        "vegetarian"
       ],
       "thumbnailAsset": "plums-plum-jam.jpg"
     },
@@ -14428,7 +14544,8 @@
       "healthierOptions": [],
       "sourceHash": "192b5799339cfcdb808a955f486e70c0c84349369803975851f101d993f0b434",
       "labelIDs": [
-        "preserve"
+        "preserve",
+        "vegetarian"
       ],
       "thumbnailAsset": "plums-plum-preserves.jpg"
     },
@@ -14476,7 +14593,8 @@
       "healthierOptions": [],
       "sourceHash": "fa6bb71ecfed7b117c7c15118f7aa6e7472778b6e924b17cd2cf607ba167c9fc",
       "labelIDs": [
-        "beverage"
+        "beverage",
+        "vegetarian"
       ],
       "thumbnailAsset": "plums-plum-mixer.jpg"
     },
@@ -14552,7 +14670,8 @@
       "sourceHash": "a75fad986d8eb92a1329c2188eeb02af6b930eb337da0eac9a9ab303c050b804",
       "labelIDs": [
         "cocktail",
-        "lemon"
+        "lemon",
+        "vegetarian"
       ],
       "thumbnailAsset": "cocktails-whiskey-sour.jpg"
     },
@@ -14618,7 +14737,8 @@
       "healthierOptions": [],
       "sourceHash": "699eddb8088a24419823e690c619e80929f908b48fb96b0621b9feec001ab0de",
       "labelIDs": [
-        "cocktail"
+        "cocktail",
+        "vegetarian"
       ],
       "thumbnailAsset": "cocktails-paloma.jpg"
     },
@@ -14685,7 +14805,8 @@
       "sourceHash": "52c1841c3f10332184c21d2b0a863de3139e1935b07162250e8739df83f54395",
       "labelIDs": [
         "cocktail",
-        "lemon"
+        "lemon",
+        "vegetarian"
       ],
       "thumbnailAsset": "cocktails-margarita.jpg"
     },
@@ -14751,7 +14872,8 @@
       "healthierOptions": [],
       "sourceHash": "c0f467d88976c672b8f4582bbc3cb1c7551ed497d1bc5636dc09a4b0594737a9",
       "labelIDs": [
-        "cocktail"
+        "cocktail",
+        "vegetarian"
       ],
       "thumbnailAsset": "cocktails-negroni.jpg"
     },
@@ -14847,7 +14969,8 @@
       "healthierOptions": [],
       "sourceHash": "b9047996127a0de062a6d23461366e25641e423d51f4c056d41adbd577b8b842",
       "labelIDs": [
-        "snack"
+        "snack",
+        "vegetarian"
       ],
       "thumbnailAsset": "popcorn.jpg"
     },
@@ -14950,7 +15073,8 @@
       "healthierOptions": [],
       "sourceHash": "723172e756e3924e3102b05aec592a3bf7a0e0919f42dccfe212023522032a9f",
       "labelIDs": [
-        "beverage"
+        "beverage",
+        "vegetarian"
       ],
       "thumbnailAsset": "raspberry_lime_rickey.jpg"
     },
@@ -15180,7 +15304,8 @@
         "sandwich",
         "tomatoes",
         "peppers",
-        "cheese"
+        "cheese",
+        "onions"
       ],
       "thumbnailAsset": "ham_and_cheese_italian.jpg"
     },
@@ -15390,7 +15515,10 @@
       "healthierOptions": [],
       "sourceHash": "a08fc48b41268f4f27b91d7ac93ae71b1b23fe07e6dd41311905d66f10a78f4e",
       "labelIDs": [
-        "condiment"
+        "condiment",
+        "vegetarian",
+        "garlic",
+        "onions"
       ],
       "thumbnailAsset": "chili_oil.jpg"
     }
