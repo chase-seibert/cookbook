@@ -11,7 +11,6 @@ import UIKit
 }
 
 struct RootView: View {
-    @AppStorage("browseMode") private var browseMode = "list"
     var body: some View {
         TabView {
             RecipeBrowserView().tabItem { Label("Recipes", systemImage: "book.closed") }
@@ -24,34 +23,45 @@ struct RootView: View {
 
 struct RecipeBrowserView: View {
     @Environment(\.modelContext) private var modelContext
-    @AppStorage("browseMode") private var browseMode = "list"
     @State private var query = ""
-    @State private var category = "All"
+    @State private var isSearchPresented = false
     @State private var selectedLabelIDs: Set<String> = []
     @State private var selectedDinnerRecipeID: String?
     private let recipes = CookbookCatalog.bundled.recipes
     private var labelGroups: [RecipeLabelGroup] { (CookbookCatalog.bundled.labelGroups ?? []).sorted { $0.order < $1.order } }
     private var labels: [RecipeLabel] { CookbookCatalog.bundled.labels ?? [] }
-    private var categories: [String] { ["All"] + CookbookCatalog.bundled.categoryOrder }
-    private func labels(in group: RecipeLabelGroup) -> [RecipeLabel] {
+    private func allLabels(in group: RecipeLabelGroup) -> [RecipeLabel] {
         labels.filter { $0.groupID == group.id }.sorted { $0.order < $1.order }
+    }
+    private func labels(in group: RecipeLabelGroup) -> [RecipeLabel] {
+        let otherGroupSelections = Set(labels.filter { $0.groupID != group.id && selectedLabelIDs.contains($0.id) }.map(\.id))
+        return allLabels(in: group).filter { candidate in
+            selectedLabelIDs.contains(candidate.id) || recipes.contains { recipe in
+                matchesSearch(recipe) && RecipeLabelFilter.matches(
+                    recipe,
+                    selectedLabelIDs: otherGroupSelections.union([candidate.id]),
+                    groups: labelGroups,
+                    labels: labels
+                )
+            }
+        }
     }
     private func toggle(_ label: RecipeLabel) {
         selectedLabelIDs = RecipeLabelFilter.togglingSingle(label, selectedLabelIDs: selectedLabelIDs, labels: labels)
     }
     private func clearLabels(in group: RecipeLabelGroup) {
-        selectedLabelIDs.subtract(labels(in: group).map(\.id))
+        selectedLabelIDs.subtract(allLabels(in: group).map(\.id))
     }
     private var hasLabelFilters: Bool { !selectedLabelIDs.isEmpty }
     private func selectionCount(in group: RecipeLabelGroup) -> Int {
-        labels(in: group).filter { selectedLabelIDs.contains($0.id) }.count
+        allLabels(in: group).filter { selectedLabelIDs.contains($0.id) }.count
     }
-    private func selectedLabel(in group: RecipeLabelGroup) -> RecipeLabel? {
-        labels(in: group).first { selectedLabelIDs.contains($0.id) }
+    private var activeFilterCount: Int { selectedLabelIDs.count }
+    private func matchesSearch(_ recipe: Recipe) -> Bool {
+        query.isEmpty || recipe.title.localizedCaseInsensitiveContains(query) || recipe.ingredients.contains { $0.name.localizedCaseInsensitiveContains(query) }
     }
     private var visibleCategories: [String] {
-        let source = category == "All" ? CookbookCatalog.bundled.categoryOrder : [category]
-        return source.filter { sectionName in filtered.contains { $0.category == sectionName } }
+        CookbookCatalog.bundled.categoryOrder.filter { sectionName in filtered.contains { $0.category == sectionName } }
     }
     private func browserGroups(in sectionName: String) -> [BrowserGroup] {
         var result: [BrowserGroup] = []
@@ -78,8 +88,7 @@ struct RecipeBrowserView: View {
     }
     private var filtered: [Recipe] {
         recipes.filter { recipe in
-            return (category == "All" || recipe.category == category) &&
-                (query.isEmpty || recipe.title.localizedCaseInsensitiveContains(query) || recipe.ingredients.contains { $0.name.localizedCaseInsensitiveContains(query) }) &&
+            return matchesSearch(recipe) &&
                 RecipeLabelFilter.matches(recipe, selectedLabelIDs: selectedLabelIDs, groups: labelGroups, labels: labels)
         }
     }
@@ -90,7 +99,6 @@ struct RecipeBrowserView: View {
             NavigationStack {
                 ZStack {
                     VStack(spacing: 0) {
-                        labelFilterBar
                         browserContent
                     }
                     .opacity(isLandscape ? 0 : 1)
@@ -103,16 +111,23 @@ struct RecipeBrowserView: View {
                         .accessibilityHidden(!isLandscape)
                 }
                 .navigationTitle(isLandscape ? "" : "Cookbook")
-                .modifier(PortraitRecipeSearch(query: $query, isLandscape: isLandscape))
+                .navigationBarTitleDisplayMode(isSearchPresented ? .inline : .large)
+                .modifier(PresentedRecipeSearch(query: $query, isPresented: $isSearchPresented))
                 .toolbar {
                     if !isLandscape {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Menu { ForEach(categories, id: \.self) { value in Button(value) { category = value } } } label: { Label(category, systemImage: "line.3.horizontal.decrease") }
-                        }
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button { browseMode = browseMode == "list" ? "grid" : "list" } label: { Image(systemName: browseMode == "list" ? "square.grid.2x2" : "list.bullet") }.accessibilityLabel("Switch browse layout")
+                        ToolbarItemGroup(placement: .topBarTrailing) {
+                            if !isSearchPresented {
+                                recipeFilterMenu
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.2)) { isSearchPresented = true }
+                                } label: { Image(systemName: "magnifyingglass") }
+                                    .accessibilityLabel("Search recipes")
+                            }
                         }
                     }
+                }
+                .onChange(of: isSearchPresented) { _, isPresented in
+                    if !isPresented { query = "" }
                 }
             }
             .toolbar(isLandscape ? .hidden : .visible, for: .navigationBar)
@@ -125,12 +140,12 @@ struct RecipeBrowserView: View {
             ContentUnavailableView {
                 Label("No matching recipes", systemImage: "line.3.horizontal.decrease.circle")
             } description: {
-                Text("Try changing a label, category, or search.")
+                Text("Try changing a label or search.")
             } actions: {
-                Button("Clear filters") { selectedLabelIDs.removeAll(); category = "All"; query = "" }
+                Button("Clear filters") { selectedLabelIDs.removeAll(); query = "" }
                     .buttonStyle(.borderedProminent)
             }
-        } else if browseMode == "grid" {
+        } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     ForEach(visibleCategories, id: \.self) { sectionName in
@@ -148,81 +163,50 @@ struct RecipeBrowserView: View {
                     }
                 }.padding()
             }
-        } else {
-            List {
-                ForEach(visibleCategories, id: \.self) { sectionName in
-                    Section(sectionName) {
-                        ForEach(browserGroups(in: sectionName)) { group in
-                            if let title = group.title { Text(title).font(.headline).padding(.top, 6) }
-                            ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeRow(recipe: recipe) }.simultaneousGesture(TapGesture().onEnded { RecipeUsageStore(context: modelContext).recordRecipeOpen(recipe.id) }) }
-                        }
-                    }
-                }
-            }.listStyle(.insetGrouped)
         }
     }
 
-    @ViewBuilder private var labelFilterBar: some View {
-        if !labelGroups.isEmpty {
-            ScrollView(.horizontal) {
-                HStack(spacing: 8) {
-                    ForEach(labelGroups) { group in
-                        Menu {
-                            ForEach(labels(in: group)) { label in
-                                Button {
-                                    toggle(label)
-                                } label: {
-                                    if selectedLabelIDs.contains(label.id) {
-                                        Label(label.displayName, systemImage: "checkmark")
-                                    } else {
-                                        Text(label.displayName)
-                                    }
-                                }
-                            }
-                            if selectionCount(in: group) > 0 {
-                                Divider()
-                                Button("Clear \(group.displayName)") { clearLabels(in: group) }
-                            }
+    private var recipeFilterMenu: some View {
+        Menu {
+            ForEach(labelGroups) { group in
+                Section(group.displayName) {
+                    ForEach(labels(in: group)) { label in
+                        Button {
+                            toggle(label)
                         } label: {
-                            HStack(spacing: 5) {
-                                if let selected = selectedLabel(in: group) {
-                                    Text(selected.displayName).fontWeight(.semibold)
-                                } else {
-                                    Text(group.displayName)
-                                }
-                                Image(systemName: "chevron.down").font(.caption2)
+                            if selectedLabelIDs.contains(label.id) {
+                                Label(label.displayName, systemImage: "checkmark")
+                            } else {
+                                Text(label.displayName)
                             }
-                            .font(.subheadline)
-                            .foregroundStyle(selectionCount(in: group) > 0 ? Color.white : Color.primary)
-                            .padding(.horizontal, 12).padding(.vertical, 8)
-                            .background(selectionCount(in: group) > 0 ? Color(red: 0.16, green: 0.31, blue: 0.19) : Color(.secondarySystemGroupedBackground), in: Capsule())
-                            .accessibilityLabel(selectedLabel(in: group).map { "\(group.displayName): \($0.displayName)" } ?? group.displayName)
-                            .accessibilityHint("Opens the \(group.displayName.lowercased()) filter.")
                         }
                     }
-                    if hasLabelFilters {
-                        Button("Clear labels") { selectedLabelIDs.removeAll() }
-                            .font(.subheadline).buttonStyle(.bordered)
+                    if selectionCount(in: group) > 0 {
+                        Button("Clear \(group.displayName)") { clearLabels(in: group) }
                     }
                 }
-                .padding(.horizontal, 16).padding(.vertical, 9)
             }
-            .scrollIndicators(.hidden)
-            .background(Color(.systemGroupedBackground))
+            if hasLabelFilters {
+                Divider()
+                Button("Clear all filters") { selectedLabelIDs.removeAll() }
+            }
+        } label: {
+            Image(systemName: "line.3.horizontal.decrease")
+                .overlay(alignment: .topTrailing) {
+                    if activeFilterCount > 0 {
+                        Text("\(activeFilterCount)")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 4)
+                            .frame(minWidth: 14, minHeight: 14)
+                            .background(Color.accentColor, in: Capsule())
+                            .offset(x: 8, y: -7)
+                    }
+                }
         }
-    }
-}
-
-private struct PortraitRecipeSearch: ViewModifier {
-    @Binding var query: String
-    let isLandscape: Bool
-
-    @ViewBuilder func body(content: Content) -> some View {
-        if isLandscape {
-            content
-        } else {
-            content.searchable(text: $query, prompt: "Recipes or ingredients")
-        }
+        .accessibilityLabel("Filters")
+        .accessibilityValue(activeFilterCount == 0 ? "No active filters" : "\(activeFilterCount) active \(activeFilterCount == 1 ? "filter" : "filters")")
+        .accessibilityHint("Opens Protein, Meal Style, and Ingredients filters.")
     }
 }
 
@@ -232,13 +216,21 @@ private struct BrowserGroup: Identifiable {
     let recipes: [Recipe]
 }
 
-private struct RecipeRow: View {
-    let recipe: Recipe
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(recipe.title).font(.headline).foregroundStyle(.primary)
-            Text("\(recipe.ingredients.count) ingredients · \(recipe.steps.count) steps").font(.subheadline).foregroundStyle(.secondary)
-        }.padding(.vertical, 3)
+private struct PresentedRecipeSearch: ViewModifier {
+    @Binding var query: String
+    @Binding var isPresented: Bool
+
+    func body(content: Content) -> some View {
+        if isPresented {
+            content.searchable(
+                text: $query,
+                isPresented: $isPresented,
+                placement: .toolbarPrincipal,
+                prompt: "Recipes or ingredients"
+            )
+        } else {
+            content
+        }
     }
 }
 
