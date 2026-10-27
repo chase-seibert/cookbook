@@ -75,6 +75,49 @@ import SwiftData
     }
 }
 
+@Model final class RecipeUsageStats {
+    @Attribute(.unique) var recipeID: String
+    var recipeOpenCount: Int
+    var groceryAddFlowCount: Int
+    var updatedAt: Date
+
+    init(recipeID: String, recipeOpenCount: Int = 0, groceryAddFlowCount: Int = 0, updatedAt: Date = .now) {
+        self.recipeID = recipeID
+        self.recipeOpenCount = recipeOpenCount
+        self.groceryAddFlowCount = groceryAddFlowCount
+        self.updatedAt = updatedAt
+    }
+}
+
+@MainActor struct RecipeUsageStore {
+    private let context: ModelContext
+
+    init(context: ModelContext) { self.context = context }
+
+    func recordRecipeOpen(_ recipeID: String) {
+        update(recipeID) { $0.recipeOpenCount += 1 }
+    }
+
+    func recordCompletedGroceryFlow(_ recipeID: String) {
+        update(recipeID) { $0.groceryAddFlowCount += 1 }
+    }
+
+    private func update(_ recipeID: String, change: (RecipeUsageStats) -> Void) {
+        let descriptor = FetchDescriptor<RecipeUsageStats>(predicate: #Predicate<RecipeUsageStats> { $0.recipeID == recipeID })
+        let stats: RecipeUsageStats
+        if let existing = try? context.fetch(descriptor).first {
+            stats = existing
+        } else {
+            stats = RecipeUsageStats(recipeID: recipeID)
+            context.insert(stats)
+        }
+        change(stats)
+        stats.updatedAt = .now
+        do { try context.save() }
+        catch { print("Could not save recipe usage statistics: \(error.localizedDescription)") }
+    }
+}
+
 struct TimelineActivity: Codable, Identifiable {
     var id: String
     var recipeTitle: String

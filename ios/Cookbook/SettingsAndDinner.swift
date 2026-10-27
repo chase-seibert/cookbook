@@ -38,6 +38,14 @@ struct SettingsView: View {
                     if let markdownURL { ShareLink(item: markdownURL) { Label("Share Markdown companion", systemImage: "doc.text") } }
                     Text("Exports preserve each note's original text, recipe ID, optional step ID, and creation/update timestamps.").font(.footnote).foregroundStyle(.secondary)
                 }
+                Section("Recipe usage") {
+                    NavigationLink {
+                        RecipeUsageStatsView()
+                    } label: {
+                        Label("Recipe popularity counts", systemImage: "chart.bar")
+                    }
+                    Text("Counts are stored on this device only. They are a local usage signal, not cross-user popularity data.").font(.footnote).foregroundStyle(.secondary)
+                }
                 Section("Dinner planning") {
                     Picker("AI provider", selection: $aiProvider) { Text("OpenAI (cloud)").tag("openai"); Text("On-device").tag("on-device") }
                     if aiProvider == "openai" {
@@ -86,6 +94,68 @@ struct SettingsView: View {
         }.joined(separator: "\n\n---\n\n")
         do { try json.write(to: path, options: .atomic); try Data(("# Cookbook notes\n\n" + body + "\n").utf8).write(to: markdownPath, options: .atomic); exportURL = path; self.markdownURL = markdownPath } catch { status = "Could not export notes: \(error.localizedDescription)" }
     }
+}
+
+private struct RecipeUsageStatsView: View {
+    @Query private var stats: [RecipeUsageStats]
+    @State private var exportURL: URL?
+
+    private var rows: [(recipe: Recipe?, stats: RecipeUsageStats?)] {
+        let catalog = CookbookCatalog.bundled.recipes
+        var byID = Dictionary(uniqueKeysWithValues: stats.map { ($0.recipeID, $0) })
+        let catalogRows: [(recipe: Recipe?, stats: RecipeUsageStats?)] = catalog.map { (Optional($0), byID.removeValue(forKey: $0.id)) }
+        let unmatched = stats.filter { record in !catalog.contains { $0.id == record.recipeID } }
+        return (catalogRows + unmatched.map { (Optional<Recipe>.none, Optional($0)) }).sorted { left, right in
+            let leftOpens = left.stats?.recipeOpenCount ?? 0
+            let rightOpens = right.stats?.recipeOpenCount ?? 0
+            if leftOpens != rightOpens { return leftOpens > rightOpens }
+            let leftGroceries = left.stats?.groceryAddFlowCount ?? 0
+            let rightGroceries = right.stats?.groceryAddFlowCount ?? 0
+            if leftGroceries != rightGroceries { return leftGroceries > rightGroceries }
+            return (left.recipe?.title ?? left.stats?.recipeID ?? "") < (right.recipe?.title ?? right.stats?.recipeID ?? "")
+        }
+    }
+
+    var body: some View {
+        List {
+            Section {
+                ForEach(Array(rows.enumerated()), id: \.offset) { item in
+                    let row = item.element
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(row.recipe?.title ?? "Unknown recipe (\(row.stats?.recipeID ?? ""))").font(.headline)
+                        Text("\(row.stats?.recipeOpenCount ?? 0) opens · \(row.stats?.groceryAddFlowCount ?? 0) grocery adds")
+                            .font(.subheadline).foregroundStyle(.secondary)
+                        if let updatedAt = row.stats?.updatedAt {
+                            Text("Updated \(updatedAt.formatted(date: .abbreviated, time: .shortened))").font(.caption).foregroundStyle(.tertiary)
+                        }
+                    }
+                }
+                if let exportURL { ShareLink(item: exportURL) { Label("Share CSV export", systemImage: "square.and.arrow.up") } }
+                Button("Export counts as CSV") { exportCSV() }
+            } footer: {
+                Text("Usage counts are local to this device. The export includes every catalog recipe, including zero-count recipes, and preserves IDs no longer present in the catalog.")
+            }
+        }
+        .navigationTitle("Recipe popularity")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func exportCSV() {
+        let formatter = ISO8601DateFormatter()
+        let timestamp = Int(Date().timeIntervalSince1970)
+        let url = UserFiles.directory.appendingPathComponent("recipe-usage-\(timestamp).csv")
+        let lines = ["recipe_id,title,recipe_opens,grocery_add_flows,updated_at"] + rows.map { row in
+            let recipeID = row.recipe?.id ?? row.stats?.recipeID ?? ""
+            let title = row.recipe?.title ?? "Unknown recipe"
+            let updatedAt = row.stats.map { formatter.string(from: $0.updatedAt) } ?? ""
+            return [recipeID, title, String(row.stats?.recipeOpenCount ?? 0), String(row.stats?.groceryAddFlowCount ?? 0), updatedAt]
+                .map(Self.csvField).joined(separator: ",")
+        }
+        do { try Data((lines.joined(separator: "\n") + "\n").utf8).write(to: url, options: .atomic); exportURL = url }
+        catch { exportURL = nil }
+    }
+
+    private static func csvField(_ value: String) -> String { "\"\(value.replacingOccurrences(of: "\"", with: "\"\""))\"" }
 }
 
 private struct ReminderListChoice: Identifiable { let id: String; let title: String }

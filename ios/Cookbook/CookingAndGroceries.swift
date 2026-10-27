@@ -104,6 +104,7 @@ struct CookingModeView: View {
 struct GroceryReviewView: View {
     let recipe: Recipe
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @AppStorage("reminderListID") private var selectedListID = ""
     @State private var lists: [EKCalendar] = []
     @State private var existing: Set<String> = []
@@ -193,12 +194,21 @@ struct GroceryReviewView: View {
         guard let calendar = lists.first(where: { $0.calendarIdentifier == selectedListID }), calendar.allowsContentModifications else { message = "That list is unavailable or read-only. Choose another list in Settings."; return }
         let items = uniqueIngredients.filter { selected.contains($0.id) && !existing.contains(normalize($0.groceryName)) }
         guard !items.isEmpty else { message = "All selected ingredients are already on this list."; return }
-        var added = 0
+        var savedCount = 0
+        var saveFailed = false
         for item in items {
             let reminder = EKReminder(eventStore: store); reminder.calendar = calendar; reminder.title = item.groceryName
-            do { try store.save(reminder, commit: false); added += 1 } catch { }
+            do { try store.save(reminder, commit: false); savedCount += 1 } catch { saveFailed = true }
         }
-        do { try store.commit(); dismiss() } catch { message = "Added \(added) of \(items.count) items. Check Reminders before retrying." }
+        do {
+            try store.commit()
+            guard !saveFailed, savedCount == items.count else {
+                message = "Added \(savedCount) of \(items.count) items. Check Reminders before retrying."
+                return
+            }
+            RecipeUsageStore(context: modelContext).recordCompletedGroceryFlow(recipe.id)
+            dismiss()
+        } catch { message = "Added \(savedCount) of \(items.count) items. Check Reminders before retrying." }
     }
 
     private func normalize(_ value: String) -> String { value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current).split(whereSeparator: \.isWhitespace).joined(separator: " ") }

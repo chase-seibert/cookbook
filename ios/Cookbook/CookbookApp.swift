@@ -6,7 +6,7 @@ import UIKit
 @main struct CookbookApp: App {
     var body: some Scene {
         WindowGroup { RootView() }
-        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self])
+        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self])
     }
 }
 
@@ -23,6 +23,7 @@ struct RootView: View {
 }
 
 struct RecipeBrowserView: View {
+    @Environment(\.modelContext) private var modelContext
     @AppStorage("browseMode") private var browseMode = "list"
     @State private var query = ""
     @State private var category = "All"
@@ -139,7 +140,7 @@ struct RecipeBrowserView: View {
                                 VStack(alignment: .leading, spacing: 10) {
                                     if let title = group.title { Text(title).font(.headline) }
                                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 14)], spacing: 14) {
-                                        ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe) }.buttonStyle(.plain) }
+                                        ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe) }.buttonStyle(.plain).simultaneousGesture(TapGesture().onEnded { RecipeUsageStore(context: modelContext).recordRecipeOpen(recipe.id) }) }
                                     }
                                 }
                             }
@@ -153,7 +154,7 @@ struct RecipeBrowserView: View {
                     Section(sectionName) {
                         ForEach(browserGroups(in: sectionName)) { group in
                             if let title = group.title { Text(title).font(.headline).padding(.top, 6) }
-                            ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeRow(recipe: recipe) } }
+                            ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeRow(recipe: recipe) }.simultaneousGesture(TapGesture().onEnded { RecipeUsageStore(context: modelContext).recordRecipeOpen(recipe.id) }) }
                         }
                     }
                 }
