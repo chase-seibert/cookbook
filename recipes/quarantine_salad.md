@@ -1,0 +1,24 @@
+---
+format: cookbook-recipe/v1
+id: quarantine_salad
+---
+
+# Quarantine Salad with warm Brussels and Feta
+
+> **Introduction:** The still-warm Brussel sprouts are what make this salad. They bring out the flavor of the feta. This recipe is for single serving. This salad can take salt and Sriracha well.
+
+| Quantity | Ingredient |
+|---|---|
+|  | young mixed greens (aka spring mix) |
+| ½ | cup feta cheese, small crumble |
+|  | whole shelled pistachios |
+
+1. Mince spring mix finely. Layer lettuce, feta, and pistacios in a bowl.
+
+| Quantity | Ingredient |
+|---|---|
+|  | Brussel sprouts |
+
+1. Slice brussel sprouts and sauté in a pan with olive oil until the leaves are blackened.
+
+1. Top salad with warm Brussel sprouts, and season to taste with salt and Sriracha.

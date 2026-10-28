@@ -1,0 +1,50 @@
+---
+format: cookbook-recipe/v1
+id: pot_pie
+---
+
+# Chicken Pot Pie
+
+> **Tip:** You can either use a rotisserie chicken, or chicken breasts that you bake or boil. Shredded chicken is better in the dish than chopped.
+
+| Quantity | Ingredient |
+|---|---|
+| ½ | cup sour cream |
+| 1 | egg |
+| 2½ | cups flour |
+| 1½ | teaspoons salt |
+| 12 | tablespoons butter |
+
+1. Beat eggs with sour cream. Process dry ingredients in a food processor, and add butter in pieces. Slowly add egg mixture. Stop when dough just begins to form. Transfer to a floured surface and kneed. Divide into two halves, and form into discs. Wrap in plastic and put into the refrigerator for at least one hour.
+
+1. Remove dough from plastic, and roll one into a 12 inch circle. Transfer to the bottom of a 9 inch pie dish. Press dough into the edges. Wrap in plastic, and put the dish into the refrigerator for at least 30 minutes.
+
+1. Roll the other half of the dough, cover in plastic, and move to the refrigerator on a separate plate.
+
+| Quantity | Ingredient |
+|---|---|
+| 4 | tablespoons butter |
+| 1 | onion |
+| 2 | carrots |
+| 2 | celery ribs |
+| 6 | tablespoons flour |
+| 2½ | cups chicken broth |
+| ½ | cup half and half |
+| 1 | russet potato |
+| 1 | teaspoon minced fresh thyme |
+| 2½ | lbs chicken |
+| 1 | cup frozen peas |
+
+1. Start the oven at 450°. Poach chicken in shallow water for 15 minutes, then cool and shred.
+
+1. Melt button in a dutch oven on the stove top, on medium heat. Add onions, carrots, and celery. Season with salt and pepper. Cook for 5 minutes. Add flour, and cook for another 2 minutes. Add chicken broth, and half and half.
+
+1. Add potato and thyme. Reduce heat and simmer for 8 minutes.
+
+1. Turn off the heat, and add chicken and peas.
+
+1. Assemble pie. Trim upper crust as needed, and pinch the seams together using your fingers. Cut four slots in the top of the crust. Brush with egg wash.
+
+1. Bake at 450° for 20 minutes. Reduce oven to 375° and bake for another 15 minutes.
+
+1. Let pie cool for 45 minutes.

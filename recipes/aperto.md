@@ -1,0 +1,41 @@
+---
+format: cookbook-recipe/v1
+id: aperto
+---
+
+# Aperto's Tagliolini Pepati
+
+> **Tip:** Great use of home grown and in season tomatoes.
+
+| Quantity | Ingredient |
+|---|---|
+| 28 | ounces fresh tomatoes |
+| 3 | garlic cloves |
+|  | olive oil |
+| 2 | jalapeños |
+
+1. Heat oil in a 12 inch frying pan over medium heat. Add diced tomatoes and smashed garlic. Salt to taste.
+
+1. Slice jalapeños length wise, remove pith and seeds, and slice cross wise thinly. Add to the sauce.
+
+1. Bring to simmer, reduce to low, and simmer for 30 minutes.
+
+| Quantity | Ingredient |
+|---|---|
+| 1 | pound linguine |
+
+1. Boil to box directions, al-dente. Drain, reserving some of the cooking water, and combine pasta with red sauce in a large mixing bowl.
+
+| Quantity | Ingredient |
+|---|---|
+| 1 | package thick cut bacon |
+
+1. Bake in a 425° oven for 20-25 minutes, until well browned. Remove, pat dry and slice into thick pieces.
+
+| Quantity | Ingredient |
+|---|---|
+| 4 | tablespoons butter |
+| 8 | ounces pecorino |
+| 1 | handful baby arugula |
+
+1. Grate pecorino finely. Combine all ingredients in the mixing bowl. Stir to combine. Add reserved pasta water as needed to thin out. Serve.

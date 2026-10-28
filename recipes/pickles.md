@@ -1,0 +1,28 @@
+---
+format: cookbook-recipe/v1
+id: pickles
+---
+
+# Pickles
+
+> **Introduction:** These are lacto-fermented pickles. Instead if using an acid like vinegar, they produce their own lactic acid through fermentation. The use of non-chlorinated water is required so as not to kill helpful microbes in the pickles and on the glass jars.
+
+| Quantity | Ingredient |
+|---|---|
+| 1 | pound pickling cucumbers |
+| 6 | sprigs fresh dill |
+| 1 | teaspoon kosher salt |
+| 1 | garlic clove |
+|  | non-chlorinated water |
+
+1. Quarter cucumbers length wise, and pack them tightly into wide mouthed mason jars.
+
+1. Wedge dill sprigs down in between the cucumbers. Also wedge the garlic clove down there.
+
+1. Top with kosher salt, and enough water to cover the cucumbers. You do not want them exposed to air.
+
+1. Leave out at room temperature for 4 days. You should start seeing bubbling and other signs of fermentation by then.
+
+1. Store in a cool cellar, or in the refrigerator, for up to a year.
+
+> **Tip:** You will know if your pickles are good by smell. It should smell strong, but pleasant. It should not smell spoiled or rotten.

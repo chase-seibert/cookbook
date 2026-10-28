@@ -1,0 +1,34 @@
+---
+format: cookbook-recipe/v1
+id: christmas
+---
+
+# Christmas Morning Casserole
+
+> **Introduction:** My mother made a version of this every Christmas morning. It's easy to make the night before and pop in the oven as you're making your coffee.
+
+| Quantity | Ingredient |
+|---|---|
+| 10 | eggs |
+| 2 | cups half and half |
+| 1 | onion |
+| 2 | tablespoons butter |
+| 1 | loaf rustic bread |
+| 15 | ounces crushed tomato |
+| 12 | ounces Gruyere |
+|  | kosher salt |
+|  | pepper |
+
+1. Whisk eggs and half and half together. Finely chop onion and sauté in butter with salt. Add egg and cream mixture and heat up until it's just warm. Season liberally with salt and pepper.
+
+1. Cube bread and combine with egg mixture, making sure there is no dry bread left.
+
+1. Top with tomatoes and grated cheese and refrigerate overnight, covered.
+
+| Quantity | Ingredient |
+|---|---|
+| ½ | package bacon |
+
+1. On Christmas morning, start by cooking bacon in a 400° oven on a baking sheet for 20 minutes. Remove, blot dry with paper towels, and chop into medium sized pieces.
+
+1. Top casserole with bacon pieces and bake in a 350° oven until the sides are bubbling, about 25 minutes. Let cool for 10 minutes and serve.

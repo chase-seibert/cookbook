@@ -1,0 +1,53 @@
+---
+format: cookbook-recipe/v1
+id: burgers
+---
+
+# Drive-Thru Burgers
+
+> **Introduction:** The key to this recipe is to keep the patties loose, so the juices can bubble up through the nooks and crannies as they cook. This makes them both crisp and juicy.
+
+| Quantity | Ingredient |
+|---|---|
+| 2 | parts sirloin tips |
+| 1 | part beef short ribs |
+|  | kosher salt |
+
+1. Cut both meats into one-inch cubes, spread uncrowded on plates and freeze for 15-20 minutes.
+
+| Quantity | Ingredient |
+|---|---|
+|  | unsalted butter |
+|  | Kaiser rolls |
+
+1. For each roll, melt one tablespoon of butter in a sauté pan over medium heat, and fry both roll halves face down until golden brown, about 3 minutes.
+
+1. Remove meat from freezer.
+
+1. Working in batches with a 2:1 ratio of steak tip to short rib, pulse in a food processor to a coarse ground meat consistency (About 10 one-second pulses).
+
+1. Spread ground meat onto baking sheets and hand-mold into loose, thin burgers. Season liberally with salt and pepper.
+
+| Quantity | Ingredient |
+|---|---|
+|  | slices American cheese |
+|  | vegetable oil |
+
+1. Add one tablespoon oil to a large sauté pan over high heat, along with the burgers. Don't move the burgers at all for at least three minutes, or until the juices are bubbling through the raw layer on top.
+
+1. Flip burgers. Add one slice of cheese to each, and cook for another two minutes without flipping.
+
+> **Tip:** Best served with thinly sliced onions, and not much else.
+
+## "Secret Sauce"
+
+> **Introduction:** This is identical to Big-Mac sauce.
+
+| Quantity | Ingredient |
+|---|---|
+| 1 | part mayonnaise |
+| 1 | part ketchup |
+| 1 | teaspoon sweet relish |
+|  | fresh pepper |
+
+1. Whisk ingredients together in a small bowl, add pepper and sweet relish to taste.

@@ -1,0 +1,52 @@
+---
+format: cookbook-recipe/v1
+id: beef_tenderloin
+---
+
+# Horseradish-Crusted Beef Tenderloin
+
+> **Introduction:** The gelatin is the key to getting the crust to stick, even when you slice it. A 2.5 pound roast is good for 4 adults and 2 children. Ask for a center-cut Chateaubriand fillet roast. Use jarred horseradish. Cut into two roasts if you want different donenesses. The whole recipe takes about 90-120 minutes. The sauce at the end is worth it!
+
+| Quantity | Ingredient |
+|---|---|
+| 2.5 | pound beef tenderloin |
+
+1. Trim excess fat and remove silver skin.
+
+1. Sprinkle liberally with kosher salt, and rest in the refrigerator for 24 hours. Remove from refrigerator and bring to room temperature for 1 hour.
+
+1. Pre-heat oven to 400°.
+
+| Quantity | Ingredient |
+|---|---|
+| 3 | tablespoons Panko breadcrumbs |
+| 1 | tablespoon vegatable oil |
+
+1. Toast breadcrumbs over medium high heat, and remove to a medium sized bowl.
+
+| Quantity | Ingredient |
+|---|---|
+| 1 | shallot |
+| 2 | cloves garlic |
+| 2 | tablespoons minced parsley |
+| 1 | tablespoon minced thyme |
+| 2 | tablespoons horseradish |
+| 1 | russet potato |
+| 1 | cup vegetable oil |
+
+1. Mince shallot and garlic. Combine with herbs. Pat horseradish dry with a paper towel, and combine. Peel potato, and grate on a box grater. Shallow fry potato over medium high heat until well browned. Strain oil, and let cool. Put potato into a ziploc bag and crush. Combine with breadcrumb mixture.
+
+1. Pat tenderloin dry, and season with pepper. Brown all four sides in a large dutch oven. Let rest for 10 minutes before coating.
+
+| Quantity | Ingredient |
+|---|---|
+| 1 | tablespoon mayonnaise |
+| 1 | tablespoon dijon mustard |
+| 2 | tablespoons horseradish |
+| ½ | teaspoons powdered gelatin |
+
+1. Combine mayonnaise, mustard, and horseradish. Right before coating the beef, stir in gelatin. Coat beef on three sides using a brush. Roll in the breadcrumb mixture, pressing down so that it adheres.
+
+1. Roast on a wired rack on a baking sheet for 30 minutes, or until 135° for medium. Roast will climb another 10° while it's resting. Rest for at least 20 minutes before serving. Slice into fillets.
+
+> **Tip:** A good sauce to serve with is another jar of horseradish, enough heavy cream to loosen, and salt and pepper to taste. Optional minced green apple and red onion.

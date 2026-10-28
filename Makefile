@@ -1,4 +1,4 @@
-.PHONY: pdf html docker-build docker-pdf docker-html docker recipe-pdf all catalog catalog-check label-test thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
+.PHONY: pdf html docker-build docker-pdf docker-html docker recipe-pdf recipe-md-validate recipe-md-latex recipe-md-html recipe-md-import-sqlite all catalog catalog-check label-test thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
 
 DOCKER_PLATFORM ?= linux/amd64
 DOCKER_IMAGE ?= cookbook-latex
@@ -36,6 +36,28 @@ recipe-pdf:
 		latexmk -pdf -interaction=nonstopmode -halt-on-error -outdir=build/recipe-pdf \
 		build/recipe-pdf/$(RECIPE)-preview.tex
 	python3 scripts/recipe_pdf.py check "$(RECIPE)"
+
+RECIPE_MD ?=
+RECIPE_DB ?= build/recipes.sqlite3
+MARKDOWN_OUTPUT_DIR := build/markdown-conversion
+
+recipe-md-validate:
+	@test -n "$(RECIPE_MD)" || { echo "Usage: make recipe-md-validate RECIPE_MD=recipes/<slug>.md" >&2; exit 2; }
+	python3 scripts/validate_recipe_markdown.py "$(RECIPE_MD)"
+
+recipe-md-latex:
+	@test -n "$(RECIPE_MD)" || { echo "Usage: make recipe-md-latex RECIPE_MD=recipes/<slug>.md" >&2; exit 2; }
+	mkdir -p "$(MARKDOWN_OUTPUT_DIR)"
+	python3 scripts/markdown_recipe_to_latex.py "$(RECIPE_MD)" --output "$(MARKDOWN_OUTPUT_DIR)/$(notdir $(basename $(RECIPE_MD))).tex"
+
+recipe-md-html:
+	@test -n "$(RECIPE_MD)" || { echo "Usage: make recipe-md-html RECIPE_MD=recipes/<slug>.md" >&2; exit 2; }
+	mkdir -p "$(MARKDOWN_OUTPUT_DIR)"
+	python3 scripts/markdown_recipe_to_html.py "$(RECIPE_MD)" --output "$(MARKDOWN_OUTPUT_DIR)/$(notdir $(basename $(RECIPE_MD))).html"
+
+recipe-md-import-sqlite:
+	@test -n "$(RECIPE_MD)" || { echo "Usage: make recipe-md-import-sqlite RECIPE_MD=recipes/<slug>.md [RECIPE_DB=build/recipes.sqlite3]" >&2; exit 2; }
+	python3 scripts/import_markdown_recipe_to_sqlite.py "$(RECIPE_MD)" --database "$(RECIPE_DB)"
 
 IOS_PROJECT := ios/Cookbook.xcodeproj
 IOS_SCHEME := Cookbook

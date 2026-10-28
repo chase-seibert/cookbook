@@ -1,0 +1,51 @@
+---
+format: cookbook-recipe/v1
+id: fiery_green_beans
+---
+
+# Fiery Green Beans and Tofu
+
+> **Tip:** Using a large cast iron or carbon steel pan will help char the stir fry quickly. Finding the firmest tofu you can is the key to keeping the tofu intact as you cook it. This recipe is from Burma Superstar.
+
+1. Pre-heat a frying pan on high.
+
+| Quantity | Ingredient |
+|---|---|
+| 1 | pound green beans |
+| 1 | red bell pepper |
+| 1 | package extra firm tofu |
+
+1. Trim and cut green beans in half. Slice bell pepper and tofu in strips ⅓ of an inch wide, and as long as the green beans.
+
+| Quantity | Ingredient |
+|---|---|
+| 5 | cloves garlic |
+| 1 | knob ginger |
+
+1. Peel and mince garlic and ginger finely.
+
+| Quantity | Ingredient |
+|---|---|
+| 2 | tablespoons vegatable oil |
+|  | kosher salt |
+
+1. Toss green beans with one tablespoon of oil, and season with kosher salt to taste. Place in the frying pan. Cook for 3 minutes without stirring, then stir and cook for another three minutes. Beans should have a char on them.
+
+1. For the last 30 seconds, add one third of the garlic and ginger, and sauté.
+
+1. Remove to large bowl.
+
+1. Repeat for bell peppers and tofu, separately. For the tofu, don't stir at all, try to develop a char on just one side.
+
+| Quantity | Ingredient |
+|---|---|
+| 3 | tablespoons sambal oelek |
+| 2 | tablespoon soy sauce |
+| 3 | teaspoons dark soy sauce |
+| 3 | teaspoons oyster sauce |
+| 2 | teaspoon distilled white vinegar |
+| 2 | teaspoon sugar |
+
+1. Combine ingredients and whisk together.
+
+1. Return vegetables and tofu to the pan, and add sauce. Sauté for one minute, until the sauce thickens slightly. Serve with white rice.

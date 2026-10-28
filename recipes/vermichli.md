@@ -1,0 +1,52 @@
+---
+format: cookbook-recipe/v1
+id: vermichli
+---
+
+# Vermicelli Bowl
+
+> **Introduction:** There is no broth in this recipe, just a bunch of toppings and the noodles.
+
+| Quantity | Ingredient |
+|---|---|
+| 2 | carrots |
+| 2 | cups white vinegar |
+
+1. Create a simple pickle by slicing carrots into thin sticks and pouring boiling vinegar over. Let sit for one hour and drain.
+
+| Quantity | Ingredient |
+|---|---|
+| 8 | scallions |
+| 1 | cup simple sugar |
+
+1. Simple sugar is equal parts sugar and water, boiled and cooled. Slice scallions and add to cooling syrup.
+
+| Quantity | Ingredient |
+|---|---|
+| 1 | cucumber |
+| 1 | package bean sprouts |
+| 1 | bunch mint |
+| 1 | bunch cilantro |
+| ½ | cup peanuts |
+| 1 | tablespoon sesame seeds |
+| 3 | jalapeños |
+
+1. Slice cucumber, mint, and jalapeños thinly. Cilantro leaves should removed from stalks. Peanuts should be chopped finely.
+
+| Quantity | Ingredient |
+|---|---|
+| 1 | pound rice noodles |
+
+1. Either buy pre-cooked noodles, or cook, rinse and chill the noodles yourself.
+
+1. Combine noodles, veggies and toppings in each serving bowl.
+
+| Quantity | Ingredient |
+|---|---|
+|  | fish sauce |
+|  | Sriracha |
+|  | lime wedges |
+
+1. Top with fish sauce, Sriracha and lime to taste. I think a quarter cup of good fish sauce straight is fine. If you like something milder, you can water down the fish sauce with either water or sugar and lime juice.
+
+> **Tip:** You can also top with small amounts of protein. Crispy fried pork is a good pairing. Other potential additions are Romain lettuce, shallots and Thai basil.
