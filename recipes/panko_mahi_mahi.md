@@ -52,12 +52,12 @@ layout: compact
 
 ## Roast and simmer
 
-1. Heat oven to 425°. Toss carrots with 2 tablespoons oil, salt, and pepper; roast on a sheet pan 25–30 minutes, turning once. Rinse lentils; simmer in 4 cups water with ½ teaspoon salt for 20–30 minutes, until just tender. Drain well.
+Heat oven to 425°. Toss carrots with 2 tablespoons oil, salt, and pepper; roast on a sheet pan 25–30 minutes, turning once. Rinse lentils; simmer in 4 cups water with ½ teaspoon salt for 20–30 minutes, until just tender. Drain well.
 
 ## Coat and bake fish
 
-1. Mix panko, Parmesan, 2 tablespoons oil, lemon zest, garlic powder, salt, and pepper. Stir mayonnaise with Dijon. Pat fish dry, spread mixture on top, and press on crumbs. Put on a lightly oiled pan. When carrots have about 15 minutes left, bake fish 12–16 minutes, until the thickest part reaches 145° (check thin pieces early). Broil 30–60 seconds to brown, if desired.
+Mix panko, Parmesan, 2 tablespoons oil, lemon zest, garlic powder, salt, and pepper. Stir mayonnaise with Dijon. Pat fish dry, spread mixture on top, and press on crumbs. Put on a lightly oiled pan. When carrots have about 15 minutes left, bake fish 12–16 minutes, until the thickest part reaches 145° (check thin pieces early). Broil 30–60 seconds to brown, if desired.
 
 ## Finish salad and sauce
 
-1. Whisk lemon juice, vinegar, extra-virgin olive oil, Dijon, and honey. Toss with warm lentils, roasted carrots, shallot, and parsley; season. Thin yogurt with lemon juice, honey, optional garlic, salt, and enough water to spoon. Serve with fish.
+Whisk lemon juice, vinegar, extra-virgin olive oil, Dijon, and honey. Toss with warm lentils, roasted carrots, shallot, and parsley; season. Thin yogurt with lemon juice, honey, optional garlic, salt, and enough water to spoon. Serve with fish.

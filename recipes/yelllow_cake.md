@@ -7,7 +7,7 @@ id: yelllow_cake
 
 > **Introduction:** Bring ingredients to room temperature ahead of time, including the buttermilk.
 
-1. Set oven to 350°. Line the bottoms of two 9-inch pans with parchment paper. Grease pans with cooking spray and dust with flour.
+Set oven to 350°. Line the bottoms of two 9-inch pans with parchment paper. Grease pans with cooking spray and dust with flour.
 
 | Quantity | Ingredient |
 |---|---|
@@ -16,7 +16,7 @@ id: yelllow_cake
 | ¼ | teaspoons baking soda |
 | 1½ | cups sugar |
 
-1. Whisk ingredients in a large bowl.
+Whisk ingredients in a large bowl.
 
 | Quantity | Ingredient |
 |---|---|
@@ -26,21 +26,21 @@ id: yelllow_cake
 | 2 | teaspoons vanilla extract |
 | 6 | egg yolks |
 
-1. Melt butter. Reserve egg whites. Whisk wet ingredients in a small bowl.
+Melt butter. Reserve egg whites. Whisk wet ingredients in a small bowl.
 
 | Quantity | Ingredient |
 |---|---|
 | ¼ | cup sugar |
 
-1. In a stand mixer with a whisk attachment, beat egg whites until foamy. Add sugar and beat to stiff peaks. Set aside, emptying the mixing bowl.
+In a stand mixer with a whisk attachment, beat egg whites until foamy. Add sugar and beat to stiff peaks. Set aside, emptying the mixing bowl.
 
-1. Put the flour mixture into the mixing bowl and set speed to low. Slowly add wet mixture to combine. Stop mixer and scrape the bowl. Return mixer to medium-low and beat until smooth.
+Put the flour mixture into the mixing bowl and set speed to low. Slowly add wet mixture to combine. Stop mixer and scrape the bowl. Return mixer to medium-low and beat until smooth.
 
-1. Using a spatula, stir ⅓ of whites into batter. Then fold in remaining whites.
+Using a spatula, stir ⅓ of whites into batter. Then fold in remaining whites.
 
-1. Divide batter evenly between the two cake pans, tapping pans on the counter a few times.
+Divide batter evenly between the two cake pans, tapping pans on the counter a few times.
 
-1. Bake for about 20 minutes. Cool for 10 minutes and flip cakes onto a wire rack.
+Bake for about 20 minutes. Cool for 10 minutes and flip cakes onto a wire rack.
 
 | Quantity | Ingredient |
 |---|---|
@@ -52,4 +52,4 @@ id: yelllow_cake
 | 1 | teaspoon vanilla extract |
 | 8 | ounces milk chocolate, melted and cooled |
 
-1. Using a food processor, process butter, sugar, cocoa and salt until smooth. Add corn syrup and vanilla. Add chocolate and process until smooth.
+Using a food processor, process butter, sugar, cocoa and salt until smooth. Add corn syrup and vanilla. Add chocolate and process until smooth.

@@ -1,3 +1,4 @@
-# install MacTex
-pdflatex Cookbook.tex
-open Cookbook.pdf
+#!/bin/sh
+set -eu
+make docker-pdf
+open build/latex/Cookbook.pdf

@@ -14,11 +14,11 @@ id: potatosalad
 |  | kosher salt |
 |  | pickle juice |
 
-1. Slice potatoes into one inch chucks. Heavily salt water, put potatoes in, and bring to a boil. The water does not need to be at a boil before you put the potatoes in. Once boiling, reduce heat to a medium boil. Cook for 15 to 25 minutes, or until a knife easily pierces a potato.
+Slice potatoes into one inch chucks. Heavily salt water, put potatoes in, and bring to a boil. The water does not need to be at a boil before you put the potatoes in. Once boiling, reduce heat to a medium boil. Cook for 15 to 25 minutes, or until a knife easily pierces a potato.
 
-1. Drain potatoes using a colander. Place a colander with potatoes inside a large bowl. Pour (strained) pickle juice over the hot potatoes. Using another large bowl, move colander back and forth, and continue to pour the pickle juice over the potatoes every minute, until they stop steaming.
+Drain potatoes using a colander. Place a colander with potatoes inside a large bowl. Pour (strained) pickle juice over the hot potatoes. Using another large bowl, move colander back and forth, and continue to pour the pickle juice over the potatoes every minute, until they stop steaming.
 
-1. Leave potatoes out at room temperature to cool completely, before cutting them.
+Leave potatoes out at room temperature to cool completely, before cutting them.
 
 | Quantity | Ingredient |
 |---|---|
@@ -30,11 +30,11 @@ id: potatosalad
 | 1 | tablespoon celery seed |
 | 2 | tablespoons dijon mustard |
 
-1. Slice celery and onion and add to potatoes. Mince dill and parsley. Whisk herbs and web ingredients. Season to taste with salt and pepper.
+Slice celery and onion and add to potatoes. Mince dill and parsley. Whisk herbs and web ingredients. Season to taste with salt and pepper.
 
 | Quantity | Ingredient |
 |---|---|
 |  | paprika |
 |  | frozen peas |
 
-1. Combine the potatoes and sauce, and top with paprika and defrosted peas.
+Combine the potatoes and sauce, and top with paprika and defrosted peas.

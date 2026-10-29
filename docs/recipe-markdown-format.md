@@ -2,14 +2,12 @@
 
 ## Status
 
-This document specifies the proposed human-editable recipe format for the
-cookbook. An initial Markdown file has been created for each of the 68 indexed
-LaTeX recipe sources, and the ordered content model round-trips through the
-Markdown representation for all 68. LaTeX remains authoritative until the
-conversion and generated-output comparisons are reviewed and accepted. The
-five-recipe prototype established semantic reversibility for long recipes;
-this format removes the prototype's comment markers and raw-LaTeX layout
-fence.
+This document specifies the authoritative human-editable recipe format for the
+cookbook. Each of the 68 recipe source files lives in `recipes/`; category and
+recipe order live in `recipes/index.json`. The iOS catalog, generated LaTeX
+cookbook, and full HTML cookbook are derived from these Markdown files. The
+five-recipe round trip and full-catalog migration were reviewed before the
+legacy LaTeX recipe sources were removed.
 
 ## Goals
 
@@ -127,16 +125,19 @@ ingredient tables.
 
 ### Instructions
 
-Use an ordered list for instructions. Each list item is one ordered step; wrap
-long steps onto following indented lines. Use `1.` for each item so inserting a
-step does not require renumbering later lines. Keep the recipe's original
-wording and safety cues. Tables and notes may appear between instruction lists
-to preserve the original sequence of ingredient groups and steps.
+Use one bare paragraph for each instruction step. Separate steps with a
+blank line. Long steps may wrap across lines within the same paragraph. Any
+otherwise-unmarked paragraph in the recipe body is interpreted as an
+instruction step; use a labeled blockquote for notes and a table for ingredients
+or schedules. Keep the recipe's original wording and safety cues. Tables and
+notes may appear between steps to preserve the original content order.
 
 ```markdown
-1. Heat the oven to 350°.
-1. Add the apples, onions, and water to the roasting pan.
-1. Roast until the ham reaches 140°.
+Heat the oven to 350°.
+
+Add the apples, onions, and water to the roasting pan.
+
+Roast until the ham reaches 140°.
 ```
 
 ### Page breaks
@@ -207,7 +208,7 @@ id: cinnamon_bun
 | 1 tablespoon | shortening |
 | ¾ cup | sugar |
 
-1. Combine and bring to 185° over medium heat.
+Combine and bring to 185° over medium heat.
 
 | Quantity | Ingredient |
 |---|---|
@@ -215,7 +216,7 @@ id: cinnamon_bun
 | 3 tablespoons | yeast (3 packets) |
 | 2 tablespoons | sugar |
 
-1. Combine and let rise until doubled in size, about 30 minutes.
+Combine and let rise until doubled in size, about 30 minutes.
 
 > **Tip:** The rolls can be held overnight or frozen before the final rise.
 ```

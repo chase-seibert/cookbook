@@ -159,18 +159,26 @@ def parse_recipe(path: str | Path) -> Recipe:
                 raise ValueError(f"{path}:{index + 1}: {table_type} table must have at least one row")
             blocks.append({"type": table_type, "rows": rows})
             continue
-        if re.match(r"1\.\s+", line):
-            pieces = [re.sub(r"^1\.\s+", "", line)]
+        if re.match(r"\d+\.\s+", line):
+            raise ValueError(f"{path}:{index + 1}: use a bare paragraph for each instruction step")
+        # In this experimental format, every otherwise-unrecognized body
+        # paragraph is an instruction step. Physical line wraps within a
+        # paragraph are joined until a blank line or the next structured block.
+        pieces = [line.strip()]
+        index += 1
+        while index < len(lines) and lines[index].strip():
+            following = lines[index]
+            if (
+                following.startswith(("# ", "## ", "> ", "|"))
+                or following == '<div class="page-break"></div>'
+            ):
+                break
+            pieces.append(following.strip())
             index += 1
-            while index < len(lines) and (lines[index].startswith("  ") or lines[index].startswith("\t")):
-                pieces.append(lines[index].strip())
-                index += 1
-            step = _unescape_markdown(" ".join(pieces)).strip()
-            if not step:
-                raise ValueError(f"{path}:{index}: instruction step must not be empty")
-            blocks.append({"type": "step", "text": step})
-            continue
-        raise ValueError(f"{path}:{index + 1}: unsupported Markdown syntax: {line!r}")
+        step = _unescape_markdown(" ".join(pieces)).strip()
+        if not step:
+            raise ValueError(f"{path}:{index}: instruction step must not be empty")
+        blocks.append({"type": "step", "text": step})
     if title is None:
         raise ValueError(f"{path}: exactly one H1 title is required")
     return Recipe(path=path, metadata=metadata, title=title, blocks=blocks)

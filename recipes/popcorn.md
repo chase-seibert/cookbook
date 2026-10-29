@@ -14,10 +14,10 @@ id: popcorn
 | 1½ | tablespoons coconut oil |
 | 1½ | teaspoons Flavacol |
 
-1. Combine in a 9-inch pot. Put over medium heat, swirl to melt coconut oil and combine, and place a cover on the pot.
+Combine in a 9-inch pot. Put over medium heat, swirl to melt coconut oil and combine, and place a cover on the pot.
 
-1. You don't need to shake or swirl the pot after the cover is on.
+You don't need to shake or swirl the pot after the cover is on.
 
-1. Remove from heat when there are 1-2 seconds between pops. Immediately empty into a large bowl, and let cool for 1 minute.
+Remove from heat when there are 1-2 seconds between pops. Immediately empty into a large bowl, and let cool for 1 minute.
 
 > **Tip:** You can put all kinds of toppings on popcorn. Some of my favorites are Zahtar spice, nutritional yeast, and white cheddar powder.

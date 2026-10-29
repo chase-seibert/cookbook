@@ -16,9 +16,9 @@ kind: collection
 | 8 | cups plums, quartered and squished |
 | 8 | cups sugar |
 
-1. Mix pectin, ½ cup of water and plums together, thoroughly dissolving the pectin. Bring to high simmer over high heat in an oversized pot. Add sugar all at once and bring to a boil that does not dissipate when you stir it. You want to the mixture to reach 220°.
+Mix pectin, ½ cup of water and plums together, thoroughly dissolving the pectin. Bring to high simmer over high heat in an oversized pot. Add sugar all at once and bring to a boil that does not dissipate when you stir it. You want to the mixture to reach 220°.
 
-1. Remove from heat. Spoon into canning jars. Process for 10 minutes (see any canning recipe).
+Remove from heat. Spoon into canning jars. Process for 10 minutes (see any canning recipe).
 
 ## Plum Preserves
 
@@ -29,7 +29,7 @@ kind: collection
 |  | halved plums, pit removed |
 |  | simple sugar |
 
-1. Simple sugar is just equal parts sugar and water brought to a simmer. Pour over plums in jars and process for 10 minutes.
+Simple sugar is just equal parts sugar and water brought to a simmer. Pour over plums in jars and process for 10 minutes.
 
 ## Plum Mixer
 
@@ -40,4 +40,4 @@ kind: collection
 | 1 | pound whole plums |
 | 1 | cup water |
 
-1. Place plums in a dutch oven with water. Cover and bring to a boil over medium heat until water is reduced by half. Strain into small canning jars. Process for 10 minutes.
+Place plums in a dutch oven with water. Cover and bring to a boil over medium heat until water is reduced by half. Strain into small canning jars. Process for 10 minutes.

@@ -12,7 +12,7 @@ id: macandcheese
 | 1 | box cavatappi pasta |
 | 2 | teaspoons salt |
 
-1. Bring one gallon of water to boil. Add 2 teaspoons salt and cook pasta very al-dente - no more than 5 minutes.
+Bring one gallon of water to boil. Add 2 teaspoons salt and cook pasta very al-dente - no more than 5 minutes.
 
 | Quantity | Ingredient |
 |---|---|
@@ -20,7 +20,7 @@ id: macandcheese
 | 1 | stick unsalted butter |
 | 2 | tablespoon flour |
 
-1. In a dutch oven, sauté onions in butter over medium heat. Add flour and cook for one minute.
+In a dutch oven, sauté onions in butter over medium heat. Add flour and cook for one minute.
 
 | Quantity | Ingredient |
 |---|---|
@@ -28,7 +28,7 @@ id: macandcheese
 | 2 | cups half and half |
 |  | dash of hot sauce |
 
-1. Add cream, half and half, kosher salt and white pepper to the dutch oven and bring to a simmer.
+Add cream, half and half, kosher salt and white pepper to the dutch oven and bring to a simmer.
 
 | Quantity | Ingredient |
 |---|---|
@@ -36,7 +36,7 @@ id: macandcheese
 | 3 | slices American cheese |
 | 1 | tablespoon liquid smoke |
 
-1. Still in the dutch oven, blend grated and sliced cheese into sauce until melted. Add pasta.
+Still in the dutch oven, blend grated and sliced cheese into sauce until melted. Add pasta.
 
 | Quantity | Ingredient |
 |---|---|
@@ -44,8 +44,8 @@ id: macandcheese
 | 1 | teaspoon chipotle powder |
 | ¾ | cup panko bread crumbs |
 
-1. In a separate pan, sauté oil and chipotle powder over medium-high heat for 30 seconds. Remove from stove and stir in bread crumbs.
+In a separate pan, sauté oil and chipotle powder over medium-high heat for 30 seconds. Remove from stove and stir in bread crumbs.
 
-1. Sprinkle bread crumbs over the pasta and bake in the dutch oven for 15-20 minutes at 350°.
+Sprinkle bread crumbs over the pasta and bake in the dutch oven for 15-20 minutes at 350°.
 
 > **Tip:** If you need to reheat, try 3-4 minutes in the microwave at 30 percent power, so the sauce doesn't break.

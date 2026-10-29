@@ -11,13 +11,13 @@ id: spinach
 |---|---|
 | 2 | eggs |
 
-1. Boil eggs, cool, shell and slice into rings.
+Boil eggs, cool, shell and slice into rings.
 
 | Quantity | Ingredient |
 |---|---|
 | 10 | strips bacon |
 
-1. Separate strips onto aluminum foil on a baking sheet, and bake for 15 minutes at 425°. Pat dry and chop into small pieces.
+Separate strips onto aluminum foil on a baking sheet, and bake for 15 minutes at 425°. Pat dry and chop into small pieces.
 
 | Quantity | Ingredient |
 |---|---|
@@ -34,14 +34,14 @@ id: spinach
 | ¼ | onion salt |
 | ¼ | paprika |
 
-1. Discard the oil in the can and use only the anchovies. Liquefy all ingredients in a blender.
+Discard the oil in the can and use only the anchovies. Liquefy all ingredients in a blender.
 
 | Quantity | Ingredient |
 |---|---|
 | 1 | package spinach |
 |  | pre-sliced mushrooms |
 
-1. Combine eggs, bacon and dressing in a large mixing bowl.
+Combine eggs, bacon and dressing in a large mixing bowl.
 
 > **Tip:** The dressing can keep at least overnight.
 

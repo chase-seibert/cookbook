@@ -14,11 +14,11 @@ id: orecchiette
 | 1 | tablespoon red pepper flake |
 | 4 | garlic cloves |
 
-1. Pre-heat oven to 550°.
+Pre-heat oven to 550°.
 
-1. Shallow fry sausage roll, garlic and red pepper flakes in olive oil in a dutch oven over medium-high heat until browned. Removed with a slotted spoon and process in a food processor for 3 short bursts. This will break up the sausage into the right sized pieces. Return to pan and brown for another 10 minutes on medium heat. You may need to add a little more oil so that all of the sausage browns evenly.
+Shallow fry sausage roll, garlic and red pepper flakes in olive oil in a dutch oven over medium-high heat until browned. Removed with a slotted spoon and process in a food processor for 3 short bursts. This will break up the sausage into the right sized pieces. Return to pan and brown for another 10 minutes on medium heat. You may need to add a little more oil so that all of the sausage browns evenly.
 
-1. Drain sausage, reserving the oil.
+Drain sausage, reserving the oil.
 
 | Quantity | Ingredient |
 |---|---|
@@ -26,22 +26,22 @@ id: orecchiette
 |  | salt |
 |  | pepper |
 
-1. Dice broccoli stalk and florets into small pieces that can fit into the pasta.
+Dice broccoli stalk and florets into small pieces that can fit into the pasta.
 
-1. Toss in the reserved sausage oil in the now empty dutch oven. Season with salt and papper. Turn out into a foiled baking sheet, and place under the broiler until lightly blackened.
+Toss in the reserved sausage oil in the now empty dutch oven. Season with salt and papper. Turn out into a foiled baking sheet, and place under the broiler until lightly blackened.
 
 | Quantity | Ingredient |
 |---|---|
 | 1 | box Orecchiette pasta |
 
-1. Boil paste until al dente, as per box instructions. Drain, reserving a bowl of the water.
+Boil paste until al dente, as per box instructions. Drain, reserving a bowl of the water.
 
-1. Add the sausage and broccoli to the pasta. Toss to combine. Season with salt to taste.
+Add the sausage and broccoli to the pasta. Toss to combine. Season with salt to taste.
 
 | Quantity | Ingredient |
 |---|---|
 | 4 | ounces parmesan |
 
-1. Grate the parmesan on a microplane. When the pasta has cooled for 3 minutes, toss with cheese and reserved pasta liquid. The goal is to create a cheese sauce.
+Grate the parmesan on a microplane. When the pasta has cooled for 3 minutes, toss with cheese and reserved pasta liquid. The goal is to create a cheese sauce.
 
 > **Tip:** Great with Sriracha.

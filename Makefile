@@ -1,34 +1,40 @@
-.PHONY: pdf html docker-build docker-pdf docker-html docker recipe-pdf recipe-md-validate recipe-md-latex recipe-md-html recipe-md-import-sqlite all catalog catalog-check label-test thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
+.PHONY: all pdf html latex cookbook-outputs docker-build docker-pdf docker-html docker recipe-pdf recipe-md-validate recipe-md-latex recipe-md-html recipe-md-import-sqlite catalog catalog-check label-test thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
 
 DOCKER_PLATFORM ?= linux/amd64
 DOCKER_IMAGE ?= cookbook-latex
 
-all: pdf html
+all: catalog pdf html
+cookbook-outputs: catalog latex html
 
-pdf:
-	pdflatex Cookbook.tex
+LATEX_OUTPUT_DIR := build/latex
+HTML_OUTPUT := build/html/Cookbook.html
+
+latex:
+	python3 scripts/generate_latex.py --output-dir "$(LATEX_OUTPUT_DIR)"
+
+pdf: docker-pdf
 
 html:
-	./run_html.py --index Cookbook.tex > Cookbook.html
+	python3 scripts/generate_cookbook_html.py --output "$(HTML_OUTPUT)"
 
 docker-build:
 	docker build --platform "$(DOCKER_PLATFORM)" --tag "$(DOCKER_IMAGE)" .
 
 docker-pdf: docker-build
-	docker run --rm --platform "$(DOCKER_PLATFORM)" --volume "$(PWD):/work" --workdir /work \
+	$(MAKE) latex
+	docker run --rm --platform "$(DOCKER_PLATFORM)" --volume "$(PWD):/work" --workdir /work/$(LATEX_OUTPUT_DIR) \
 		--user "$(shell id -u):$(shell id -g)" --env HOME=/tmp "$(DOCKER_IMAGE)" \
 		latexmk -pdf -interaction=nonstopmode -halt-on-error Cookbook.tex
 
-docker-html:
-	docker run --rm --volume "$(PWD):/work" --workdir /work python:3.13-slim \
-		python3 run_html.py --index Cookbook.tex > Cookbook.html
+docker-html: html
 
-docker: docker-pdf docker-html
+docker: docker-pdf html
 
 RECIPE ?=
 
 recipe-pdf:
 	@test -n "$(RECIPE)" || { echo "Usage: make recipe-pdf RECIPE=<recipe-id-or-source-slug>" >&2; exit 2; }
+	$(MAKE) latex
 	python3 scripts/recipe_pdf.py prepare "$(RECIPE)"
 	$(MAKE) docker-build
 	docker run --rm --platform "$(DOCKER_PLATFORM)" --volume "$(PWD):/work" --workdir /work \
@@ -47,8 +53,8 @@ recipe-md-validate:
 
 recipe-md-latex:
 	@test -n "$(RECIPE_MD)" || { echo "Usage: make recipe-md-latex RECIPE_MD=recipes/<slug>.md" >&2; exit 2; }
-	mkdir -p "$(MARKDOWN_OUTPUT_DIR)"
-	python3 scripts/markdown_recipe_to_latex.py "$(RECIPE_MD)" --output "$(MARKDOWN_OUTPUT_DIR)/$(notdir $(basename $(RECIPE_MD))).tex"
+	mkdir -p "$(LATEX_OUTPUT_DIR)/recipes"
+	python3 scripts/markdown_recipe_to_latex.py "$(RECIPE_MD)" --output "$(LATEX_OUTPUT_DIR)/recipes/$(notdir $(basename $(RECIPE_MD))).tex"
 
 recipe-md-html:
 	@test -n "$(RECIPE_MD)" || { echo "Usage: make recipe-md-html RECIPE_MD=recipes/<slug>.md" >&2; exit 2; }

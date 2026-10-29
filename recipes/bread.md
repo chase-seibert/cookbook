@@ -12,26 +12,26 @@ id: bread
 | 1½ | tablespoons yeast |
 | 1½ | teaspoons kosher salt |
 
-1. Whisk dry ingredients to combine in a large container with an air tight top. Add water, warm to hot if possible. Mix with a large spoon until no dry flour remains, even on the bottom of the container. This can take some muscle.
+Whisk dry ingredients to combine in a large container with an air tight top. Add water, warm to hot if possible. Mix with a large spoon until no dry flour remains, even on the bottom of the container. This can take some muscle.
 
-1. Secure the top of the container so that it's air tight. Place on the counter and allow to rise. Dough should double in volume over the course of three hours. Put in the fridge for at least 12 hours.
+Secure the top of the container so that it's air tight. Place on the counter and allow to rise. Dough should double in volume over the course of three hours. Put in the fridge for at least 12 hours.
 
-1. The dough can last quite a number of days in the refrigerator, but bread made the next day will rise best.
+The dough can last quite a number of days in the refrigerator, but bread made the next day will rise best.
 
-1. When you're ready to make bread, cut a square of parchment paper and place it on a pizza or bread stone. You can also use the back of a baking sheet.
+When you're ready to make bread, cut a square of parchment paper and place it on a pizza or bread stone. You can also use the back of a baking sheet.
 
-1. Flour your hands well, and remove half of the dough. Making a cupping motion from top to bottom, stretch the dough over itself, tucking the excess under the bottom. Don't be afraid to handle the dough roughly, Doing so with agitate the yeast to create a good rise. The goal is to create a tight surface which will expand like a balloon in the oven.
+Flour your hands well, and remove half of the dough. Making a cupping motion from top to bottom, stretch the dough over itself, tucking the excess under the bottom. Don't be afraid to handle the dough roughly, Doing so with agitate the yeast to create a good rise. The goal is to create a tight surface which will expand like a balloon in the oven.
 
-1. Place the dough on the parchment paper and allow to rise at room temperature for three hours.
+Place the dough on the parchment paper and allow to rise at room temperature for three hours.
 
-1. Put a bread stone in the oven. Also place an empty metal pan on the bottom the oven floor. Heat to 450 degrees.
+Put a bread stone in the oven. Also place an empty metal pan on the bottom the oven floor. Heat to 450 degrees.
 
-1. Take a bread knife and create shallow slashes on the surface of the dough. Popular patterns are an X, or parallel lines.
+Take a bread knife and create shallow slashes on the surface of the dough. Popular patterns are an X, or parallel lines.
 
-1. Slide the dough onto the bread stone, opening the door for as little time as possible. Also pour a glass of hot water into the metal pan to create steam.
+Slide the dough onto the bread stone, opening the door for as little time as possible. Also pour a glass of hot water into the metal pan to create steam.
 
-1. Bake for at least 45 minutes. The crust of the dough will get much darker than you think it should be. This is normal; you cannot over bake this bread, but you can easily under bake it.
+Bake for at least 45 minutes. The crust of the dough will get much darker than you think it should be. This is normal; you cannot over bake this bread, but you can easily under bake it.
 
-1. Remove from the oven and allow to cool completely, at least 3 hours.
+Remove from the oven and allow to cool completely, at least 3 hours.
 
 > **Tip:** You can increase the speed of the rising step by placing the loaf in a very low oven at 100°. Many home ovens do not go that low. In that case, you can preheat to a low heat, turn the oven off, and leave the door open. Either way, place a very wet paper towel on top of the loaf to keep the surface from drying out.

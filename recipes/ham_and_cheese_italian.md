@@ -15,7 +15,7 @@ id: ham_and_cheese_italian
 | 1 | pickle spear |
 |  | kosher salt |
 
-1. Dice onion medium. Slice bell pepper and tomato. Slice pickle spear in half. Salt the peppers and tomatoes.
+Dice onion medium. Slice bell pepper and tomato. Slice pickle spear in half. Salt the peppers and tomatoes.
 
 | Quantity | Ingredient |
 |---|---|
@@ -31,8 +31,8 @@ id: ham_and_cheese_italian
 |  | pepper |
 |  | olive oil |
 
-1. Open the sub roll, and lay down the ingredients in this order, with the onions on the bottom. The ham and cheese slices should be cut so that the ham lines both sides of the roll in a "U" shape. This will protect the bread from getting soggy.
+Open the sub roll, and lay down the ingredients in this order, with the onions on the bottom. The ham and cheese slices should be cut so that the ham lines both sides of the roll in a "U" shape. This will protect the bread from getting soggy.
 
-1. Layer the rest of the ingredients inside the ham. Season with more salt than you think is necessary. Lightly oil the top of the sandwich with a brush.
+Layer the rest of the ingredients inside the ham. Season with more salt than you think is necessary. Lightly oil the top of the sandwich with a brush.
 
-1. Wrap tightly in parchment paper. This is important so that the sandwich compresses. Wrap with a paper napkin to absorb any moisture, a rubber band, and let it sit for at least 10 minutes, or up to 2 hours refrigerated.
+Wrap tightly in parchment paper. This is important so that the sandwich compresses. Wrap with a paper napkin to absorb any moisture, a rubber band, and let it sit for at least 10 minutes, or up to 2 hours refrigerated.

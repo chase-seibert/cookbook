@@ -15,7 +15,7 @@ id: braised_chicken_thighs
 |  | olive oil |
 |  | salt |
 
-1. Pat chicken dry and salt. Saute whole thighs on medium heat until browned. Add Better than Bouillon and water and bring to simmer. Reduce until liquid is nearly gone, flipping once in a while. Shred the meat in the pan and toss with sauce to coat.
+Pat chicken dry and salt. Saute whole thighs on medium heat until browned. Add Better than Bouillon and water and bring to simmer. Reduce until liquid is nearly gone, flipping once in a while. Shred the meat in the pan and toss with sauce to coat.
 
 | Quantity | Ingredient |
 |---|---|
@@ -29,6 +29,6 @@ id: braised_chicken_thighs
 | 1½ | cups of chicken broth |
 | 1 | small can black beans |
 
-1. Saute salted diced onion in olive oil. Add garlic, cumin, and cayenne. Add rice and stir until coated in fat and some grains of rice turn a lighter white color. Add chicken broth plus the beans (with the canned liquid), reduce heat to low and cover for 22 minutes.
+Saute salted diced onion in olive oil. Add garlic, cumin, and cayenne. Add rice and stir until coated in fat and some grains of rice turn a lighter white color. Add chicken broth plus the beans (with the canned liquid), reduce heat to low and cover for 22 minutes.
 
-1. Serve with butter and hot sauce.
+Serve with butter and hot sauce.

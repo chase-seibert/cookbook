@@ -15,17 +15,17 @@ id: deepdish
 | 1¼ | cups warm water |
 | 3 | tablespoons melted butter |
 
-1. Mix dry ingredients in stand mixer. Add water and melted butter, and mix on medium-high for 5 minutes.
+Mix dry ingredients in stand mixer. Add water and melted butter, and mix on medium-high for 5 minutes.
 
-1. Empty the dough into an oiled bowl, turn to coat surface, and let rise for 1 hour.
+Empty the dough into an oiled bowl, turn to coat surface, and let rise for 1 hour.
 
-1. Empty dough onto the counter top, and use a rolling pin to flatten into a 12 by 15 inch rectangle. Slather with softened butter, and roll into a cylinder, like a jelly roll.
+Empty dough onto the counter top, and use a rolling pin to flatten into a 12 by 15 inch rectangle. Slather with softened butter, and roll into a cylinder, like a jelly roll.
 
-1. Flatten the cylinder into an 18 by 4 inch rectangle with the rolling pin. Cut in half, and fold the ends of each half in on itself, like a letter.
+Flatten the cylinder into an 18 by 4 inch rectangle with the rolling pin. Cut in half, and fold the ends of each half in on itself, like a letter.
 
-1. Shape each half into a rough ball, and place back into the oiled bowl for 1 hour to rise.
+Shape each half into a rough ball, and place back into the oiled bowl for 1 hour to rise.
 
-1. Shape the dough to cover the pan surface, as well as one inch up the sides. If the dough resists shaping, let sit for 10 minutes and try again.
+Shape the dough to cover the pan surface, as well as one inch up the sides. If the dough resists shaping, let sit for 10 minutes and try again.
 
 | Quantity | Ingredient |
 |---|---|
@@ -37,15 +37,15 @@ id: deepdish
 |  | red pepper flakes |
 |  | kosher salt |
 
-1. In a dutch oven over medium heat, brown shredded onion with olive oil. Add tomato paste, garlic and red pepper flakes, and cook for 30 seconds. Add crushed tomatoes simmer for 15 minutes. Salt to taste.
+In a dutch oven over medium heat, brown shredded onion with olive oil. Add tomato paste, garlic and red pepper flakes, and cook for 30 seconds. Add crushed tomatoes simmer for 15 minutes. Salt to taste.
 
 | Quantity | Ingredient |
 |---|---|
 | ¾ | pounds mozzarella cheese |
 | 3 | Italian sausages |
 
-1. Taking the stuffing out of the sausages, press quarter sized pieces directly into the dough. Top with cheese, and finally tomato sauce. Optionally, top with a sprinkling of Parmesan.
+Taking the stuffing out of the sausages, press quarter sized pieces directly into the dough. Top with cheese, and finally tomato sauce. Optionally, top with a sprinkling of Parmesan.
 
-1. Bake for 25 minutes at 350. Don't worry, the sausage will be done. Rest for 15 full minutes and then remove from baking dish before slicing and serving.
+Bake for 25 minutes at 350. Don't worry, the sausage will be done. Rest for 15 full minutes and then remove from baking dish before slicing and serving.
 
 > **Tip:** For a variation, skip the sauce, and top with chopped bacon, caramelized onions and thyme. Onions can be caramelized by sautéeing on low for an hour with 3 tablespoons of butter, and a sprinkle of salt and sugar.

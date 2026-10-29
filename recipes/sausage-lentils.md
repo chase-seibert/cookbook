@@ -5,13 +5,15 @@ id: sausage-lentils
 
 # Louisiana Hot-links and Lentils
 
+> **Tip:** Can also be made with Kielbasa, which Noel prefers.
+
 | Quantity | Ingredient |
 |---|---|
 | 1 | onion |
 |  | olive oil |
 |  | kosher salt |
 
-1. Sauté diced onion in a dutch oven with olive oil and salt until just browned.
+Sauté diced onion in a dutch oven with olive oil and salt until just browned.
 
 | Quantity | Ingredient |
 |---|---|
@@ -19,7 +21,7 @@ id: sausage-lentils
 | 2 | tablespoons paprika |
 | 4 | hot link sausages |
 
-1. Slice sausages on the bias and add to the pot, along with garlic and paprika.
+Slice sausages on the bias and add to the pot, along with garlic and paprika.
 
 | Quantity | Ingredient |
 |---|---|
@@ -30,9 +32,9 @@ id: sausage-lentils
 |  | fresh thyme |
 |  | salt |
 
-1. Add lentils and wet ingredients, bring to a light simmer, and place in a 300° oven for 60 minutes, covered.
+Add lentils and wet ingredients, bring to a light simmer, and place in a 300° oven for 60 minutes, covered.
 
-1. Remove cover and bake for another 15 minutes, longer if needed until fairly dry.
+Remove cover and bake for another 15 minutes, longer if needed until fairly dry.
 
 | Quantity | Ingredient |
 |---|---|
@@ -41,4 +43,4 @@ id: sausage-lentils
 | 1 | loaf french bread |
 |  | butter |
 
-1. Slice scallions to use for a garnish. Squeeze a lemon on top for acid. Just like a soup, bread and butter is a good accompaniment.
+Slice scallions to use for a garnish. Squeeze a lemon on top for acid. Just like a soup, bread and butter is a good accompaniment.

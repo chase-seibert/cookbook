@@ -12,7 +12,7 @@ id: flatbread
 | ½ | cup water |
 | ¼ | cup yogurt or sour cream |
 
-1. Whisk together.
+Whisk together.
 
 | Quantity | Ingredient |
 |---|---|
@@ -21,13 +21,13 @@ id: flatbread
 | 1½ | teaspoons baking powder |
 | ⅓ | cup lard |
 
-1. Combine everything except the lard in a food processor and pulse. Add lard and process for 10 pulses. Add water mixture slowly while processing.
+Combine everything except the lard in a food processor and pulse. Add lard and process for 10 pulses. Add water mixture slowly while processing.
 
-1. Split into four even portions and roll into balls. Leave on the counter to rise for 15 minutes under a clean kitchen towel.
+Split into four even portions and roll into balls. Leave on the counter to rise for 15 minutes under a clean kitchen towel.
 
-1. Pre-heat a cast iron skillet over medium heat.
+Pre-heat a cast iron skillet over medium heat.
 
-1. Roll into 10 inch rounds using your hands and a silicon baking mat. Place in the dry cast iron skillet for two minutes on the first side, then flip and cook for another one minute. Eat immediately.
+Roll into 10 inch rounds using your hands and a silicon baking mat. Place in the dry cast iron skillet for two minutes on the first side, then flip and cook for another one minute. Eat immediately.
 
 ## Charcuterie, and Arugula Flatbread
 
@@ -40,4 +40,4 @@ id: flatbread
 |  | olive oil |
 |  | hot sauce |
 
-1. Assemble sandwiches to taste.
+Assemble sandwiches to taste.

@@ -2,23 +2,24 @@
 
 ## Source and generated data
 
-LaTeX files and `Cookbook.tex` remain the authoritative recipe source. The
+Markdown files in `recipes/` are the authoritative recipe source. The
 standard-library Python generator in `scripts/generate_mobile_catalog.py`
-parses the cookbook index, recipe sections, ingredients, prose, tips, and
-healthier options. `data/mobile/metadata.json` stores stable file IDs, files
-whose section headings are collections rather than recipes, grocery staple and
-exclusion rules, per-ingredient overrides, and optional per-step ingredient
-assignments. A normal source file produces one recipe; designated collections
-such as Cocktails produce one recipe for each subsection and show the parent as
-a list heading. The catalog hashes source sections and keeps original
-instruction text. `make catalog-check` rebuilds in memory and rejects stale
-output.
+parses the versioned recipe format into the offline iOS catalog. The ordered
+category and recipe index is `recipes/index.json`. `data/mobile/metadata.json`
+stores grocery staple and exclusion rules, per-ingredient overrides, reviewed
+per-step ingredient assignments, labels, and menu copy. A normal source file
+produces one app recipe; collections such as Cocktails produce one app recipe
+per H2 component and show the collection title as the parent. The catalog uses
+Markdown source filenames and hashes canonical parsed content. `make
+catalog-check` rebuilds in memory and rejects stale output.
 
-The catalog preserves chapter order from `Cookbook.tex`. Subsections inside a
-recipe remain instruction headings, so “Carving” and “Secret Sauce” do not
-become separate recipes. Each instruction paragraph is assigned the nearest
-preceding ingredient block. Recipes that reuse ingredients across components
-need reviewed `stepIngredientIDs` metadata.
+`make latex` generates per-file LaTeX fragments and a complete LaTeX index in
+`build/latex/`. `make html` generates the complete standalone HTML cookbook in
+`build/html/Cookbook.html`. Both are derived outputs; do not edit them by hand.
+Subsections inside a normal recipe remain instruction headings. In a collection
+they identify the contained recipes. Each instruction step receives the
+nearest preceding ingredient group's IDs unless reviewed `stepIngredientIDs`
+metadata provides a more precise mapping.
 
 ## App layers
 

@@ -18,7 +18,7 @@ kind: collection
 | 1 | teaspoon oregano |
 | 1 | garlic clove |
 
-1. Combine ingredients in a small jar, and shake vigorously. The emulsion is stable for at least an hour.
+Combine ingredients in a small jar, and shake vigorously. The emulsion is stable for at least an hour.
 
 ## Lemon Vinaigrette
 
@@ -28,7 +28,7 @@ kind: collection
 |---|---|
 | 1 | garlic clove |
 
-1. Cut clove in half and rub the against the inside of a wooden salad bowl. Discard the clove.
+Cut clove in half and rub the against the inside of a wooden salad bowl. Discard the clove.
 
 | Quantity | Ingredient |
 |---|---|
@@ -36,7 +36,7 @@ kind: collection
 | 2 | tablespoons lemon juice |
 | 1 | teaspoon kosher salt |
 
-1. Combine ingredients in the bottom of the bowl, whisk to combine, and toss salad.
+Combine ingredients in the bottom of the bowl, whisk to combine, and toss salad.
 
 ## Parmesan Peppercorn
 
@@ -51,4 +51,4 @@ kind: collection
 | 1 | teaspoon garlic powder |
 | 1 | teaspoon basil |
 
-1. Whisk together in a medium bowl, and refrigerate for at least an hour.
+Whisk together in a medium bowl, and refrigerate for at least an hour.

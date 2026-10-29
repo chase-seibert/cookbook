@@ -14,13 +14,13 @@ id: garlicchilipasta
 | 1 | teaspoon red chili flakes |
 | 1 | cup Panko bread crumbs |
 
-1. Press garlic and sauté in olive oil over very low heat in a dutch oven. The goal is not to brown the garlic, just season the oil. Add red chili flakes and Panko, stir and take off heat.
+Press garlic and sauté in olive oil over very low heat in a dutch oven. The goal is not to brown the garlic, just season the oil. Add red chili flakes and Panko, stir and take off heat.
 
 | Quantity | Ingredient |
 |---|---|
 | 1 | pound spaghetti |
 
-1. Boil until al-dente. Reserve 1 cup of the cooking water, drain, and add pasta to the oil.
+Boil until al-dente. Reserve 1 cup of the cooking water, drain, and add pasta to the oil.
 
 | Quantity | Ingredient |
 |---|---|
@@ -28,4 +28,4 @@ id: garlicchilipasta
 | ½ | lemon |
 | 1 | bunch parsley |
 
-1. Let pasta cool for 10 minutes so the cheese does not melt. Grate Parmesan finely and mix into pasta with a generous amount of the reserved cooking water to keep it from clumping. Squeeze in lemon juice, and add minced parsley.
+Let pasta cool for 10 minutes so the cheese does not melt. Grate Parmesan finely and mix into pasta with a generous amount of the reserved cooking water to keep it from clumping. Squeeze in lemon juice, and add minced parsley.

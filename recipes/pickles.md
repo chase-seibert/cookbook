@@ -15,14 +15,14 @@ id: pickles
 | 1 | garlic clove |
 |  | non-chlorinated water |
 
-1. Quarter cucumbers length wise, and pack them tightly into wide mouthed mason jars.
+Quarter cucumbers length wise, and pack them tightly into wide mouthed mason jars.
 
-1. Wedge dill sprigs down in between the cucumbers. Also wedge the garlic clove down there.
+Wedge dill sprigs down in between the cucumbers. Also wedge the garlic clove down there.
 
-1. Top with kosher salt, and enough water to cover the cucumbers. You do not want them exposed to air.
+Top with kosher salt, and enough water to cover the cucumbers. You do not want them exposed to air.
 
-1. Leave out at room temperature for 4 days. You should start seeing bubbling and other signs of fermentation by then.
+Leave out at room temperature for 4 days. You should start seeing bubbling and other signs of fermentation by then.
 
-1. Store in a cool cellar, or in the refrigerator, for up to a year.
+Store in a cool cellar, or in the refrigerator, for up to a year.
 
 > **Tip:** You will know if your pickles are good by smell. It should smell strong, but pleasant. It should not smell spoiled or rotten.

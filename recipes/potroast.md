@@ -9,11 +9,11 @@ id: potroast
 |---|---|
 | 4 | pound chuck eye roast |
 
-1. Sprinkle liberally with kosher salt, and rest overnight in the refrigerator, lightly tented with paper towel.
+Sprinkle liberally with kosher salt, and rest overnight in the refrigerator, lightly tented with paper towel.
 
-1. Before cooking, bring the roast onto the counter and let it come up to room temperature, which can take up to two hours.
+Before cooking, bring the roast onto the counter and let it come up to room temperature, which can take up to two hours.
 
-1. Pat the roast dry with paper towels, and brown all sides over medium-high heat in a large dutch oven. Reduce temperature if it starts to smoke. Remove roast to a plate.
+Pat the roast dry with paper towels, and brown all sides over medium-high heat in a large dutch oven. Reduce temperature if it starts to smoke. Remove roast to a plate.
 
 | Quantity | Ingredient |
 |---|---|
@@ -23,7 +23,7 @@ id: potroast
 | 2 | whole garlic cloves |
 | 1 | tablespoon kosher salt |
 
-1. Roughly chop vegetables, and add onions and salt to the pot, and cook until onions are just starting to brown. Add carrots, celery and garlic and cook for 5 more minutes.
+Roughly chop vegetables, and add onions and salt to the pot, and cook until onions are just starting to brown. Add carrots, celery and garlic and cook for 5 more minutes.
 
 | Quantity | Ingredient |
 |---|---|
@@ -31,11 +31,11 @@ id: potroast
 | 1 | cup red wine |
 | 1 | sprig fresh thyme |
 
-1. Move the roast back to the pot, and add liquid until the level comes halfway up the roast. Better to have too little liquid than too much. Put in a 300° oven for 5 hours, flipping the roast half way through.
+Move the roast back to the pot, and add liquid until the level comes halfway up the roast. Better to have too little liquid than too much. Put in a 300° oven for 5 hours, flipping the roast half way through.
 
 > **Tip:** At the end, blend the sauce and root vegetables for a thicker sauce.
 
-1. Baked red bliss potatoes are a good accompaniment. They can either be placed on the bare oven rack, or added to the pot in the last two hours.
+Baked red bliss potatoes are a good accompaniment. They can either be placed on the bare oven rack, or added to the pot in the last two hours.
 
 ## Whiskey Variation
 

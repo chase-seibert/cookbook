@@ -6,22 +6,20 @@ jobs:
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v2
-      - name: Compile LaTeX document
-        uses: xu-cheng/latex-action@v2
-        with:
-          root_file: Cookbook.tex
+      - name: Generate and compile the Markdown-based LaTeX cookbook
+        run: make docker-pdf
       - name: Upload GitHub Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Cookbook
-          path: Cookbook.pdf
+          path: build/latex/Cookbook.pdf
       - name: Upload Final PDF to AWS S3
         uses: zdurham/s3-upload-github-action@master
         if: github.ref == 'refs/heads/master'
         with:
           args: --acl public-read
         env:
-          FILE: ./Cookbook.pdf
+          FILE: ./build/latex/Cookbook.pdf
           AWS_REGION: 'us-west-2'
           S3_BUCKET: ${{ secrets.AWS_BUCKET }}
           S3_KEY: 'cookbook.pdf'

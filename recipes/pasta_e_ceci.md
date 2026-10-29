@@ -15,9 +15,9 @@ id: pasta_e_ceci
 | 4 | garlic cloves |
 | 1 | onion |
 
-1. Dice pancetta and process in a food processor. Add roughly chopped vegetables and process.
+Dice pancetta and process in a food processor. Add roughly chopped vegetables and process.
 
-1. Transfer to dutch oven and cook over medium heat with salt and olive oil. Cook until a fond starts to form.
+Transfer to dutch oven and cook over medium heat with salt and olive oil. Cook until a fond starts to form.
 
 | Quantity | Ingredient |
 |---|---|
@@ -25,7 +25,7 @@ id: pasta_e_ceci
 | 1 | teaspoon red chili flakes |
 | 2 | teaspoons rosemary |
 
-1. Add ingredients and cook until fragrant.
+Add ingredients and cook until fragrant.
 
 | Quantity | Ingredient |
 |---|---|
@@ -33,13 +33,13 @@ id: pasta_e_ceci
 | 15 | ounces chickpeas (with liquid) |
 | 2 | cups water |
 
-1. Stir in tomatoes, chickpeas and water. Deglaze. Bring to simmer. Let simmer for 10 minutes.
+Stir in tomatoes, chickpeas and water. Deglaze. Bring to simmer. Let simmer for 10 minutes.
 
 | Quantity | Ingredient |
 |---|---|
 | 1 | box ditalini pasta |
 
-1. Add pasta and cook until al-dente.
+Add pasta and cook until al-dente.
 
 | Quantity | Ingredient |
 |---|---|
@@ -49,4 +49,4 @@ id: pasta_e_ceci
 |  | salt |
 |  | pepper |
 
-1. Season to taste.
+Season to taste.

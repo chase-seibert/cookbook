@@ -1,60 +1,39 @@
 # Chase Seibert's Cookbook
 
-This is a collection of recipes in LaTeX format.
+Recipe content is maintained as Markdown in [`recipes/`](recipes/), using the
+format in [`docs/recipe-markdown-format.md`](docs/recipe-markdown-format.md).
+The order of categories and recipes is in [`recipes/index.json`](recipes/index.json).
+The iOS catalog, LaTeX cookbook, PDF, and HTML cookbook are generated outputs.
 
-- [PDF version](https://chase-cookbook.s3.us-west-2.amazonaws.com/cookbook.pdf)
-- [HTML version](https://chase-cookbook.s3.us-west-2.amazonaws.com/cookbook.html)
+- [Published PDF](https://chase-cookbook.s3.us-west-2.amazonaws.com/cookbook.pdf)
+- [Published HTML](https://chase-cookbook.s3.us-west-2.amazonaws.com/cookbook.html)
 
-# Compiling 
-
-See the GitHub Actions tab for this project and the related YAML files under `.github/workflows`. 
-
-Compiling PDF for local development: 
-
-```bash
-pdflatex Cookbook.tex
-open Cookbook.pdf
-```
-
-Compiling HTML for local development: 
+## Generate cookbook outputs
 
 ```bash
-./run_html.py --index Cookbook.tex > Cookbook.html
-open Cookbook.html
+make catalog          # iOS bundled catalog: ios/Cookbook/Resources/recipes.json
+make catalog-check    # verify the bundled catalog matches Markdown
+make latex            # LaTeX files under build/latex/
+make docker-pdf       # build/latex/Cookbook.pdf
+make html             # build/html/Cookbook.html
 ```
 
-## Docker
-
-The PDF Docker flow uses the same full TeX Live image as the GitHub Actions
-workflow (`xu-cheng/latex-action@v2`). This keeps local compilation isolated
-from macOS LaTeX installations:
+The LaTeX build uses the repository Docker image so it does not depend on a
+local TeX installation. For a one-recipe preview, use the stable recipe ID or
+Markdown source slug:
 
 ```bash
-make docker-pdf
-make docker-html
+make recipe-pdf RECIPE=bread
 ```
 
-For a one-recipe edit, compile only that recipe and enforce the one-page limit:
-
-```bash
-make recipe-pdf RECIPE=<recipe-id-or-source-slug>
-```
-
-The preview PDF is written to `build/recipe-pdf/`. Keep each recipe to one
-cookbook page in a single column by condensing its wording and headings; do not
-use side-by-side recipe columns. Do not deploy the iOS app as part of recipe
-work unless deployment is explicitly requested.
-
-On Apple Silicon, the PDF image runs as `linux/amd64`, matching the GitHub
-Actions runner. The first PDF build downloads the TeX Live image and may take
-some time.
-
-Recipe notes can use `\tip{...}` for general tips or `\healthierOption{...}` for healthier alternatives.
+The preview is written to `build/recipe-pdf/` and checks the one-page recipe
+limit. Keep recipe layouts in one column and preserve ingredient amounts,
+temperatures, and food-safety instructions.
 
 ## iPhone app
 
-The `ios/` directory contains a native SwiftUI app and an offline recipe catalog
-generated from the LaTeX sources. Recipe files remain authoritative; do not edit
+The native SwiftUI app lives in `ios/`. Its offline recipe catalog is generated
+from the Markdown recipe files and cookbook index; do not edit
 `ios/Cookbook/Resources/recipes.json` by hand.
 
 ```bash
@@ -64,13 +43,14 @@ make sim-build
 make sim-launch
 ```
 
-See [the mobile setup guide](docs/setup-install.md) and [the app architecture](docs/architecture.md).
+See [the mobile setup guide](docs/setup-install.md) and
+[the app architecture](docs/architecture.md).
 
-# Printing
+## Printing
 
-I use [Lulu.com](http://lulu.com)
+I use [Lulu.com](http://lulu.com).
 
-```bash
+```text
 Print Book: US Letter (8.5 x 11 in / 216 x 279 mm)
 Standard Black & White, 60# White, Hardcover, Glossy Cover
 ```

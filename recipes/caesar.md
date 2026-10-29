@@ -13,17 +13,17 @@ id: caesar
 | ¼ | cup olive oil |
 | 5 | garlic cloves |
 
-1. Simmer smashed garlic cloves in oil for 10 minutes to flavor the oil.
+Simmer smashed garlic cloves in oil for 10 minutes to flavor the oil.
 
-1. Cut bread into ½ inch cubes. Toss with olive ol and spread on a baking sheet.
+Cut bread into ½ inch cubes. Toss with olive ol and spread on a baking sheet.
 
-1. Bake at 400° for 7 minutes. Remove to bowl, toss, and return to oven for 4 minutes so that crutons brown evenly. Repeat until very well browned.
+Bake at 400° for 7 minutes. Remove to bowl, toss, and return to oven for 4 minutes so that crutons brown evenly. Repeat until very well browned.
 
 | Quantity | Ingredient |
 |---|---|
 | 2 | heads romaine hearts |
 
-1. Cut whole leaves off of the root, and place in an ice bath for 30 minutes. Drain and spin with a salad spinner, and place in the refrigerator to dry off for 30 minutes.
+Cut whole leaves off of the root, and place in an ice bath for 30 minutes. Drain and spin with a salad spinner, and place in the refrigerator to dry off for 30 minutes.
 
 | Quantity | Ingredient |
 |---|---|
@@ -35,6 +35,6 @@ id: caesar
 | 4 | anchovy fillets |
 | 3 | oz parmesan reggiano |
 
-1. Blitz everything except the Parmesan in a small food processor until completely homogenous. Then add the grated Parmesan and blitz again. Season with salt and pepper.
+Blitz everything except the Parmesan in a small food processor until completely homogenous. Then add the grated Parmesan and blitz again. Season with salt and pepper.
 
-1. Dress the salad, using only half the dressing to start. You can always add more. Serve with extra parmesan, and fresh pepper.
+Dress the salad, using only half the dressing to start. You can always add more. Serve with extra parmesan, and fresh pepper.

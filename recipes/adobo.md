@@ -19,11 +19,11 @@ kind: collection
 | 4 | Serrano chilis |
 |  | Kosher salt |
 
-1. Toast garlic cloves (with skins on) for 15 minutes in a skillet on the stove top. Add the chilis for the last 10 minutes.
+Toast garlic cloves (with skins on) for 15 minutes in a skillet on the stove top. Add the chilis for the last 10 minutes.
 
-1. Remove the garlic skins and chop the garlic and chilis roughly.
+Remove the garlic skins and chop the garlic and chilis roughly.
 
-1. Process all ingredients in a food processor until it's the consistency of pesto. Pack into a jar and refrigerate.
+Process all ingredients in a food processor until it's the consistency of pesto. Pack into a jar and refrigerate.
 
 ## Red Adobo
 
@@ -34,10 +34,10 @@ kind: collection
 |  | apple cider vinegar |
 |  | Kosher salt |
 
-1. Remove stems from chilis.
+Remove stems from chilis.
 
-1. Toast garlic cloves (with skins on) for 15 minutes in a skillet on the stove top. Add the chilis for the last 10 minutes.
+Toast garlic cloves (with skins on) for 15 minutes in a skillet on the stove top. Add the chilis for the last 10 minutes.
 
-1. Remove the garlic skins and chop the garlic and chilis roughly.
+Remove the garlic skins and chop the garlic and chilis roughly.
 
-1. Process all ingredients in a blender until it's the consistency of tomato paste, adding just enough apple cider vinegar. Pack into a jar and refrigerate.
+Process all ingredients in a blender until it's the consistency of tomato paste, adding just enough apple cider vinegar. Pack into a jar and refrigerate.

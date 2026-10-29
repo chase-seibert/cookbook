@@ -13,7 +13,7 @@ id: yellow_curry
 | 2 | tablespoons yellow curry powder |
 | 1 | tablespoon yellow curry paste |
 
-1. Bloom curry powder and paste in oil over medium heat for 30 seconds.
+Bloom curry powder and paste in oil over medium heat for 30 seconds.
 
 | Quantity | Ingredient |
 |---|---|
@@ -23,7 +23,7 @@ id: yellow_curry
 | 2 | teaspoons fish sauce |
 | 1 | tablespoon kosher salt |
 
-1. Add a small amount of the coconut milk. Whisk to combine. Whisk in sugar and peanut butter. Add the rest of the coconut milk and the fish sauce.
+Add a small amount of the coconut milk. Whisk to combine. Whisk in sugar and peanut butter. Add the rest of the coconut milk and the fish sauce.
 
 | Quantity | Ingredient |
 |---|---|
@@ -34,17 +34,17 @@ id: yellow_curry
 | 1 | large chicken breast |
 | 1 | tablespoon cornstarch |
 
-1. Slice potatoes into ¾ inch chunks, and carrots into discs. Slice chicken ¼ inch.
+Slice potatoes into ¾ inch chunks, and carrots into discs. Slice chicken ¼ inch.
 
-1. Add potatoes, carrots, chicken and pineapple. Simmer for 10 minutes.
+Add potatoes, carrots, chicken and pineapple. Simmer for 10 minutes.
 
-1. Make a cornstarch and water slurry and add to sauce. Slice onions into half crescents. Add the onions and simmer another 10 minutes.
+Make a cornstarch and water slurry and add to sauce. Slice onions into half crescents. Add the onions and simmer another 10 minutes.
 
 | Quantity | Ingredient |
 |---|---|
 | 2 | cups Jasmine rice, rinsed three times |
 
-1. Boil 2.25 cups of water. Add rice. Cook covered for 15 minutes on lowest setting.
+Boil 2.25 cups of water. Add rice. Cook covered for 15 minutes on lowest setting.
 
 | Quantity | Ingredient |
 |---|---|
@@ -52,6 +52,6 @@ id: yellow_curry
 |  | Cilantro |
 |  | Sriracha |
 
-1. Once curry is done, take off heat and stir in half a lime of juice. Let cool for 10 minutes.
+Once curry is done, take off heat and stir in half a lime of juice. Let cool for 10 minutes.
 
-1. Roughly chopped cilantro and serve with Sriracha on the side.
+Roughly chopped cilantro and serve with Sriracha on the side.

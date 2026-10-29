@@ -16,7 +16,7 @@ kind: collection
 | 1 | Maraschino cherry |
 |  | lemon peel |
 
-1. Combine in a cocktail shaker with ice. Shake for 60 seconds. Strain into a glass with fresh ice, and top with cherry and lemon peel.
+Combine in a cocktail shaker with ice. Shake for 60 seconds. Strain into a glass with fresh ice, and top with cherry and lemon peel.
 
 ## Paloma
 
@@ -27,7 +27,7 @@ kind: collection
 | 3 | oz San Pellegrino Pomelo or Squirt |
 |  | grapefruit wedge |
 
-1. Combine in glass over ice. The grapefruit soda amount is variable to top up a 9 ounce glass.
+Combine in glass over ice. The grapefruit soda amount is variable to top up a 9 ounce glass.
 
 ## Margarita
 
@@ -38,7 +38,7 @@ kind: collection
 | 1 | oz grand marnier |
 |  | kosher salt |
 
-1. Shake with ice.
+Shake with ice.
 
 ## Negroni
 
@@ -49,4 +49,4 @@ kind: collection
 | 1 | oz Cinzano |
 | 1 | oz simple syrup |
 
-1. Shake with ice. Serve with a citrus twist.
+Shake with ice. Serve with a citrus twist.

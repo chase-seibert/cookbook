@@ -13,15 +13,15 @@ id: stock
 | 4 | celery stalks |
 | 2 | carrots |
 
-1. Roughly chop these ingredients. They don't have to be peeled at all, even the onions. Cover with four quarts of water.
+Roughly chop these ingredients. They don't have to be peeled at all, even the onions. Cover with four quarts of water.
 
 > **Tip:** You can also add any protein and/or bones you have on hand. A chicken or turkey carcass is the usual option.
 
-1. Ingredients should be covered by the water. This may require the larger items to be broken down first.
+Ingredients should be covered by the water. This may require the larger items to be broken down first.
 
-1. Bring to boil on the stove, and quickly reduce to the lowest heat setting. You want the surface to be broken by a small bubble only once every two or three seconds.
+Bring to boil on the stove, and quickly reduce to the lowest heat setting. You want the surface to be broken by a small bubble only once every two or three seconds.
 
-1. Simmer for at least four hours.
+Simmer for at least four hours.
 
 | Quantity | Ingredient |
 |---|---|
@@ -30,12 +30,12 @@ id: stock
 |  | kosher salt |
 |  | pepper |
 
-1. Time to flavor the stock. Add liberal amounts of salt and pepper to taste.
+Time to flavor the stock. Add liberal amounts of salt and pepper to taste.
 
 > **Tip:** The gelatin serves to give the stock a better mouth feel. You can get the same effect by using a lot of bones; gelatin will naturally be extracted from the bone marrow.
 
-1. Remove one cup of the stock and mix with gelatin powder, then add the gelatin mixture back to the stock.
+Remove one cup of the stock and mix with gelatin powder, then add the gelatin mixture back to the stock.
 
-1. Typical herbs to use would be rosemary, thyme and sage. Tie them into a bundle and steep in the stock.
+Typical herbs to use would be rosemary, thyme and sage. Tie them into a bundle and steep in the stock.
 
-1. Filter the stock through a fine mesh strainer like a Chinois. and discard solids. Stock can be used immediately, or cooled to room temperature in an ice bath and then refrigerated. Should be used within two weeks.
+Filter the stock through a fine mesh strainer like a Chinois. and discard solids. Stock can be used immediately, or cooled to room temperature in an ice bath and then refrigerated. Should be used within two weeks.

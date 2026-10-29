@@ -11,7 +11,7 @@ id: tacos
 |---|---|
 | 1 | pound ground beef |
 
-1. Fry in a cast iron pan over medium-high heat. Don't flip it at all for at least 10 minutes.
+Fry in a cast iron pan over medium-high heat. Don't flip it at all for at least 10 minutes.
 
 | Quantity | Ingredient |
 |---|---|
@@ -23,9 +23,9 @@ id: tacos
 | ¼ | cup chicken broth |
 | 1 | can Adobe sauce, chilies removed |
 
-1. Dump the spice mixture on top. Smother in chicken broth and Adobe sauce, and stir to combine.
+Dump the spice mixture on top. Smother in chicken broth and Adobe sauce, and stir to combine.
 
-1. Cook for 10 minutes.
+Cook for 10 minutes.
 
 | Quantity | Ingredient |
 |---|---|
@@ -35,18 +35,18 @@ id: tacos
 | 2 | cups chicken broth |
 | 3 | tablespoons chopped parsley |
 
-1. Brown rice with oil. Add smashed garlic clove and chicken broth and bring to simmer. Reduce to low, cover with a dish towel between the lid and the pot and cook for 25 minutes.
+Brown rice with oil. Add smashed garlic clove and chicken broth and bring to simmer. Reduce to low, cover with a dish towel between the lid and the pot and cook for 25 minutes.
 
 | Quantity | Ingredient |
 |---|---|
 | 8 | six inch corn tortillas |
 | 2 | cups vegetable oil |
 
-1. Heat the vegetable oil over medium heat in a frying pan just big enough to fit one tortilla.
+Heat the vegetable oil over medium heat in a frying pan just big enough to fit one tortilla.
 
-1. Fry each tortilla for 30 seconds per side. Remove to a paper towel lined cooling rack.
+Fry each tortilla for 30 seconds per side. Remove to a paper towel lined cooling rack.
 
-1. Blacken flour tortillas directly over the gas flames.
+Blacken flour tortillas directly over the gas flames.
 
 | Quantity | Ingredient |
 |---|---|
@@ -54,7 +54,7 @@ id: tacos
 | 2 | limes |
 | 1 | tablespoon hot sauce |
 
-1. Mix together.
+Mix together.
 
 | Quantity | Ingredient |
 |---|---|
@@ -63,4 +63,4 @@ id: tacos
 |  | refried beans |
 |  | lettuce |
 
-1. Wrap corn tortillas in flour tortilla shells and serve with various accoutrements.
+Wrap corn tortillas in flour tortilla shells and serve with various accoutrements.

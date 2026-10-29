@@ -19,16 +19,16 @@ id: christmas
 |  | kosher salt |
 |  | pepper |
 
-1. Whisk eggs and half and half together. Finely chop onion and sauté in butter with salt. Add egg and cream mixture and heat up until it's just warm. Season liberally with salt and pepper.
+Whisk eggs and half and half together. Finely chop onion and sauté in butter with salt. Add egg and cream mixture and heat up until it's just warm. Season liberally with salt and pepper.
 
-1. Cube bread and combine with egg mixture, making sure there is no dry bread left.
+Cube bread and combine with egg mixture, making sure there is no dry bread left.
 
-1. Top with tomatoes and grated cheese and refrigerate overnight, covered.
+Top with tomatoes and grated cheese and refrigerate overnight, covered.
 
 | Quantity | Ingredient |
 |---|---|
 | ½ | package bacon |
 
-1. On Christmas morning, start by cooking bacon in a 400° oven on a baking sheet for 20 minutes. Remove, blot dry with paper towels, and chop into medium sized pieces.
+On Christmas morning, start by cooking bacon in a 400° oven on a baking sheet for 20 minutes. Remove, blot dry with paper towels, and chop into medium sized pieces.
 
-1. Top casserole with bacon pieces and bake in a 350° oven until the sides are bubbling, about 25 minutes. Let cool for 10 minutes and serve.
+Top casserole with bacon pieces and bake in a 350° oven until the sides are bubbling, about 25 minutes. Let cool for 10 minutes and serve.

@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "categories": [
+    {
+      "title": "Salads",
+      "recipes": [
+        "caesar",
+        "spinach",
+        "kale",
+        "quarantine_salad",
+        "couscous",
+        "potatosalad",
+        "panzanella",
+        "southwest",
+        "brownrice",
+        "saladdressings"
+      ]
+    },
+    {
+      "title": "Main Dishes: Every Day",
+      "recipes": [
+        "macandcheese",
+        "creammushroom",
+        "burgers",
+        "tacos",
+        "ziti",
+        "orecchiette",
+        "roastchicken",
+        "vermichli",
+        "garlicchilipasta",
+        "pasta_e_ceci",
+        "pizza",
+        "sausage-lentils",
+        "fiery_green_beans",
+        "aperto",
+        "deepdish",
+        "lasagna",
+        "enchilada",
+        "tomatillo-enchilada",
+        "chili",
+        "pulledpork",
+        "potroast",
+        "pho",
+        "pork_ramen",
+        "pot_pie",
+        "yellow_curry",
+        "beef_stew",
+        "pasta_ouva",
+        "cashew_chicken",
+        "pad_see_ew",
+        "braised_chicken_thighs",
+        "chicken_parmesan",
+        "panko_mahi_mahi",
+        "chicken_kebabs",
+        "chicken_piccata",
+        "orange_chicken"
+      ]
+    },
+    {
+      "title": "Main Dishes: Out-of-Your-Way",
+      "recipes": [
+        "turkey",
+        "ham",
+        "beef_tenderloin",
+        "christmas",
+        "cheesecake"
+      ]
+    },
+    {
+      "title": "Baking",
+      "recipes": [
+        "pancakes",
+        "bread",
+        "flatbread",
+        "prosciutto_cheese_bread",
+        "banana_muffins",
+        "cinnamon_bun",
+        "biscuits",
+        "yelllow_cake"
+      ]
+    },
+    {
+      "title": "Odds and Ends",
+      "recipes": [
+        "omelet",
+        "stock",
+        "pickles",
+        "adobo",
+        "plums",
+        "cocktails",
+        "popcorn",
+        "raspberry_lime_rickey",
+        "ham_and_cheese_italian",
+        "chili_oil"
+      ]
+    }
+  ]
+}

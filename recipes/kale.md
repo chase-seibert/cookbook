@@ -11,7 +11,7 @@ id: kale
 |---|---|
 | 2 | heads Luciano kale |
 
-1. Remove the ribs of the kale by folding the leaves over lengthwise and stripping them through your curled fingers. Chop kale into ribbons of approximately ¼ inch.
+Remove the ribs of the kale by folding the leaves over lengthwise and stripping them through your curled fingers. Chop kale into ribbons of approximately ¼ inch.
 
 > **Tip:** Massage the kale for 2-3 minutes roughly with your hands to produce a mellower flavor.
 
@@ -21,7 +21,7 @@ id: kale
 | ¼ | cup lemon juice |
 | 2 | garlic cloves |
 
-1. Mince garlic and whisk ingredients together to create a vinaigrette dressing.
+Mince garlic and whisk ingredients together to create a vinaigrette dressing.
 
 | Quantity | Ingredient |
 |---|---|
@@ -32,6 +32,6 @@ id: kale
 
 > **Tip:** Frozen Edamame is just fine, and so much more convenient than shelling pods. Just defrost ahead of time.
 
-1. Grate cheese and combine ingredients in a large bowl. Season liberally with salt and pepper. Kale can take a lot of salt!
+Grate cheese and combine ingredients in a large bowl. Season liberally with salt and pepper. Kale can take a lot of salt!
 
-1. Serve with Sriracha for the adventurous.
+Serve with Sriracha for the adventurous.

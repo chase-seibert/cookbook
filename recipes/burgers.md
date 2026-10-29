@@ -13,29 +13,29 @@ id: burgers
 | 1 | part beef short ribs |
 |  | kosher salt |
 
-1. Cut both meats into one-inch cubes, spread uncrowded on plates and freeze for 15-20 minutes.
+Cut both meats into one-inch cubes, spread uncrowded on plates and freeze for 15-20 minutes.
 
 | Quantity | Ingredient |
 |---|---|
 |  | unsalted butter |
 |  | Kaiser rolls |
 
-1. For each roll, melt one tablespoon of butter in a sauté pan over medium heat, and fry both roll halves face down until golden brown, about 3 minutes.
+For each roll, melt one tablespoon of butter in a sauté pan over medium heat, and fry both roll halves face down until golden brown, about 3 minutes.
 
-1. Remove meat from freezer.
+Remove meat from freezer.
 
-1. Working in batches with a 2:1 ratio of steak tip to short rib, pulse in a food processor to a coarse ground meat consistency (About 10 one-second pulses).
+Working in batches with a 2:1 ratio of steak tip to short rib, pulse in a food processor to a coarse ground meat consistency (About 10 one-second pulses).
 
-1. Spread ground meat onto baking sheets and hand-mold into loose, thin burgers. Season liberally with salt and pepper.
+Spread ground meat onto baking sheets and hand-mold into loose, thin burgers. Season liberally with salt and pepper.
 
 | Quantity | Ingredient |
 |---|---|
 |  | slices American cheese |
 |  | vegetable oil |
 
-1. Add one tablespoon oil to a large sauté pan over high heat, along with the burgers. Don't move the burgers at all for at least three minutes, or until the juices are bubbling through the raw layer on top.
+Add one tablespoon oil to a large sauté pan over high heat, along with the burgers. Don't move the burgers at all for at least three minutes, or until the juices are bubbling through the raw layer on top.
 
-1. Flip burgers. Add one slice of cheese to each, and cook for another two minutes without flipping.
+Flip burgers. Add one slice of cheese to each, and cook for another two minutes without flipping.
 
 > **Tip:** Best served with thinly sliced onions, and not much else.
 
@@ -50,4 +50,4 @@ id: burgers
 | 1 | teaspoon sweet relish |
 |  | fresh pepper |
 
-1. Whisk ingredients together in a small bowl, add pepper and sweet relish to taste.
+Whisk ingredients together in a small bowl, add pepper and sweet relish to taste.

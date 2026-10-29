@@ -1,6 +1,6 @@
 # Recipe thumbnail generation
 
-The recipe LaTeX files remain authoritative. Generated thumbnails are derived,
+The Markdown recipe files remain authoritative. Generated thumbnails are derived,
 offline app resources stored in `ios/Cookbook/Resources/Thumbnails/`; the
 checkpoint manifest is `data/mobile/thumbnail-manifest.json`.
 
@@ -33,5 +33,5 @@ prompt version, missing file, malformed image, or size violation is pending.
 
 `make thumbnail-validate` checks all checkpointed image files and reports the
 aggregate size. `make catalog-check` verifies that the bundled catalog matches
-the LaTeX sources and only references current manifest entries with existing
+the Markdown sources and only references current manifest entries with existing
 assets. No generation or network request runs inside the iOS app.

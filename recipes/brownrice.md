@@ -11,7 +11,7 @@ id: brownrice
 |---|---|
 | 2 | cups brown rice |
 
-1. Boil in a large amount of water for 30 or minutes. It should be al-dente.
+Boil in a large amount of water for 30 or minutes. It should be al-dente.
 
 | Quantity | Ingredient |
 |---|---|
@@ -22,6 +22,6 @@ id: brownrice
 | 3 | teaspoons red wine vinegar |
 | 8 | ounces feta cheese |
 
-1. Mince herbs and combine with cooled drained rice.
+Mince herbs and combine with cooled drained rice.
 
 > **Tip:** Variations include adding sliced cherry tomatoes, cucumbers or preserved lemon.

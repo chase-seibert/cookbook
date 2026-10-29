@@ -13,12 +13,12 @@ id: quarantine_salad
 | ½ | cup feta cheese, small crumble |
 |  | whole shelled pistachios |
 
-1. Mince spring mix finely. Layer lettuce, feta, and pistacios in a bowl.
+Mince spring mix finely. Layer lettuce, feta, and pistacios in a bowl.
 
 | Quantity | Ingredient |
 |---|---|
 |  | Brussel sprouts |
 
-1. Slice brussel sprouts and sauté in a pan with olive oil until the leaves are blackened.
+Slice brussel sprouts and sauté in a pan with olive oil until the leaves are blackened.
 
-1. Top salad with warm Brussel sprouts, and season to taste with salt and Sriracha.
+Top salad with warm Brussel sprouts, and season to taste with salt and Sriracha.

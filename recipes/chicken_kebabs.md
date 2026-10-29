@@ -18,13 +18,13 @@ id: chicken_kebabs
 |  | Salt |
 | 1 | bunch cilantro minced |
 
-1. Mix ingredients in a bowl with a lid.
+Mix ingredients in a bowl with a lid.
 
 | Quantity | Ingredient |
 |---|---|
 | 4 | chicken thighs |
 
-1. Cut chicken into one-inch pieces and toss in the bowl to coat. Marinate for 24 hours.
+Cut chicken into one-inch pieces and toss in the bowl to coat. Marinate for 24 hours.
 
 | Quantity | Ingredient |
 |---|---|
@@ -35,19 +35,19 @@ id: chicken_kebabs
 |  | olive oil |
 | 1 | bunch fresh dill or mint |
 
-1. To make Tzatziki sauce, peel and scoop seeds out of the cucumber. Dice. Combine with the rest of the ingredients, plus the minced herbs.
+To make Tzatziki sauce, peel and scoop seeds out of the cucumber. Dice. Combine with the rest of the ingredients, plus the minced herbs.
 
-1. Pre-heat oven to 450°.
+Pre-heat oven to 450°.
 
-1. Put foil on the bottom of a sheet pan. Space out the chicken pieces on the foil.
+Put foil on the bottom of a sheet pan. Space out the chicken pieces on the foil.
 
 | Quantity | Ingredient |
 |---|---|
 | 2 | onions |
 | 2 | bell peppers |
 
-1. Slice vegetables, and toss with olive oil and salt. Place on a second sheet pan covered in foil.
+Slice vegetables, and toss with olive oil and salt. Place on a second sheet pan covered in foil.
 
-1. Broil chicken until charred and chicken is fully cooked. Then broil the vegetables while the chicken cools.
+Broil chicken until charred and chicken is fully cooked. Then broil the vegetables while the chicken cools.
 
-1. Serve with rice, hummus and Tzatziki sauce.
+Serve with rice, hummus and Tzatziki sauce.
