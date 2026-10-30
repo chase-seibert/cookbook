@@ -951,7 +951,236 @@
       "onions"
     ]
   },
-  "recipeProvenance": {},
+  "recipeProvenance": {
+    "caesar": {
+      "type": "personalCookbook"
+    },
+    "spinach": {
+      "type": "personalCookbook"
+    },
+    "kale": {
+      "type": "personalCookbook"
+    },
+    "quarantine_salad": {
+      "type": "personalCookbook"
+    },
+    "couscous": {
+      "type": "personalCookbook"
+    },
+    "potatosalad": {
+      "type": "personalCookbook"
+    },
+    "panzanella": {
+      "type": "personalCookbook"
+    },
+    "southwest": {
+      "type": "personalCookbook"
+    },
+    "brownrice": {
+      "type": "personalCookbook"
+    },
+    "saladdressings-phil-s-famous": {
+      "type": "personalCookbook"
+    },
+    "saladdressings-lemon-vinaigrette": {
+      "type": "personalCookbook"
+    },
+    "saladdressings-parmesan-peppercorn": {
+      "type": "personalCookbook"
+    },
+    "macandcheese": {
+      "type": "personalCookbook"
+    },
+    "creammushroom": {
+      "type": "personalCookbook"
+    },
+    "burgers": {
+      "type": "personalCookbook"
+    },
+    "tacos": {
+      "type": "personalCookbook"
+    },
+    "ziti": {
+      "type": "personalCookbook"
+    },
+    "orecchiette": {
+      "type": "personalCookbook"
+    },
+    "roastchicken": {
+      "type": "personalCookbook"
+    },
+    "vermichli": {
+      "type": "personalCookbook"
+    },
+    "garlicchilipasta": {
+      "type": "personalCookbook"
+    },
+    "pasta_e_ceci": {
+      "type": "personalCookbook"
+    },
+    "pizza": {
+      "type": "personalCookbook"
+    },
+    "sausage-lentils": {
+      "type": "personalCookbook"
+    },
+    "fiery_green_beans": {
+      "type": "personalCookbook"
+    },
+    "aperto": {
+      "type": "personalCookbook"
+    },
+    "deepdish": {
+      "type": "personalCookbook"
+    },
+    "lasagna": {
+      "type": "personalCookbook"
+    },
+    "enchilada": {
+      "type": "personalCookbook"
+    },
+    "tomatillo-enchilada": {
+      "type": "personalCookbook"
+    },
+    "chili": {
+      "type": "personalCookbook"
+    },
+    "pulledpork": {
+      "type": "personalCookbook"
+    },
+    "potroast": {
+      "type": "personalCookbook"
+    },
+    "pho": {
+      "type": "personalCookbook"
+    },
+    "pork_ramen": {
+      "type": "personalCookbook"
+    },
+    "pot_pie": {
+      "type": "personalCookbook"
+    },
+    "yellow_curry": {
+      "type": "personalCookbook"
+    },
+    "beef_stew": {
+      "type": "personalCookbook"
+    },
+    "pasta_ouva": {
+      "type": "personalCookbook"
+    },
+    "cashew_chicken": {
+      "type": "personalCookbook"
+    },
+    "pad_see_ew": {
+      "type": "personalCookbook"
+    },
+    "braised_chicken_thighs": {
+      "type": "personalCookbook"
+    },
+    "chicken_parmesan": {
+      "type": "personalCookbook"
+    },
+    "panko_mahi_mahi": {
+      "type": "personalCookbook"
+    },
+    "chicken_kebabs": {
+      "type": "personalCookbook"
+    },
+    "chicken_piccata": {
+      "type": "personalCookbook"
+    },
+    "orange_chicken": {
+      "type": "personalCookbook"
+    },
+    "turkey": {
+      "type": "personalCookbook"
+    },
+    "ham": {
+      "type": "personalCookbook"
+    },
+    "beef_tenderloin": {
+      "type": "personalCookbook"
+    },
+    "christmas": {
+      "type": "personalCookbook"
+    },
+    "cheesecake": {
+      "type": "personalCookbook"
+    },
+    "pancakes": {
+      "type": "personalCookbook"
+    },
+    "bread": {
+      "type": "personalCookbook"
+    },
+    "flatbread": {
+      "type": "personalCookbook"
+    },
+    "prosciutto_cheese_bread": {
+      "type": "personalCookbook"
+    },
+    "banana_muffins": {
+      "type": "personalCookbook"
+    },
+    "cinnamon_bun": {
+      "type": "personalCookbook"
+    },
+    "biscuits": {
+      "type": "personalCookbook"
+    },
+    "yelllow_cake": {
+      "type": "personalCookbook"
+    },
+    "omelet": {
+      "type": "personalCookbook"
+    },
+    "stock": {
+      "type": "personalCookbook"
+    },
+    "pickles": {
+      "type": "personalCookbook"
+    },
+    "adobo-green-adobo": {
+      "type": "personalCookbook"
+    },
+    "adobo-red-adobo": {
+      "type": "personalCookbook"
+    },
+    "plums-plum-jam": {
+      "type": "personalCookbook"
+    },
+    "plums-plum-preserves": {
+      "type": "personalCookbook"
+    },
+    "plums-plum-mixer": {
+      "type": "personalCookbook"
+    },
+    "cocktails-whiskey-sour": {
+      "type": "personalCookbook"
+    },
+    "cocktails-paloma": {
+      "type": "personalCookbook"
+    },
+    "cocktails-margarita": {
+      "type": "personalCookbook"
+    },
+    "cocktails-negroni": {
+      "type": "personalCookbook"
+    },
+    "popcorn": {
+      "type": "personalCookbook"
+    },
+    "raspberry_lime_rickey": {
+      "type": "personalCookbook"
+    },
+    "ham_and_cheese_italian": {
+      "type": "personalCookbook"
+    },
+    "chili_oil": {
+      "type": "personalCookbook"
+    }
+  },
   "menuCopy": {
     "cashew_chicken": {
       "description": "Tender chicken and crisp vegetables meet a savory Thai-style sauce, finished with toasted cashews for a little crunch in every bite.",

@@ -299,7 +299,7 @@ def validate_provenance(recipes: list[dict], provenance: object) -> None:
     unknown = set(provenance) - recipe_ids
     if unknown:
         raise ValueError(f"recipe provenance has unknown IDs: {', '.join(sorted(unknown))}")
-    allowed_types = {"website", "paprikaImport", "manual", "cookbookRepository", "other"}
+    allowed_types = {"website", "paprikaImport", "manual", "personalCookbook", "cookbookRepository", "other"}
     for recipe_id, source in provenance.items():
         if not isinstance(source, dict) or source.get("type") not in allowed_types:
             raise ValueError(f"recipe {recipe_id} has an unsupported provenance type")
@@ -311,6 +311,8 @@ def validate_provenance(recipes: list[dict], provenance: object) -> None:
             reference = source.get("reference")
             if reference is not None and not re.match(r"^https?://", reference, re.I):
                 raise ValueError(f"recipe {recipe_id} website reference must be an HTTP(S) URL")
+            if reference is None and source.get("name") is None:
+                raise ValueError(f"recipe {recipe_id} website provenance needs a URL or domain name")
 
 
 def main() -> int:

@@ -394,6 +394,9 @@
       "collectionTitle": null,
       "sourceFile": "caesar.md",
       "sourceSection": "Caesar Salad",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -593,6 +596,9 @@
       "collectionTitle": null,
       "sourceFile": "spinach.md",
       "sourceSection": "Anne's Spinach Salad",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "This recipe is from my Aunt Anne, who swears that she always used romaine lettuce instead of spinach.",
       "ingredients": [
         {
@@ -806,6 +812,9 @@
       "collectionTitle": null,
       "sourceFile": "kale.md",
       "sourceSection": "Kick-Ass Kale Salad",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "This salad was served by a caterer at a startup I worked for. I asked the chef about the recipe, and took copious notes so I could try to replicate it.",
       "ingredients": [
         {
@@ -951,6 +960,9 @@
       "collectionTitle": null,
       "sourceFile": "quarantine_salad.md",
       "sourceSection": "Quarantine Salad with warm Brussels and Feta",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "The still-warm Brussel sprouts are what make this salad. They bring out the flavor of the feta. This recipe is for single serving. This salad can take salt and Sriracha well.",
       "ingredients": [
         {
@@ -1041,6 +1053,9 @@
       "collectionTitle": null,
       "sourceFile": "couscous.md",
       "sourceSection": "Couscous Salad",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Couscous has a tendency to clump together. Ideally, we want every kernel to be separate.",
       "ingredients": [
         {
@@ -1214,6 +1229,9 @@
       "collectionTitle": null,
       "sourceFile": "potatosalad.md",
       "sourceSection": "Potato Salad",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "The key to this potato salad is cooking and cooling the potatoes completely, before cutting them up, or stirring them. Otherwise, the potatoes start to break down and muddy the salad. While they are hot, you want to both salt and season them with vinegar (pickle juice). If you can cook the potatoes inside a fitted colander inside a large pot, then they will bairly be distrubuted while cooking or cooling. There is never a reason to make more than 5lbs of potato salad.",
       "ingredients": [
         {
@@ -1413,6 +1431,9 @@
       "collectionTitle": null,
       "sourceFile": "panzanella.md",
       "sourceSection": "Panzanella",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "When you make a salad with wet ingredients like tomatoes, often times you get a pool of juice in the bottom of the bowl. This recipe, also known as Italian Bread Salad, soaks up that flavorful juice with toasted bread. The key is to let the salad rest for 10 minutes while the bread soaks up the juices.",
       "ingredients": [
         {
@@ -1547,6 +1568,9 @@
       "collectionTitle": null,
       "sourceFile": "southwest.md",
       "sourceSection": "Southwest Caesar Salad",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "You can make your own caesar dressing, or you can use a store bought version. I prefer the creamy white style. Cotija is a dry, fresh Mexican farm cheese.",
       "ingredients": [
         {
@@ -1683,6 +1707,9 @@
       "collectionTitle": null,
       "sourceFile": "brownrice.md",
       "sourceSection": "Brown Rice Salad",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Brown rice does not need to be boiled in a precise amount of water like white rice. You can cook it like pasta.",
       "ingredients": [
         {
@@ -1792,6 +1819,9 @@
       "collectionTitle": "Salad Dressings",
       "sourceFile": "saladdressings.md",
       "sourceSection": "Phil's Famous",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "My father used to make this dressing for salads and marinades at almost every family gathering, as well as once a week for regular dinners.",
       "ingredients": [
         {
@@ -1869,6 +1899,9 @@
       "collectionTitle": "Salad Dressings",
       "sourceFile": "saladdressings.md",
       "sourceSection": "Lemon Vinaigrette",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "This simple dressing is from Pam and Rick. I remember them serving it many times in Bar Harbor. It's great with just mixed greens, or with cucumber.",
       "ingredients": [
         {
@@ -1948,6 +1981,9 @@
       "collectionTitle": "Salad Dressings",
       "sourceFile": "saladdressings.md",
       "sourceSection": "Parmesan Peppercorn",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -2052,6 +2088,9 @@
       "collectionTitle": null,
       "sourceFile": "macandcheese.md",
       "sourceSection": "Fleming's Macaroni and Cheese",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "This is the actual recipe for a favorite side-dish from Fleming's Steak House in Boston. The recipe was published on the web by their head chef. Don't use sharp or extra sharp cheddar, or it will be a little grainy. If you can also throw in 3 slices of American cheese, the final dish will be much creamier.",
       "ingredients": [
         {
@@ -2267,6 +2306,9 @@
       "collectionTitle": null,
       "sourceFile": "creammushroom.md",
       "sourceSection": "Cream of Mushroom and Chicken",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "This is great for a cold week night, and it re-heats very well. Shredding the chicken versus cutting into pieces helps the texture.",
       "ingredients": [
         {
@@ -2475,6 +2517,9 @@
       "collectionTitle": null,
       "sourceFile": "burgers.md",
       "sourceSection": "Drive-Thru Burgers",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "The key to this recipe is to keep the patties loose, so the juices can bubble up through the nooks and crannies as they cook. This makes them both crisp and juicy.",
       "ingredients": [
         {
@@ -2686,6 +2731,9 @@
       "collectionTitle": null,
       "sourceFile": "tacos.md",
       "sourceSection": "Taco Night",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "With ground beef, you want to nearly burn it to develop some flavor.",
       "ingredients": [
         {
@@ -3010,6 +3058,9 @@
       "collectionTitle": null,
       "sourceFile": "ziti.md",
       "sourceSection": "Baked Ziti",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "I usually make this with two dutch ovens, but you could also use a dutch oven and a sauté pan.",
       "ingredients": [
         {
@@ -3293,6 +3344,9 @@
       "collectionTitle": null,
       "sourceFile": "orecchiette.md",
       "sourceSection": "Broccoli Sausage Orecchiette",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "This recipe relies on a good parmesan cheese, and a good olive oil. Don't skimp on the full half cup of oil. The other key is to break the broccoli and sausage down into small pieces, so that they fit into the orecchiette.",
       "ingredients": [
         {
@@ -3492,6 +3546,9 @@
       "collectionTitle": null,
       "sourceFile": "roastchicken.md",
       "sourceSection": "Roast Chicken and Green Beans",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "This is one of Noel's favorite weeknight meals. The baking powder helps the skin get crisp.",
       "ingredients": [
         {
@@ -3731,6 +3788,9 @@
       "collectionTitle": null,
       "sourceFile": "vermichli.md",
       "sourceSection": "Vermicelli Bowl",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "There is no broth in this recipe, just a bunch of toppings and the noodles.",
       "ingredients": [
         {
@@ -3953,6 +4013,9 @@
       "collectionTitle": null,
       "sourceFile": "garlicchilipasta.md",
       "sourceSection": "Garlic Chili Pasta",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Super quick meal with just staples.",
       "ingredients": [
         {
@@ -4079,6 +4142,9 @@
       "collectionTitle": null,
       "sourceFile": "pasta_e_ceci.md",
       "sourceSection": "Pasta e Ceci",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "We once made this over an open fire while camping to great effect. It's a good camping recipe because it's mostly dried and canned ingredients.",
       "ingredients": [
         {
@@ -4325,6 +4391,9 @@
       "collectionTitle": null,
       "sourceFile": "pizza.md",
       "sourceSection": "Neopolitan Pizza",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "You can either start the dough the night before or same day. Both require two steps over at least a four hour period before dinner. Pre-sliced pepperoni is better than whole.",
       "ingredients": [
         {
@@ -4579,6 +4648,9 @@
       "collectionTitle": null,
       "sourceFile": "sausage-lentils.md",
       "sourceSection": "Louisiana Hot-links and Lentils",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -4805,6 +4877,9 @@
       "collectionTitle": null,
       "sourceFile": "fiery_green_beans.md",
       "sourceSection": "Fiery Green Beans and Tofu",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -5048,6 +5123,9 @@
       "collectionTitle": null,
       "sourceFile": "aperto.md",
       "sourceSection": "Aperto's Tagliolini Pepati",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -5224,6 +5302,9 @@
       "collectionTitle": null,
       "sourceFile": "deepdish.md",
       "sourceSection": "Deep Dish Pizza",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -5523,6 +5604,9 @@
       "collectionTitle": null,
       "sourceFile": "lasagna.md",
       "sourceSection": "Lasagna",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "This is a kid-friendly lasagna, no ricotta or bechamel sauce. This will be even better if you make it ahead of time and reheat it in the oven. One box of noodles is plenty for a medium lasagna. This will seem like a lot of sauce, but the lasagna will absorb it. Total cooking time is 4.5 hours. Serves 4 adults and 5 kids no problem.",
       "ingredients": [
         {
@@ -5761,6 +5845,9 @@
       "collectionTitle": null,
       "sourceFile": "enchilada.md",
       "sourceSection": "Red Chile Chicken Enchiladas",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -6079,6 +6166,9 @@
       "collectionTitle": null,
       "sourceFile": "tomatillo-enchilada.md",
       "sourceSection": "Bean and Cheese Tomatillo Enchiladas",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -6322,6 +6412,9 @@
       "collectionTitle": null,
       "sourceFile": "chili.md",
       "sourceSection": "Noel's Chili",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "You want beef with a high fat content, 80 or 85 percent.",
       "ingredients": [
         {
@@ -6623,6 +6716,9 @@
       "collectionTitle": null,
       "sourceFile": "pulledpork.md",
       "sourceSection": "South Carolina Pulled Pork",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -6939,6 +7035,9 @@
       "collectionTitle": null,
       "sourceFile": "potroast.md",
       "sourceSection": "Pot Roast",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -7126,6 +7225,9 @@
       "collectionTitle": null,
       "sourceFile": "pho.md",
       "sourceSection": "Yen's Pho",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -7349,6 +7451,9 @@
       "collectionTitle": null,
       "sourceFile": "pork_ramen.md",
       "sourceSection": "Premium Pork Ramen",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -7611,6 +7716,9 @@
       "collectionTitle": null,
       "sourceFile": "pot_pie.md",
       "sourceSection": "Chicken Pot Pie",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -7957,6 +8065,9 @@
       "collectionTitle": null,
       "sourceFile": "yellow_curry.md",
       "sourceSection": "Thai Fast Food Yellow Curry",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "I use Morton's yellow curry powder, and Mae Ploy yellow curry paste.",
       "ingredients": [
         {
@@ -8238,6 +8349,9 @@
       "collectionTitle": null,
       "sourceFile": "beef_stew.md",
       "sourceSection": "Beef Stew",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "You want to fully develop flavor, but also have some texture to the beef, potatoes, and a carrots. This recipe takes 3½ hours, but can also be started well ahead of that.",
       "ingredients": [
         {
@@ -8468,6 +8582,9 @@
       "collectionTitle": null,
       "sourceFile": "pasta_ouva.md",
       "sourceSection": "Pasta Cacio e Uova",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Cook the pasta in a small amount of salted water, for a starchier sauce.",
       "ingredients": [
         {
@@ -8587,6 +8704,9 @@
       "collectionTitle": null,
       "sourceFile": "cashew_chicken.md",
       "sourceSection": "Thai Cashew Chicken (Gai Pad Med Ma Muang)",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Serve with Jasmine rice.",
       "ingredients": [
         {
@@ -8890,6 +9010,9 @@
       "collectionTitle": null,
       "sourceFile": "pad_see_ew.md",
       "sourceSection": "Pad See Ew",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Serve with a chili and vinegar condiment.",
       "ingredients": [
         {
@@ -9119,6 +9242,9 @@
       "collectionTitle": null,
       "sourceFile": "braised_chicken_thighs.md",
       "sourceSection": "Braised Chicken Thighs with Black Bean Rice",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "The secret ingredient for extra chicken flavor is Better than Bouillon.",
       "ingredients": [
         {
@@ -9307,6 +9433,9 @@
       "collectionTitle": null,
       "sourceFile": "chicken_parmesan.md",
       "sourceSection": "Chicken Parmesan",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "One large chicken breast and half a box of pasta can feed the family (2 adults, 3 kids). Finishing the chicken in the oven before you add the cheese and then broiling the cheese briefly will make sure the chicken is not undercooked and rhe cheese is just melted.",
       "ingredients": [
         {
@@ -9512,6 +9641,9 @@
       "collectionTitle": null,
       "sourceFile": "panko_mahi_mahi.md",
       "sourceSection": "Crispy Panko Mahi-Mahi with Warm French Lentil and Roasted Carrot Salad",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Serves 5. About 45 minutes. Roast at 425°. Cook lentils and mix vinaigrette up to 2 days ahead; refrigerate separately. For kids, serve some lentils and carrots undressed, with yogurt sauce for dipping.",
       "ingredients": [
         {
@@ -9804,6 +9936,9 @@
       "collectionTitle": null,
       "sourceFile": "chicken_kebabs.md",
       "sourceSection": "Chicken Kebabs",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Pairs well with rice and hummus.",
       "ingredients": [
         {
@@ -10081,6 +10216,9 @@
       "collectionTitle": null,
       "sourceFile": "chicken_piccata.md",
       "sourceSection": "Chicken Piccata",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -10263,6 +10401,9 @@
       "collectionTitle": null,
       "sourceFile": "orange_chicken.md",
       "sourceSection": "Orange Chicken",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Serve with rice.",
       "ingredients": [
         {
@@ -10461,6 +10602,9 @@
       "collectionTitle": null,
       "sourceFile": "turkey.md",
       "sourceSection": "Thanksgiving Dinner",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "A 12 pound turkey is plenty for eight people. 22 pounds is plenty for 18 people. For up to 18 pounds, you don't need to increase the cooking time at all. Icing and flipping the tukey is worth it for well cooked dark meat. Let the turkey rest in the oven to give the dark meat even more time to come up to temperature.",
       "ingredients": [
         {
@@ -11178,6 +11322,9 @@
       "collectionTitle": null,
       "sourceFile": "ham.md",
       "sourceSection": "Ham and Scalloped Potatoes",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "The scalloped potatoes can be prepped ahead of time, even the day before. Simply pause at the step when they go into the oven, and refrigerate instead.",
       "ingredients": [
         {
@@ -11508,6 +11655,9 @@
       "collectionTitle": null,
       "sourceFile": "beef_tenderloin.md",
       "sourceSection": "Horseradish-Crusted Beef Tenderloin",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "The gelatin is the key to getting the crust to stick, even when you slice it. A 2.5 pound roast is good for 4 adults and 2 children. Ask for a center-cut Chateaubriand fillet roast. Use jarred horseradish. Cut into two roasts if you want different donenesses. The whole recipe takes about 90-120 minutes. The sauce at the end is worth it!",
       "ingredients": [
         {
@@ -11752,6 +11902,9 @@
       "collectionTitle": null,
       "sourceFile": "christmas.md",
       "sourceSection": "Christmas Morning Casserole",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "My mother made a version of this every Christmas morning. It's easy to make the night before and pop in the oven as you're making your coffee.",
       "ingredients": [
         {
@@ -11937,6 +12090,9 @@
       "collectionTitle": null,
       "sourceFile": "cheesecake.md",
       "sourceSection": "Burnt Cheesecake",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "The top of this cheescake will be very dark, almost burned. The inside will be light and fluffy if you serve after cooling for the minimum two hours. If refrigerated, it will have the same consistency as normal cheesecake. Goes well with any type of fruit compote topping. All together it takes about 4 hours to make, including bringing the ingredients to room temperature. Be prepared for both the food processor and the baking pan to potentially leak; work quickly. Don't wrap the pan in tin foil or put a catch-all tray too close underneath it in the over, or it may not cook properly.",
       "ingredients": [
         {
@@ -12082,6 +12238,9 @@
       "collectionTitle": null,
       "sourceFile": "pancakes.md",
       "sourceSection": "Pancakes",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "I used to make pancakes from scratch, using either buttermilk or buttermilk powder. But it turns out that even basic pancake mix like Bisquick has all the basic ingredients I was using, and nothing more. This make 5 medium pancakes.",
       "ingredients": [
         {
@@ -12245,6 +12404,9 @@
       "collectionTitle": null,
       "sourceFile": "bread.md",
       "sourceSection": "Bread",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -12454,6 +12616,9 @@
       "collectionTitle": null,
       "sourceFile": "flatbread.md",
       "sourceSection": "Flatbread",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Lard can be found in some grocery stores near the oils.",
       "ingredients": [
         {
@@ -12658,6 +12823,9 @@
       "collectionTitle": null,
       "sourceFile": "prosciutto_cheese_bread.md",
       "sourceSection": "Prosciutto Cheese Bread",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Great side dish for a pork roast.",
       "ingredients": [
         {
@@ -12857,6 +13025,9 @@
       "collectionTitle": null,
       "sourceFile": "banana_muffins.md",
       "sourceSection": "Mom's Banana Muffins",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Don't throw out those brown bananas! The can substitute brown sugar and coconut oil if needed.",
       "ingredients": [
         {
@@ -12973,6 +13144,9 @@
       "collectionTitle": null,
       "sourceFile": "cinnamon_bun.md",
       "sourceSection": "Julie's Cinnamon Rolls",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Makes about 16 rolls. You can substitude coconut oil for shortening. You can make these the night before, just cover airtight.",
       "ingredients": [
         {
@@ -13272,6 +13446,9 @@
       "collectionTitle": null,
       "sourceFile": "biscuits.md",
       "sourceSection": "Butter Biscuits",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Easy to make for a weeknight meal.",
       "ingredients": [
         {
@@ -13440,6 +13617,9 @@
       "collectionTitle": null,
       "sourceFile": "yelllow_cake.md",
       "sourceSection": "Fluffy Yellow Cake",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Bring ingredients to room temperature ahead of time, including the buttermilk.",
       "ingredients": [
         {
@@ -13708,6 +13888,9 @@
       "collectionTitle": null,
       "sourceFile": "omelet.md",
       "sourceSection": "Perfect Omelet",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "This omelet does need any cheese, or fillings. By cooking on very low heat, and taking it off before it's fully cooked, the eggs become custard-like, and actually taste cheesey. Start with room temperature eggs. You can submerge the eggs in warm water for 20 minutes to bring them to room temperature.",
       "ingredients": [
         {
@@ -13822,6 +14005,9 @@
       "collectionTitle": null,
       "sourceFile": "stock.md",
       "sourceSection": "Stock - Chicken, Vegetable",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Stock is very simple to make. It's only slightly harder to make well!",
       "ingredients": [
         {
@@ -14012,6 +14198,9 @@
       "collectionTitle": null,
       "sourceFile": "pickles.md",
       "sourceSection": "Pickles",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "These are lacto-fermented pickles. Instead if using an acid like vinegar, they produce their own lactic acid through fermentation. The use of non-chlorinated water is required so as not to kill helpful microbes in the pickles and on the glass jars.",
       "ingredients": [
         {
@@ -14151,6 +14340,9 @@
       "collectionTitle": "Adobo",
       "sourceFile": "adobo.md",
       "sourceSection": "Green Adobo",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -14269,6 +14461,9 @@
       "collectionTitle": "Adobo",
       "sourceFile": "adobo.md",
       "sourceSection": "Red Adobo",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -14379,6 +14574,9 @@
       "collectionTitle": "Plums",
       "sourceFile": "plums.md",
       "sourceSection": "Plum Jam",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Every year we get about 20 pounds of plums off the tree in the front yard. This is what we do with the ones that we don't eat right away. I usually pick them around June 1; you want some of them to still be tart/underripe.",
       "ingredients": [
         {
@@ -14450,6 +14648,9 @@
       "collectionTitle": "Plums",
       "sourceFile": "plums.md",
       "sourceSection": "Plum Preserves",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Makes a great topping for ice cream or cheesecake.",
       "ingredients": [
         {
@@ -14499,6 +14700,9 @@
       "collectionTitle": "Plums",
       "sourceFile": "plums.md",
       "sourceSection": "Plum Mixer",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "This is great for drinks, either with carbonated water, simple sugar and lime, or as a cocktail mixer.",
       "ingredients": [
         {
@@ -14548,6 +14752,9 @@
       "collectionTitle": "Cocktails",
       "sourceFile": "cocktails.md",
       "sourceSection": "Whiskey Sour",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -14625,6 +14832,9 @@
       "collectionTitle": "Cocktails",
       "sourceFile": "cocktails.md",
       "sourceSection": "Paloma",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -14692,6 +14902,9 @@
       "collectionTitle": "Cocktails",
       "sourceFile": "cocktails.md",
       "sourceSection": "Margarita",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -14760,6 +14973,9 @@
       "collectionTitle": "Cocktails",
       "sourceFile": "cocktails.md",
       "sourceSection": "Negroni",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -14827,6 +15043,9 @@
       "collectionTitle": null,
       "sourceFile": "popcorn.md",
       "sourceSection": "Popcorn",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "The key to this recipe is using plent of fat. Don't try to halve the recipe; the kernels will not be submerged in enough fat, and will burn more easily. Flavacol is a fine popcorn salt and seasoning that they use in movie theaters. You can buy it online.",
       "ingredients": [
         {
@@ -14924,6 +15143,9 @@
       "collectionTitle": null,
       "sourceFile": "raspberry_lime_rickey.md",
       "sourceSection": "Raspberry Lime Rickey",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "",
       "ingredients": [
         {
@@ -15028,6 +15250,9 @@
       "collectionTitle": null,
       "sourceFile": "ham_and_cheese_italian.md",
       "sourceSection": "Ocean Park's Famous Ham and Cheese Italian",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "The specific bread roll is less important than the compression of the bread by wrapping it. Classic ham without a rind is preferable. White american cheese is typically behind the deli counter.",
       "ingredients": [
         {
@@ -15259,6 +15484,9 @@
       "collectionTitle": null,
       "sourceFile": "chili_oil.md",
       "sourceSection": "Chili Oil",
+      "provenance": {
+        "type": "personalCookbook"
+      },
       "introduction": "Makes a great condiment. Combine with ramen noodles and blitzed peanuts for a quick meal. You can substitute whole dried chilis, just grind them in a spice grinder first.",
       "ingredients": [
         {

@@ -49,12 +49,29 @@ struct RecipeProvenance: Decodable, Hashable {
     let type: RecipeSourceType
     let name: String?
     let reference: String?
+
+    var tagLabel: String {
+        switch type {
+        case .website:
+            if let reference, let host = URLComponents(string: reference)?.host {
+                return host.lowercased().hasPrefix("www.") ? String(host.dropFirst(4)).lowercased() : host.lowercased()
+            }
+            return name ?? type.displayName
+        case .paprikaImport:
+            return name ?? type.displayName
+        case .personalCookbook, .cookbookRepository:
+            return "Personal cookbook"
+        case .manual, .other:
+            return name ?? type.displayName
+        }
+    }
 }
 
 enum RecipeSourceType: String, Decodable, Hashable {
     case website
     case paprikaImport
     case manual
+    case personalCookbook
     case cookbookRepository
     case other
 
@@ -63,6 +80,7 @@ enum RecipeSourceType: String, Decodable, Hashable {
         case .website: "Website"
         case .paprikaImport: "Paprika import"
         case .manual: "Manual entry"
+        case .personalCookbook: "Personal cookbook"
         case .cookbookRepository: "Cookbook repository"
         case .other: "Other"
         }

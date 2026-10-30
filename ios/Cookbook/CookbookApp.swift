@@ -455,32 +455,6 @@ struct RecipeDetailView: View {
             VStack(alignment: .leading, spacing: 22) {
                 Text(recipe.title).font(.system(size: 34, weight: .semibold, design: .serif)).fixedSize(horizontal: false, vertical: true)
                 if !recipe.introduction.isEmpty { Text(recipe.introduction).font(.body).foregroundStyle(.secondary) }
-                if !assignedLabels.isEmpty {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 92), alignment: .leading)], alignment: .leading, spacing: 8) {
-                        ForEach(assignedLabels) { label in
-                            Text(label.displayName)
-                                .font(.caption.weight(.medium))
-                                .padding(.horizontal, 10).padding(.vertical, 6)
-                                .background(Color(uiColor: .secondarySystemBackground), in: Capsule())
-                        }
-                    }
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel("Recipe tags: \(assignedLabels.map(\.displayName).joined(separator: ", "))")
-                }
-                if let provenance = recipe.provenance {
-                    VStack(alignment: .leading, spacing: 5) {
-                        SectionTitle("Source")
-                        Text(provenance.type.displayName).font(.subheadline.weight(.medium))
-                        if let name = provenance.name { Text(name).font(.subheadline).foregroundStyle(.secondary) }
-                        if let reference = provenance.reference {
-                            if provenance.type == .website, let url = URL(string: reference) {
-                                Link(reference, destination: url).font(.footnote)
-                            } else {
-                                Text(reference).font(.footnote).foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                }
                 if let cover = photos.first(where: \.isCover), let image = UIImage(contentsOfFile: UserFiles.url(for: cover.relativePath).path) {
                     Image(uiImage: image).resizable().scaledToFill().frame(maxHeight: 260).clipped().clipShape(RoundedRectangle(cornerRadius: 18))
                 }
@@ -515,6 +489,19 @@ struct RecipeDetailView: View {
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }.foregroundStyle(.primary).contextMenu { Button("Delete Note", role: .destructive) { note.deletedAt = .now; note.updatedAt = .now } }
                 }
+                if let provenance = recipe.provenance {
+                    HStack(spacing: 0) {
+                        Text(provenance.tagLabel)
+                            .font(.caption.weight(.medium))
+                            .lineLimit(1)
+                            .fixedSize(horizontal: true, vertical: false)
+                            .padding(.horizontal, 9).padding(.vertical, 5)
+                            .background(Color(uiColor: .secondarySystemBackground), in: Capsule())
+                        Spacer(minLength: 0)
+                    }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Recipe source: \(provenance.tagLabel)")
+                }
                 Button { showCooking = true } label: { Label("Start cooking", systemImage: "play.fill").frame(maxWidth: .infinity).padding(14).background(.primary, in: Capsule()).foregroundStyle(.background) }
             }.padding(22)
         }
@@ -547,11 +534,6 @@ struct RecipeDetailView: View {
     }
 
     private var activeNotes: [RecipeNote] { notes.filter { $0.deletedAt == nil }.sorted { $0.updatedAt > $1.updatedAt } }
-
-    private var assignedLabels: [RecipeLabel] {
-        let labelIDs = Set(recipe.browseLabelIDs)
-        return (CookbookCatalog.bundled.labels ?? []).filter { labelIDs.contains($0.id) }.sorted { $0.order < $1.order }
-    }
 
     @MainActor private func savePhoto(_ item: PhotosPickerItem?) async {
         guard let item, let data = try? await item.loadTransferable(type: Data.self), let image = UIImage(data: data) else { return }
