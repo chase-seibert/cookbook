@@ -108,6 +108,7 @@ def mobile_recipe(recipe: Recipe, slug: str, category: str, title: str, stable_i
         "collectionTitle": recipe.title if recipe.kind == "collection" else None,
         "sourceFile": f"{slug}.md",
         "sourceSection": title,
+        "provenance": metadata.get("recipeProvenance", {}).get(stable_id),
         "introduction": introduction,
         "ingredients": ingredients,
         "steps": steps,
@@ -157,6 +158,13 @@ def build() -> dict:
         validate_labels(recipes, label_groups, labels, assignments)
         for recipe in recipes:
             recipe["labelIDs"] = assignments[recipe["id"]]
+    provenance = metadata.get("recipeProvenance", {})
+    validate_provenance(recipes, provenance)
+    for recipe in recipes:
+        recipe_provenance = provenance.get(recipe["id"])
+        if recipe_provenance is None:
+            recipe.pop("provenance")
+    if any(value is not None for value in (label_groups, labels, assignments)):
         taxonomy = {"labelGroups": label_groups, "labels": labels}
     else:
         taxonomy = {}
@@ -281,6 +289,28 @@ def validate_labels(recipes: list[dict], groups: object, labels: object, assignm
         unknown = set(ids) - known_labels
         if unknown:
             raise ValueError(f"recipe {recipe_id} has unknown label IDs: {', '.join(sorted(unknown))}")
+
+
+def validate_provenance(recipes: list[dict], provenance: object) -> None:
+    """Validate optional, app-managed recipe source details."""
+    if not isinstance(provenance, dict):
+        raise ValueError("recipeProvenance must map stable recipe IDs to source details")
+    recipe_ids = {recipe["id"] for recipe in recipes}
+    unknown = set(provenance) - recipe_ids
+    if unknown:
+        raise ValueError(f"recipe provenance has unknown IDs: {', '.join(sorted(unknown))}")
+    allowed_types = {"website", "paprikaImport", "manual", "cookbookRepository", "other"}
+    for recipe_id, source in provenance.items():
+        if not isinstance(source, dict) or source.get("type") not in allowed_types:
+            raise ValueError(f"recipe {recipe_id} has an unsupported provenance type")
+        for key in ("name", "reference"):
+            value = source.get(key)
+            if value is not None and (not isinstance(value, str) or not value.strip()):
+                raise ValueError(f"recipe {recipe_id} provenance {key} must be non-empty text when supplied")
+        if source["type"] == "website":
+            reference = source.get("reference")
+            if reference is not None and not re.match(r"^https?://", reference, re.I):
+                raise ValueError(f"recipe {recipe_id} website reference must be an HTTP(S) URL")
 
 
 def main() -> int:

@@ -38,10 +38,35 @@ struct Recipe: Decodable, Identifiable, Hashable {
     let healthierOptions: [String]
     let thumbnailAsset: String?
     let labelIDs: [String]?
+    let provenance: RecipeProvenance?
     let menuDescription: String?
     let menuPairings: [String]?
 
     var browseLabelIDs: [String] { labelIDs ?? [] }
+}
+
+struct RecipeProvenance: Decodable, Hashable {
+    let type: RecipeSourceType
+    let name: String?
+    let reference: String?
+}
+
+enum RecipeSourceType: String, Decodable, Hashable {
+    case website
+    case paprikaImport
+    case manual
+    case cookbookRepository
+    case other
+
+    var displayName: String {
+        switch self {
+        case .website: "Website"
+        case .paprikaImport: "Paprika import"
+        case .manual: "Manual entry"
+        case .cookbookRepository: "Cookbook repository"
+        case .other: "Other"
+        }
+    }
 }
 
 struct RecipeLabelGroup: Decodable, Identifiable, Hashable {
