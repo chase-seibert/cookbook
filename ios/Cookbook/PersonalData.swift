@@ -114,6 +114,42 @@ struct PaprikaSkippedRecipe: Codable, Hashable, Identifiable, Sendable {
     }
 }
 
+@Model final class ImageGenerationRun {
+    @Attribute(.unique) var id: UUID
+    var createdAt: Date
+    var provider: String
+    var model: String
+    var status: String
+    var isBulk: Bool
+    var recipeCount: Int
+    var completedCount: Int
+    var failedCount: Int
+
+    init(id: UUID = UUID(), createdAt: Date = .now, provider: String, model: String, status: String = "running", isBulk: Bool = false, recipeCount: Int, completedCount: Int = 0, failedCount: Int = 0) {
+        self.id = id; self.createdAt = createdAt; self.provider = provider; self.model = model
+        self.status = status; self.isBulk = isBulk; self.recipeCount = recipeCount; self.completedCount = completedCount; self.failedCount = failedCount
+    }
+}
+
+@Model final class ImageGenerationEntry {
+    @Attribute(.unique) var id: UUID
+    var runID: UUID
+    var recipeID: String
+    var status: String
+    var generatedPhotoID: String?
+    var previousPhotoID: String?
+    var previousBundledAsset: String?
+    var previousHadNoImage: Bool
+    var errorMessage: String?
+
+    init(id: UUID = UUID(), runID: UUID, recipeID: String, status: String = "pending", generatedPhotoID: String? = nil, previousPhotoID: String? = nil, previousBundledAsset: String? = nil, previousHadNoImage: Bool = false, errorMessage: String? = nil) {
+        self.id = id; self.runID = runID; self.recipeID = recipeID; self.status = status
+        self.generatedPhotoID = generatedPhotoID; self.previousPhotoID = previousPhotoID
+        self.previousBundledAsset = previousBundledAsset; self.previousHadNoImage = previousHadNoImage
+        self.errorMessage = errorMessage
+    }
+}
+
 @Model final class DinnerTimeline {
     @Attribute(.unique) var id: UUID
     var name: String

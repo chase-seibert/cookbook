@@ -6,7 +6,7 @@ import UIKit
 @main struct CookbookApp: App {
     var body: some Scene {
         WindowGroup { RootView() }
-        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self, PaprikaImportRun.self, DeletedRecipe.self])
+        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, ImageGenerationRun.self, ImageGenerationEntry.self])
     }
 }
 
@@ -47,15 +47,18 @@ struct RecipeBrowserView: View {
     private let showingDeletedRecipes: Bool
     private let managesNavigationStack: Bool
     private let screenTitle: String?
+    private let imageRunID: UUID?
     @State private var query = ""
     @State private var isSearchPresented = false
     @State private var selectedLabelIDs: Set<String> = []
     @State private var selectedDinnerRecipeID: String?
-    init(importRunLabelID: String? = nil, showingDeletedRecipes: Bool = false, managesNavigationStack: Bool = true, screenTitle: String? = nil) {
+    @Query private var imageGenerationEntries: [ImageGenerationEntry]
+    init(importRunLabelID: String? = nil, showingDeletedRecipes: Bool = false, managesNavigationStack: Bool = true, screenTitle: String? = nil, imageRunID: UUID? = nil) {
         self.importRunLabelID = importRunLabelID
         self.showingDeletedRecipes = showingDeletedRecipes
         self.managesNavigationStack = managesNavigationStack
         self.screenTitle = screenTitle
+        self.imageRunID = imageRunID
     }
 
     private var availableImportedRecords: [ImportedPaprikaRecipe] {
@@ -133,6 +136,7 @@ struct RecipeBrowserView: View {
     private var filtered: [Recipe] {
         recipes.filter { recipe in
             return matchesSearch(recipe) &&
+                (imageRunID.map { runID in imageGenerationEntries.contains { $0.runID == runID && $0.recipeID == recipe.id && $0.generatedPhotoID != nil } } ?? true) &&
                 (importRunLabelID.map { recipe.browseLabelIDs.contains($0) } ?? true) &&
                 RecipeLabelFilter.matches(recipe, selectedLabelIDs: selectedLabelIDs, groups: labelGroups, labels: labels)
         }
@@ -501,6 +505,7 @@ struct RecipeDetailView: View {
     @State private var showNoteEdit = false
     @State private var showCooking = false
     @State private var showAddToDinner = false
+    @State private var showImageGeneration = false
     @State private var noteToEdit: RecipeNote?
     @State private var pickedPhoto: PhotosPickerItem?
     @State private var paprikaExportURL: URL?
@@ -596,11 +601,19 @@ struct RecipeDetailView: View {
                 Button { showPrint = true } label: { Label("Print Recipe", systemImage: "printer") }
                 Button { Task { await exportPaprikaRecipe() } } label: { Label("Export Paprika File…", systemImage: "square.and.arrow.up") }.disabled(exportingPaprika)
                 if !isDeleted {
+                    Button { showImageGeneration = true } label: {
+                        Label(hasEffectiveImage ? "Manage Recipe Images" : "Generate Recipe Cover", systemImage: "sparkles")
+                    }
+                }
+                if !isDeleted {
                     Button(role: .destructive) { deleteRecipe() } label: { Label("Delete Recipe", systemImage: "trash") }
                 }
             } label: { Image(systemName: "ellipsis.circle") }
         }}
         .sheet(isPresented: $showGroceries) { GroceryReviewView(recipe: recipe) }
+        .sheet(isPresented: $showImageGeneration) {
+            NavigationStack { RecipeImageGenerationView(recipes: [recipe], resumeRun: nil) }
+        }
         .sheet(isPresented: $showCooking) { CookingModeView(recipe: recipe) }
         .sheet(isPresented: $showAddToDinner) { AddRecipeToDinnerView(recipe: recipe) }
         .sheet(isPresented: $showNote) { NoteEditorView(recipe: recipe) }
@@ -622,6 +635,11 @@ struct RecipeDetailView: View {
     }
 
     private var activeNotes: [RecipeNote] { notes.filter { $0.deletedAt == nil }.sorted { $0.updatedAt > $1.updatedAt } }
+    private var hasEffectiveImage: Bool {
+        if photos.contains(where: { $0.recipeID == recipe.id && $0.isCover }) { return true }
+        guard let asset = recipe.thumbnailAsset else { return false }
+        return Bundle.main.url(forResource: asset, withExtension: nil, subdirectory: "Thumbnails") != nil
+    }
     private var deletedImportedRecord: ImportedPaprikaRecipe? { importedRecords.first { $0.id == recipe.id && $0.deletedAt != nil } }
     private var deletedRecipeRecord: DeletedRecipe? { deletedRecipes.first { $0.recipeID == recipe.id } }
     private var isDeleted: Bool { deletedImportedRecord != nil || deletedRecipeRecord != nil }

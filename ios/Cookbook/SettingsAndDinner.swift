@@ -16,7 +16,6 @@ struct SettingsView: View {
     @State private var paprikaExportURL: URL?
     @State private var exportingPaprika = false
     @State private var markdownURL: URL?
-    @State private var personalCredential = ""
     @State private var showingPaprikaImporter = false
     @State private var importReview: PaprikaImportReviewSession?
     @Query(sort: \RecipeNote.updatedAt, order: .reverse) private var notes: [RecipeNote]
@@ -77,13 +76,19 @@ struct SettingsView: View {
                     }
                     Text("Counts are stored on this device only. They are a local usage signal, not cross-user popularity data.").font(.footnote).foregroundStyle(.secondary)
                 }
+                OpenAIKeySettingsSection()
+                Section("Recipe images") {
+                    NavigationLink {
+                        ImageGenerationSettingsView()
+                    } label: {
+                        Label("Generate missing recipe covers", systemImage: "sparkles")
+                    }
+                    Text("Choose an image provider and review or undo previous batch runs.").font(.footnote).foregroundStyle(.secondary)
+                }
                 Section("Dinner planning") {
                     Picker("AI provider", selection: $aiProvider) { Text("OpenAI (cloud)").tag("openai"); Text("On-device").tag("on-device") }
                     if aiProvider == "openai" {
                         TextField("Model", text: $openAIModel).textInputAutocapitalization(.never).autocorrectionDisabled()
-                        SecureField("Personal OpenAI API key", text: $personalCredential).textInputAutocapitalization(.never).autocorrectionDisabled().onSubmit { KeychainKey.store(personalCredential) }
-                        Button("Save key") { KeychainKey.store(personalCredential); status = "Saved in iPhone Keychain." }
-                        Button("Remove key", role: .destructive) { personalCredential = ""; KeychainKey.delete(); status = "Removed from Keychain." }
                     } else {
                         Text("Requires iOS 26 or later, an Apple Intelligence-capable iPhone, Apple Intelligence enabled, a supported language and region, and the on-device model ready. The plan is generated on this iPhone; there is no cloud fallback.").font(.footnote).foregroundStyle(.secondary)
                     }
@@ -92,7 +97,7 @@ struct SettingsView: View {
                 Section("About") { LabeledContent("Recipe catalog", value: "\(CookbookCatalog.bundled.recipes.count - deletedRecipes.count + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe).count) recipes · offline") }
             }
             .navigationTitle("Settings")
-            .onAppear { reminderListName = UserDefaults.standard.string(forKey: "reminderListName") ?? "Not selected"; loadCredential() }
+            .onAppear { reminderListName = UserDefaults.standard.string(forKey: "reminderListName") ?? "Not selected" }
             .fileImporter(isPresented: $showingPaprikaImporter, allowedContentTypes: PaprikaFileType.supported, allowsMultipleSelection: false, onCompletion: handlePaprikaSelection)
             .sheet(item: $importReview, onDismiss: openNextPendingPaprikaShare) { session in PaprikaImportReviewView(session: session) }
             .onChange(of: incomingPaprikaURL) { _, url in
@@ -149,8 +154,6 @@ struct SettingsView: View {
             }
         } catch { status = "Reminders access is unavailable. You can allow it in iPhone Settings." }
     }
-
-    private func loadCredential() { let stored = KeychainKey.read(); personalCredential = stored }
 
     private func exportNotes() {
         struct NoteExport: Codable { let id: UUID; let recipeID: String; let stepID: String?; let text: String; let createdAt: String; let updatedAt: String; let catalogHash: String }
@@ -307,6 +310,52 @@ private struct ReminderListChoice: Identifiable { let id: String; let title: Str
 
 private extension JSONEncoder {
     static var pretty: JSONEncoder { let encoder = JSONEncoder(); encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]; return encoder }
+}
+
+struct OpenAIKeySettingsSection: View {
+    @State private var credential = ""
+    @State private var hasSavedKey = false
+    @State private var message = ""
+
+    var body: some View {
+        Section("OpenAI API key") {
+            Text(hasSavedKey ? "An API key is saved in this device’s Keychain." : "No API key is saved on this device.")
+                .font(.footnote).foregroundStyle(.secondary)
+            SecureField("Paste personal API key", text: $credential)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .onSubmit(saveKey)
+            Button("Save API key", action: saveKey)
+                .disabled(credential.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            Button("Remove API key", role: .destructive, action: removeKey)
+                .disabled(!hasSavedKey)
+            Link("Create or manage an OpenAI API key", destination: URL(string: "https://platform.openai.com/api-keys")!)
+            Text("This shared credential is used by recipe image generation and dinner planning. It is stored in Keychain.")
+                .font(.footnote).foregroundStyle(.secondary)
+            if !message.isEmpty { Text(message).font(.footnote).foregroundStyle(.secondary) }
+        }
+        .onAppear(perform: refreshStatus)
+    }
+
+    private func saveKey() {
+        let key = credential.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !key.isEmpty else { return }
+        KeychainKey.store(key)
+        credential = ""
+        hasSavedKey = true
+        message = "Saved in Keychain."
+    }
+
+    private func removeKey() {
+        KeychainKey.delete()
+        credential = ""
+        hasSavedKey = false
+        message = "Removed from Keychain."
+    }
+
+    private func refreshStatus() {
+        hasSavedKey = !KeychainKey.read().isEmpty
+    }
 }
 
 enum KeychainKey {
