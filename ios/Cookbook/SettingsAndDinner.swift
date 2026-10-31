@@ -377,7 +377,13 @@ enum KeychainKey {
 private struct DinnerDateGroup: Identifiable {
     let date: Date
     let entries: [PlannedDinnerRecipe]
+    let savedTimelines: [DinnerTimeline]
     var id: Date { date }
+}
+
+private struct GroceryReviewSession: Identifiable {
+    let id = UUID()
+    let recipes: [Recipe]
 }
 
 struct DinnerPlannerView: View {
@@ -393,10 +399,12 @@ struct DinnerPlannerView: View {
     @State private var showingPlan = false
     @State private var editingTimelineID: UUID?
     @State private var status: String?
-    @State private var checklistURL: URL?
     @State private var showingChecklistOverflow = false
     @State private var showingCookingRun = false
-    @State private var isGenerating = false
+    @State private var generatingDinnerDate: Date?
+    @State private var groceryReviewSession: GroceryReviewSession?
+    @State private var checklistShareFile: TimelineShareFile?
+    @State private var checklistError: String?
     @AppStorage("aiProvider") private var aiProvider = "openai"
     @AppStorage("openAIModel") private var openAIModel = "gpt-6-astra"
     private var recipes: [Recipe] {
@@ -406,9 +414,16 @@ struct DinnerPlannerView: View {
 
     private var recipeTitles: [String: String] { Dictionary(uniqueKeysWithValues: recipes.map { ($0.id, $0.title) }) }
     private var dinnerGroups: [DinnerDateGroup] {
-        Dictionary(grouping: scheduled, by: { Calendar.current.startOfDay(for: $0.dinnerDate) })
-            .map { DinnerDateGroup(date: $0.key, entries: $0.value.sorted { $0.addedAt < $1.addedAt }) }
-            .sorted { $0.date < $1.date }
+        let calendar = Calendar.current
+        let dates = Set(scheduled.map { calendar.startOfDay(for: $0.dinnerDate) })
+            .union(saved.map { calendar.startOfDay(for: $0.targetDate) })
+        return dates.map { date in
+            DinnerDateGroup(
+                date: date,
+                entries: scheduled.filter { calendar.isDate($0.dinnerDate, inSameDayAs: date) }.sorted { $0.dinnerDate < $1.dinnerDate },
+                savedTimelines: saved.filter { calendar.isDate($0.targetDate, inSameDayAs: date) }.sorted { $0.updatedAt > $1.updatedAt }
+            )
+        }.sorted { $0.date > $1.date }
     }
     private var timelineDayGroups: [TimelineDayGroup] {
         let grouped = Dictionary(grouping: plan.indices) { dayOffset(for: plan[$0].start) }
@@ -426,27 +441,36 @@ struct DinnerPlannerView: View {
                 ForEach(dinnerGroups) { group in
                     Section(group.date.formatted(date: .complete, time: .omitted)) {
                         ForEach(group.entries) { entry in
-                            HStack {
-                                Text(recipeTitles[entry.recipeID] ?? entry.recipeID)
-                                Spacer()
-                                Text(entry.dinnerDate.formatted(date: .omitted, time: .shortened)).font(.caption).foregroundStyle(.secondary)
+                            Group {
+                                if let recipe = recipes.first(where: { $0.id == entry.recipeID }) {
+                                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                                        dinnerRecipeLabel(title: recipe.title, date: entry.dinnerDate)
+                                    }
+                                } else {
+                                    dinnerRecipeLabel(title: recipeTitles[entry.recipeID] ?? entry.recipeID, date: entry.dinnerDate)
+                                }
                             }
                             .contextMenu { Button("Remove from dinner", systemImage: "trash", role: .destructive) { context.delete(entry) } }
                         }
-                        Button { Task { await generateWithAI(for: group.entries) } } label: {
-                            if isGenerating { ProgressView("Planning…") } else { Label("Generate work-back plan", systemImage: "sparkles") }
-                        }.disabled(isGenerating)
-                        Button("Build manual draft") { buildManualDraft(for: group.entries) }.disabled(isGenerating)
-                    }
-                }
-                if !saved.isEmpty {
-                    Section("Saved dinners") {
-                        ForEach(saved) { timeline in
+                        if !group.entries.isEmpty && group.savedTimelines.isEmpty {
+                            Button { Task { await generateWithAI(for: group.entries) } } label: {
+                                if generatingDinnerDate == Calendar.current.startOfDay(for: group.date) { ProgressView("Planning…") } else { Label("Generate work-back plan", systemImage: "sparkles") }
+                            }.disabled(generatingDinnerDate != nil)
+                        }
+                        if !group.entries.isEmpty || !group.savedTimelines.isEmpty {
+                            Button {
+                                let activities = group.savedTimelines.flatMap(\.activities)
+                                let ids = group.entries.map(\.recipeID) + group.savedTimelines.flatMap(savedRecipeIDs)
+                                let titles = group.entries.compactMap { recipeTitles[$0.recipeID] } + activities.map(\.recipeTitle)
+                                openGroceries(for: ids, titles: titles, activities: activities)
+                            } label: { Label("Add to Groceries", systemImage: "cart") }
+                        }
+                        ForEach(group.savedTimelines) { timeline in
                             HStack {
                                 Button { openTimeline(timeline); showingPlan = true } label: {
                                     VStack(alignment: .leading) {
                                         Text(timeline.name)
-                                        Text(timeline.targetDate.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(.secondary)
+                                        Text(savedDinnerSummary(timeline)).font(.caption).foregroundStyle(.secondary)
                                     }.frame(maxWidth: .infinity, alignment: .leading)
                                 }.buttonStyle(.plain)
                                 Button { openTimeline(timeline); showingCookingRun = true } label: {
@@ -454,16 +478,18 @@ struct DinnerPlannerView: View {
                                 }.buttonStyle(.bordered).accessibilityLabel("Play \(timeline.name)")
                             }
                             .contextMenu {
+                                Button("Print dinner", systemImage: "printer") { openTimeline(timeline); showingPlan = true }
                                 Button("Duplicate for next year", systemImage: "doc.on.doc") { duplicate(timeline) }
                                 Button("Delete saved dinner", systemImage: "trash", role: .destructive) { context.delete(timeline) }
                             }
                         }
                     }
                 }
-                Section { Text("Choose recipes from Recipes and assign them to a dinner date. Generate a work-back plan from that date, review the estimates, then save it in Saved dinners.").font(.footnote).foregroundStyle(.secondary) }
+                Section { Text("Choose recipes from Recipes and assign them to a dinner date. Generate a work-back plan from that date; saved plans appear with their dinner date.").font(.footnote).foregroundStyle(.secondary) }
             }
             .navigationTitle("Dinner")
             .sheet(isPresented: $showingPlan) { timelineSheet }
+            .sheet(item: $groceryReviewSession) { session in GroceryReviewView(recipes: session.recipes) }
             .fullScreenCover(isPresented: $showingCookingRun) { DinnerTimelineCookingView(activities: $plan, dinnerTime: dinnerTime) }
             .onChange(of: plan.map(\.isComplete)) { _, _ in persistCompletionIfNeeded() }
             .alert("Dinner plan", isPresented: Binding(get: { status != nil }, set: { if !$0 { status = nil } })) { Button("OK") { status = nil } } message: { Text(status ?? "") }
@@ -488,20 +514,21 @@ struct DinnerPlannerView: View {
             }
             .navigationTitle(planName)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Close") { showingPlan = false } }
-                ToolbarItem(placement: .primaryAction) { Button { makeChecklist() } label: { Label("Checklist PDF", systemImage: "printer") } }
-                ToolbarItem(placement: .confirmationAction) { Button("Save") { saveTimeline() } }
-                if let checklistURL { ToolbarItem(placement: .secondaryAction) { ShareLink(item: checklistURL) { Label("Share / Print", systemImage: "square.and.arrow.up") } } }
+                ToolbarItem(placement: .primaryAction) { Button { makeChecklist() } label: { Label("Print", systemImage: "printer") } }
+                ToolbarItem(placement: .confirmationAction) { Button("Done") { saveTimeline() } }
             }
-            .alert("One-page checklist", isPresented: $showingChecklistOverflow) { Button("OK") { } } message: { Text("This timeline does not fit on one readable page. Shorten checklist instructions or remove activities, then try again. The saved timeline remains unchanged until you save your edits.") }
+            .sheet(item: $checklistShareFile) { file in ActivityView(items: [file.url]) }
+            .alert("Print dinner", isPresented: Binding(get: { checklistError != nil }, set: { if !$0 { checklistError = nil } })) { Button("OK") { checklistError = nil } } message: { Text(checklistError ?? "") }
+            .alert("Could not print dinner", isPresented: $showingChecklistOverflow) { Button("OK") { } } message: { Text("The checklist PDF could not be created as a readable one-page document. Shorten instructions or remove activities, then try again. The saved timeline remains unchanged until you choose Done.") }
         }
     }
 
     @MainActor private func generateWithAI(for entries: [PlannedDinnerRecipe]) async {
         prepare(entries)
         let chosen = recipes.filter { selectedIDs.contains($0.id) }
-        isGenerating = true
-        defer { isGenerating = false }
+        let groupDate = Calendar.current.startOfDay(for: entries.first?.dinnerDate ?? .now)
+        generatingDinnerDate = groupDate
+        defer { generatingDinnerDate = nil }
         do {
             let estimates: [AIActivityEstimate]
             if aiProvider == "on-device" {
@@ -510,40 +537,37 @@ struct DinnerPlannerView: View {
                 estimates = try await AIDinnerPlanner.estimateActivities(recipes: chosen, model: openAIModel, key: KeychainKey.read())
             }
             let estimateByID = Dictionary(uniqueKeysWithValues: estimates.map { ("\($0.recipeID):\($0.stepID)", $0) })
-            buildTimeline(recipes: chosen, duration: { recipe, step in estimateByID["\(recipe.id):\(step.id)"]!.durationMinutes }, active: { recipe, step in estimateByID["\(recipe.id):\(step.id)"]!.active }, label: { _, _ in "AI estimate" })
+            buildTimeline(recipes: chosen, duration: { recipe, step in estimateByID["\(recipe.id):\(step.id)"]!.durationMinutes }, active: { recipe, step in estimateByID["\(recipe.id):\(step.id)"]!.active }, overlapEligible: { recipe, step in estimateByID["\(recipe.id):\(step.id)"]!.overlapEligible }, label: { _, _ in "AI estimate" })
         } catch { status = error.localizedDescription }
     }
 
     private func prepare(_ entries: [PlannedDinnerRecipe]) {
         selectedIDs = Set(entries.map(\.recipeID))
         dinnerTime = entries.first?.dinnerDate ?? .now
-        planName = "Dinner · " + dinnerTime.formatted(date: .abbreviated, time: .omitted)
+        let chosen = recipes.filter { selectedIDs.contains($0.id) }
+        planName = generatedPlanName(for: chosen, dinnerTime: dinnerTime)
         editingTimelineID = nil
     }
 
-    private func buildManualDraft(for entries: [PlannedDinnerRecipe]) {
-        prepare(entries)
-        let chosen = recipes.filter { selectedIDs.contains($0.id) }
-        buildTimeline(recipes: chosen, duration: { _, step in step.durationMinutes ?? 15 }, active: { _, step in step.active }, label: { _, step in step.durationMinutes == nil ? "15 min manual estimate" : "\(step.durationMinutes!) min from source" })
-    }
-
-    private func buildTimeline(recipes chosen: [Recipe], duration: (Recipe, RecipeStep) -> Int, active: (Recipe, RecipeStep) -> Bool, label: (Recipe, RecipeStep) -> String) {
+    private func buildTimeline(recipes chosen: [Recipe], duration: (Recipe, RecipeStep) -> Int, active: (Recipe, RecipeStep) -> Bool, overlapEligible: (Recipe, RecipeStep) -> Bool, label: (Recipe, RecipeStep) -> String) {
         let allSteps = chosen.flatMap { recipe in recipe.steps.map { (recipe, $0) } }
         guard !allSteps.isEmpty else { status = "These recipes do not have any parsed instructions yet."; return }
-        var cursor = dinnerTime
-        var result: [TimelineActivity] = []
-        for (recipe, step) in allSteps.reversed() {
-            let minutes = duration(recipe, step)
-            let end = cursor
-            cursor = cursor.addingTimeInterval(TimeInterval(-minutes * 60))
-            result.append(TimelineActivity(id: "\(recipe.id):\(step.id)", recipeTitle: recipe.title, instruction: step.originalInstruction, start: cursor, end: end, active: active(recipe, step), estimateLabel: label(recipe, step)))
+        let estimates = allSteps.map { recipe, step in
+            PlannedStep(recipe: recipe, step: step, duration: duration(recipe, step), active: active(recipe, step), overlapEligible: overlapEligible(recipe, step), label: label(recipe, step))
         }
-        plan = result.reversed()
-        status = cursor < Date() ? "This draft starts in the past. Use an earlier preparation day or change dinner time." : nil
+        let result = DinnerTimelineScheduler.schedule(estimates, dinnerTime: dinnerTime)
+        plan = result.activities
+        status = result.startsInPast ? "This draft starts in the past. Use an earlier preparation day or change dinner time." : nil
+        persistTimeline()
         showingPlan = true
     }
 
     private func saveTimeline() {
+        persistTimeline()
+        showingPlan = false
+    }
+
+    private func persistTimeline() {
         if let editingTimelineID, let existing = saved.first(where: { $0.id == editingTimelineID }) {
             existing.name = planName
             existing.targetDate = dinnerTime
@@ -551,9 +575,10 @@ struct DinnerPlannerView: View {
             existing.activitiesData = (try? JSONEncoder().encode(plan)) ?? existing.activitiesData
             existing.updatedAt = .now
         } else {
-            context.insert(DinnerTimeline(name: planName, targetDate: dinnerTime, recipeIDs: Array(selectedIDs), activities: plan))
+            let timeline = DinnerTimeline(name: planName, targetDate: dinnerTime, recipeIDs: Array(selectedIDs), activities: plan)
+            context.insert(timeline)
+            editingTimelineID = timeline.id
         }
-        showingPlan = false
     }
 
     private func openTimeline(_ timeline: DinnerTimeline) {
@@ -587,9 +612,115 @@ struct DinnerPlannerView: View {
     }
 
     private func makeChecklist() {
+        guard !plan.isEmpty else { checklistError = "This dinner has no saved steps to print."; return }
         guard let url = TimelineChecklistPDF.render(name: planName, dinnerTime: dinnerTime, activities: plan) else { showingChecklistOverflow = true; return }
-        checklistURL = url
+        checklistShareFile = TimelineShareFile(url: url)
     }
+
+    private func openGroceries(for recipeIDs: [String], titles: [String] = [], activities: [TimelineActivity] = []) {
+        let matchingRecipes = resolvedRecipes(
+            ids: recipeIDs,
+            activityIDs: activities.map(\.id),
+            titles: titles + activities.map(\.recipeTitle)
+        )
+        groceryReviewSession = GroceryReviewSession(recipes: matchingRecipes)
+    }
+
+    private func resolvedRecipes(ids: [String], activityIDs: [String] = [], titles: [String] = []) -> [Recipe] {
+        var resolved: [Recipe] = []
+        var seen = Set<String>()
+        let idsFromActivities = activityIDs.compactMap { $0.split(separator: ":", maxSplits: 1).first.map(String.init) }
+        for id in ids + idsFromActivities {
+            if let recipe = recipes.first(where: { $0.id == id }), seen.insert(recipe.id).inserted { resolved.append(recipe) }
+        }
+        let titleKeys = Set(titles.map(normalizedRecipeTitle))
+        for recipe in recipes where titleKeys.contains(normalizedRecipeTitle(recipe.title)) {
+            if seen.insert(recipe.id).inserted { resolved.append(recipe) }
+        }
+        return resolved
+    }
+
+    private func normalizedRecipeTitle(_ value: String) -> String {
+        value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+            .split(whereSeparator: \.isWhitespace).joined(separator: " ")
+    }
+
+    private func dinnerRecipeLabel(title: String, date: Date) -> some View {
+        HStack {
+            Text(title)
+            Spacer()
+            Text(date.formatted(date: .omitted, time: .shortened)).font(.caption).foregroundStyle(.secondary)
+        }
+    }
+
+    private func savedRecipeIDs(_ timeline: DinnerTimeline) -> [String] {
+        (try? JSONDecoder().decode([String].self, from: timeline.recipeIDsData)) ?? []
+    }
+
+    private func generatedPlanName(for chosen: [Recipe], dinnerTime: Date) -> String {
+        let base = chosen.map(\.title).joined(separator: " + ")
+        let title = base.isEmpty ? "Dinner" : base
+        let matching = saved.filter { Calendar.current.isDate($0.targetDate, inSameDayAs: dinnerTime) }.compactMap { timeline -> Int? in
+            if timeline.name == title { return 1 }
+            let prefix = title + " number "
+            guard timeline.name.hasPrefix(prefix), let number = Int(timeline.name.dropFirst(prefix.count)) else { return nil }
+            return number
+        }
+        guard let highest = matching.max() else { return title }
+        return "\(title) number \(highest + 1)"
+    }
+
+    private func savedDinnerSummary(_ timeline: DinnerTimeline) -> String {
+        let dinner = timeline.targetDate.formatted(date: .abbreviated, time: .shortened)
+        guard let start = timeline.activities.map(\.start).min() else { return "Dinner \(dinner) · no steps" }
+        let minutes = max(0, Int(timeline.targetDate.timeIntervalSince(start) / 60))
+        let duration = minutes >= 60 ? "\(minutes / 60)h \(minutes % 60)m" : "\(minutes)m"
+        return "Dinner \(dinner) · starts \(start.formatted(date: .abbreviated, time: .shortened)) · \(duration)"
+    }
+}
+
+private struct PlannedStep {
+    let recipe: Recipe
+    let step: RecipeStep
+    let duration: Int
+    let active: Bool
+    let overlapEligible: Bool
+    let label: String
+}
+
+private enum DinnerTimelineScheduler {
+    static func schedule(_ steps: [PlannedStep], dinnerTime: Date) -> (activities: [TimelineActivity], startsInPast: Bool) {
+        var activeCursor = dinnerTime
+        var nextStepStartByRecipe: [String: Date] = [:]
+        var activities: [TimelineActivity] = []
+        for item in steps.reversed() {
+            let recipeID = item.recipe.id
+            let downstreamStart = nextStepStartByRecipe[recipeID] ?? dinnerTime
+            let safeToOverlap = item.overlapEligible && !item.active && !containsSafetyCriticalWait(item.step.originalInstruction)
+            let end = safeToOverlap ? downstreamStart : min(activeCursor, downstreamStart)
+            let start = end.addingTimeInterval(TimeInterval(-max(1, item.duration) * 60))
+            if !safeToOverlap { activeCursor = start }
+            nextStepStartByRecipe[recipeID] = start
+            activities.append(TimelineActivity(
+                id: "\(recipeID):\(item.step.id)", recipeTitle: item.recipe.title,
+                instruction: item.step.originalInstruction, start: start, end: end,
+                active: item.active, estimateLabel: item.label
+            ))
+        }
+        let ordered = activities.sorted { $0.start < $1.start }
+        return (ordered, (ordered.first?.start ?? dinnerTime) < Date())
+    }
+
+    private static func containsSafetyCriticalWait(_ instruction: String) -> Bool {
+        let text = instruction.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+        let terms = ["rest", "cool", "chill", "refrigerat", "marinat", "overnight", "proof", "rise", "thermometer", "internal temperature", "until", "at least"]
+        return terms.contains { text.contains($0) }
+    }
+}
+
+private struct TimelineShareFile: Identifiable {
+    let id = UUID()
+    let url: URL
 }
 
 private struct TimelineDayGroup: Identifiable {

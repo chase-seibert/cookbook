@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
 import UIKit
+import CoreText
 
 struct NoteEditorView: View {
     let recipe: Recipe
@@ -38,13 +39,15 @@ struct NoteEditorView: View {
 struct RecipePrintView: View {
     let recipe: Recipe
     @Environment(\.dismiss) private var dismiss
-    @State private var shareURL: URL?
+    @State private var shareFile: ShareFile?
+    @State private var printError: String?
     var body: some View {
         NavigationStack {
             ScrollView { printContents.padding(24) }
                 .navigationTitle("Print Preview").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }; ToolbarItem(placement: .confirmationAction) { Button("PDF / Print") { shareURL = createPDF() } } }
-                .sheet(item: Binding(get: { shareURL.map(ShareFile.init) }, set: { shareURL = $0?.url })) { file in ActivityView(items: [file.url]) }
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }; ToolbarItem(placement: .confirmationAction) { Button("PDF / Print") { makePDFAndShare() } } }
+                .sheet(item: $shareFile) { file in ActivityView(items: [file.url]) }
+                .alert("Could not create recipe PDF", isPresented: Binding(get: { printError != nil }, set: { if !$0 { printError = nil } })) { Button("OK") { printError = nil } } message: { Text(printError ?? "") }
         }
     }
     private var printContents: some View {
@@ -57,19 +60,42 @@ struct RecipePrintView: View {
             ForEach(Array(recipe.steps.enumerated()), id: \.element.id) { index, step in Text("\(index + 1).  \(step.originalInstruction)") }
         }.frame(maxWidth: 620, alignment: .leading).frame(maxWidth: .infinity, alignment: .topLeading)
     }
+    private func makePDFAndShare() {
+        guard let url = createPDF() else { printError = "The PDF could not be written. Check available storage and try again."; return }
+        shareFile = ShareFile(url: url)
+    }
     private func createPDF() -> URL? {
         let renderer = UIGraphicsPDFRenderer(bounds: CGRect(x: 0, y: 0, width: 612, height: 792))
         let url = UserFiles.directory.appendingPathComponent("\(UUID().uuidString).pdf")
-        do { try renderer.writePDF(to: url) { context in
-            context.beginPage(); var y: CGFloat = 48
-            let blocks: [(String, UIFont)] = [(recipe.title, .boldSystemFont(ofSize: 24)), (recipe.introduction, .systemFont(ofSize: 11)), ("INGREDIENTS", .boldSystemFont(ofSize: 14))] + recipe.ingredients.map { ("\($0.quantity)  \($0.name)", .systemFont(ofSize: 11)) } + [("METHOD", .boldSystemFont(ofSize: 14))] + recipe.steps.enumerated().map { ("\($0.offset + 1).  \($0.element.originalInstruction)", .systemFont(ofSize: 11)) }
-            for (text, font) in blocks where !text.isEmpty {
-                let attributes: [NSAttributedString.Key: Any] = [.font: font]
-                let rect = (text as NSString).boundingRect(with: CGSize(width: 516, height: 10_000), options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: attributes, context: nil)
-                if y + rect.height > 748 { context.beginPage(); y = 48 }
-                (text as NSString).draw(in: CGRect(x: 48, y: y, width: 516, height: rect.height + 4), withAttributes: attributes); y += rect.height + 8
+        var failedToPaginate = false
+        do {
+            try renderer.writePDF(to: url) { context in
+                let blocks: [(String, UIFont)] = [(recipe.title, .boldSystemFont(ofSize: 24)), (recipe.introduction, .systemFont(ofSize: 11)), ("INGREDIENTS", .boldSystemFont(ofSize: 14))] + recipe.ingredients.map { ("\($0.quantity)  \($0.name)", .systemFont(ofSize: 11)) } + [("METHOD", .boldSystemFont(ofSize: 14))] + recipe.steps.enumerated().map { ("\($0.offset + 1).  \($0.element.originalInstruction)", .systemFont(ofSize: 11)) }
+                let content = NSMutableAttributedString()
+                for (text, font) in blocks where !text.isEmpty {
+                    content.append(NSAttributedString(string: text + "\n\n", attributes: [.font: font]))
+                }
+                guard content.length > 0 else { return }
+                let framesetter = CTFramesetterCreateWithAttributedString(content as CFAttributedString)
+                var currentRange = CFRange(location: 0, length: 0)
+                while currentRange.location < content.length {
+                    context.beginPage()
+                    let path = CGPath(rect: CGRect(x: 48, y: 48, width: 516, height: 696), transform: nil)
+                    let frame = CTFramesetterCreateFrame(framesetter, currentRange, path, nil)
+                    context.cgContext.saveGState()
+                    context.cgContext.translateBy(x: 0, y: 792)
+                    context.cgContext.scaleBy(x: 1, y: -1)
+                    CTFrameDraw(frame, context.cgContext)
+                    context.cgContext.restoreGState()
+                    let visibleRange = CTFrameGetVisibleStringRange(frame)
+                    guard visibleRange.length > 0 else { failedToPaginate = true; break }
+                    currentRange.location += visibleRange.length
+                }
             }
-        }; return url } catch { return nil }
+            if failedToPaginate { try? FileManager.default.removeItem(at: url); return nil }
+            guard ((try? Data(contentsOf: url).count) ?? 0) > 0 else { try? FileManager.default.removeItem(at: url); return nil }
+            return url
+        } catch { try? FileManager.default.removeItem(at: url); return nil }
     }
 }
 

@@ -102,7 +102,7 @@ struct CookingModeView: View {
 }
 
 struct GroceryReviewView: View {
-    let recipe: Recipe
+    let recipes: [Recipe]
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @AppStorage("reminderListID") private var selectedListID = ""
@@ -112,16 +112,21 @@ struct GroceryReviewView: View {
     @State private var message: String?
     @State private var loading = true
     private let store = EKEventStore()
+    init(recipe: Recipe) { self.recipes = [recipe] }
+    init(recipes: [Recipe]) { self.recipes = recipes }
     private var buyItems: [RecipeIngredient] { uniqueIngredients.filter { !$0.staple } }
     private var staples: [RecipeIngredient] { uniqueIngredients.filter(\.staple) }
     private var uniqueIngredients: [RecipeIngredient] {
         var seen = Set<String>()
-        return recipe.ingredients.filter { !$0.excludeFromGroceries && seen.insert(normalize($0.groceryName)).inserted }
+        return recipes.flatMap(\.ingredients).filter { !$0.excludeFromGroceries && seen.insert(normalize($0.groceryName)).inserted }
     }
 
     var body: some View {
         NavigationStack {
             List {
+                if recipes.isEmpty {
+                    Section { ContentUnavailableView("No recipe ingredients found", systemImage: "cart", description: Text("This dinner’s ingredients could not be matched to recipe records. Its saved cooking steps are still available.")) }
+                }
                 Section {
                     if loading { ProgressView("Loading Reminders lists…") }
                     else if lists.isEmpty { Text(message ?? "No writable Reminders lists found.").foregroundStyle(.secondary) }
@@ -206,7 +211,8 @@ struct GroceryReviewView: View {
                 message = "Added \(savedCount) of \(items.count) items. Check Reminders before retrying."
                 return
             }
-            RecipeUsageStore(context: modelContext).recordCompletedGroceryFlow(recipe.id)
+            let usage = RecipeUsageStore(context: modelContext)
+            for recipe in recipes { usage.recordCompletedGroceryFlow(recipe.id) }
             dismiss()
         } catch { message = "Added \(savedCount) of \(items.count) items. Check Reminders before retrying." }
     }

@@ -26,16 +26,17 @@ struct RootView: View {
             incomingPaprikaURL = url
             selectedTab = 2
         }
-        .task { openPendingPaprikaShareIfNeeded() }
+        .onChange(of: selectedTab) { _, tab in
+            if tab == 2 { openPendingPaprikaShareIfNeeded() }
+        }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { openPendingPaprikaShareIfNeeded() }
+            if phase == .active, selectedTab == 2 { openPendingPaprikaShareIfNeeded() }
         }
     }
 
     private func openPendingPaprikaShareIfNeeded() {
         guard incomingPaprikaURL == nil, let url = PaprikaShareInbox.nextPendingURL() else { return }
         incomingPaprikaURL = url
-        selectedTab = 2
     }
 }
 
