@@ -24,7 +24,7 @@ struct CookbookCatalog: Decodable {
     }()
 }
 
-struct Recipe: Decodable, Identifiable, Hashable {
+struct Recipe: Codable, Identifiable, Hashable, Sendable {
     let id: String
     let title: String
     let category: String
@@ -41,11 +41,12 @@ struct Recipe: Decodable, Identifiable, Hashable {
     let provenance: RecipeProvenance?
     let menuDescription: String?
     let menuPairings: [String]?
+    let servings: String?
 
     var browseLabelIDs: [String] { labelIDs ?? [] }
 }
 
-struct RecipeProvenance: Decodable, Hashable {
+struct RecipeProvenance: Codable, Hashable, Sendable {
     let type: RecipeSourceType
     let name: String?
     let reference: String?
@@ -67,7 +68,7 @@ struct RecipeProvenance: Decodable, Hashable {
     }
 }
 
-enum RecipeSourceType: String, Decodable, Hashable {
+enum RecipeSourceType: String, Codable, Hashable, Sendable {
     case website
     case paprikaImport
     case manual
@@ -146,7 +147,7 @@ enum RecipeLabelFilter {
     }
 }
 
-struct RecipeIngredient: Decodable, Identifiable, Hashable {
+struct RecipeIngredient: Codable, Identifiable, Hashable, Sendable {
     let id: String
     let quantity: String
     let name: String
@@ -155,7 +156,7 @@ struct RecipeIngredient: Decodable, Identifiable, Hashable {
     let excludeFromGroceries: Bool
 }
 
-struct RecipeStep: Decodable, Identifiable, Hashable {
+struct RecipeStep: Codable, Identifiable, Hashable, Sendable {
     let id: String
     let sectionTitle: String
     let instruction: String

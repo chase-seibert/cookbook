@@ -6,28 +6,51 @@ import UIKit
 @main struct CookbookApp: App {
     var body: some Scene {
         WindowGroup { RootView() }
-        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self])
+        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self])
     }
 }
 
 struct RootView: View {
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var selectedTab = 0
+    @State private var incomingPaprikaURL: URL?
+
     var body: some View {
-        TabView {
-            RecipeBrowserView().tabItem { Label("Recipes", systemImage: "book.closed") }
-            DinnerPlannerView().tabItem { Label("Dinner", systemImage: "calendar.badge.clock") }
-            SettingsView().tabItem { Label("Settings", systemImage: "gearshape") }
+        TabView(selection: $selectedTab) {
+            RecipeBrowserView().tabItem { Label("Recipes", systemImage: "book.closed") }.tag(0)
+            DinnerPlannerView().tabItem { Label("Dinner", systemImage: "calendar.badge.clock") }.tag(1)
+            SettingsView(incomingPaprikaURL: $incomingPaprikaURL).tabItem { Label("Settings", systemImage: "gearshape") }.tag(2)
         }
         .tint(Color(red: 0.32, green: 0.39, blue: 0.27))
+        .onOpenURL { url in
+            incomingPaprikaURL = url
+            selectedTab = 2
+        }
+        .task { openPendingPaprikaShareIfNeeded() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { openPendingPaprikaShareIfNeeded() }
+        }
+    }
+
+    private func openPendingPaprikaShareIfNeeded() {
+        guard incomingPaprikaURL == nil, let url = PaprikaShareInbox.nextPendingURL() else { return }
+        incomingPaprikaURL = url
+        selectedTab = 2
     }
 }
 
 struct RecipeBrowserView: View {
     @Environment(\.modelContext) private var modelContext
+    @Query private var importedRecords: [ImportedPaprikaRecipe]
     @State private var query = ""
     @State private var isSearchPresented = false
     @State private var selectedLabelIDs: Set<String> = []
     @State private var selectedDinnerRecipeID: String?
-    private let recipes = CookbookCatalog.bundled.recipes
+    private var recipes: [Recipe] { CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) }
+    private var categoryOrder: [String] {
+        var seen = Set(CookbookCatalog.bundled.categoryOrder)
+        return CookbookCatalog.bundled.categoryOrder + recipes.map(\.category).filter { seen.insert($0).inserted }
+    }
     private var labelGroups: [RecipeLabelGroup] { (CookbookCatalog.bundled.labelGroups ?? []).sorted { $0.order < $1.order } }
     private var labels: [RecipeLabel] { CookbookCatalog.bundled.labels ?? [] }
     private func allLabels(in group: RecipeLabelGroup) -> [RecipeLabel] {
@@ -61,7 +84,7 @@ struct RecipeBrowserView: View {
         query.isEmpty || recipe.title.localizedCaseInsensitiveContains(query) || recipe.ingredients.contains { $0.name.localizedCaseInsensitiveContains(query) }
     }
     private var visibleCategories: [String] {
-        CookbookCatalog.bundled.categoryOrder.filter { sectionName in filtered.contains { $0.category == sectionName } }
+        categoryOrder.filter { sectionName in filtered.contains { $0.category == sectionName } }
     }
     private func browserGroups(in sectionName: String) -> [BrowserGroup] {
         var result: [BrowserGroup] = []
@@ -263,10 +286,20 @@ struct RecipeTile: View {
 private struct RecipeArtwork: View {
     let recipe: Recipe
     var height: CGFloat
+    @Query private var photos: [RecipePhoto]
+
+    init(recipe: Recipe, height: CGFloat) {
+        self.recipe = recipe
+        self.height = height
+        let recipeID = recipe.id
+        _photos = Query(filter: #Predicate<RecipePhoto> { $0.recipeID == recipeID && $0.isCover })
+    }
 
     var body: some View {
         Group {
-            if let asset = recipe.thumbnailAsset,
+            if let photo = photos.first, let image = UIImage(contentsOfFile: UserFiles.url(for: photo.relativePath).path) {
+                Image(uiImage: image).resizable().scaledToFill()
+            } else if let asset = recipe.thumbnailAsset,
                let url = Bundle.main.url(forResource: asset, withExtension: nil, subdirectory: "Thumbnails"),
                let image = UIImage(contentsOfFile: url.path) {
                 Image(uiImage: image).resizable().scaledToFill()
@@ -455,6 +488,7 @@ struct RecipeDetailView: View {
             VStack(alignment: .leading, spacing: 22) {
                 Text(recipe.title).font(.system(size: 34, weight: .semibold, design: .serif)).fixedSize(horizontal: false, vertical: true)
                 if !recipe.introduction.isEmpty { Text(recipe.introduction).font(.body).foregroundStyle(.secondary) }
+                if let servings = recipe.servings, !servings.isEmpty { LabeledContent("Servings", value: servings) }
                 if let cover = photos.first(where: \.isCover), let image = UIImage(contentsOfFile: UserFiles.url(for: cover.relativePath).path) {
                     Image(uiImage: image).resizable().scaledToFill().frame(maxHeight: 260).clipped().clipShape(RoundedRectangle(cornerRadius: 18))
                 }
@@ -489,7 +523,7 @@ struct RecipeDetailView: View {
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }.foregroundStyle(.primary).contextMenu { Button("Delete Note", role: .destructive) { note.deletedAt = .now; note.updatedAt = .now } }
                 }
-                if let provenance = recipe.provenance {
+                if let provenance = recipe.provenance, provenance.type != .paprikaImport {
                     HStack(spacing: 0) {
                         Text(provenance.tagLabel)
                             .font(.caption.weight(.medium))

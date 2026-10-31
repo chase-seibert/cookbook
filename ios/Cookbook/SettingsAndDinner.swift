@@ -5,6 +5,7 @@ import Security
 import UIKit
 
 struct SettingsView: View {
+    @Binding var incomingPaprikaURL: URL?
     @AppStorage("reminderListID") private var reminderListID = ""
     @AppStorage("aiProvider") private var aiProvider = "openai"
     @AppStorage("openAIModel") private var openAIModel = "gpt-6-astra"
@@ -14,7 +15,10 @@ struct SettingsView: View {
     @State private var exportURL: URL?
     @State private var markdownURL: URL?
     @State private var personalCredential = ""
+    @State private var showingPaprikaImporter = false
+    @State private var importReview: PaprikaImportReviewSession?
     @Query(sort: \RecipeNote.updatedAt, order: .reverse) private var notes: [RecipeNote]
+    @Query private var importedRecords: [ImportedPaprikaRecipe]
     private let reminderStore = EKEventStore()
 
     var body: some View {
@@ -38,6 +42,10 @@ struct SettingsView: View {
                     if let markdownURL { ShareLink(item: markdownURL) { Label("Share Markdown companion", systemImage: "doc.text") } }
                     Text("Exports preserve each note's original text, recipe ID, optional step ID, and creation/update timestamps.").font(.footnote).foregroundStyle(.secondary)
                 }
+                Section("Recipe imports") {
+                    Button { showingPaprikaImporter = true } label: { Label("Import Paprika recipes…", systemImage: "square.and.arrow.down") }
+                    Text("Review recipes before adding them. Paprika imports stay on this device and are marked internally.").font(.footnote).foregroundStyle(.secondary)
+                }
                 Section("Recipe usage") {
                     NavigationLink {
                         RecipeUsageStatsView()
@@ -58,12 +66,53 @@ struct SettingsView: View {
                     }
                     Text("Provider choice is explicit. The on-device option never falls back to the cloud.").font(.footnote).foregroundStyle(.secondary)
                 }
-                Section("About") { LabeledContent("Recipe catalog", value: "\(CookbookCatalog.bundled.recipes.count) recipes · offline") }
+                Section("About") { LabeledContent("Recipe catalog", value: "\(CookbookCatalog.bundled.recipes.count + importedRecords.compactMap(\.recipe).count) recipes · offline") }
             }
             .navigationTitle("Settings")
             .onAppear { reminderListName = UserDefaults.standard.string(forKey: "reminderListName") ?? "Not selected"; loadCredential() }
+            .fileImporter(isPresented: $showingPaprikaImporter, allowedContentTypes: PaprikaFileType.supported, allowsMultipleSelection: false, onCompletion: handlePaprikaSelection)
+            .sheet(item: $importReview, onDismiss: openNextPendingPaprikaShare) { session in PaprikaImportReviewView(session: session) }
+            .onChange(of: incomingPaprikaURL) { _, url in
+                guard let url else { return }
+                incomingPaprikaURL = nil
+                importPaprikaFile(url)
+            }
             .alert("Cookbook", isPresented: Binding(get: { status != nil }, set: { if !$0 { status = nil } })) { Button("OK") { status = nil } } message: { Text(status ?? "") }
         }
+    }
+
+    private func handlePaprikaSelection(_ result: Result<[URL], Error>) {
+        do {
+            let urls: [URL]
+            do { urls = try result.get() } catch is CancellationError { return }
+            guard let url = urls.first else { return }
+            importPaprikaFile(url)
+        } catch { status = "Could not open the selected file: \(error.localizedDescription)" }
+    }
+
+    private func importPaprikaFile(_ url: URL) {
+        let hasAccess = url.startAccessingSecurityScopedResource()
+        defer { if hasAccess { url.stopAccessingSecurityScopedResource() } }
+        do {
+            let data = try Data(contentsOf: url, options: [.mappedIfSafe])
+            Task {
+                do {
+                    let drafts = try await Task.detached(priority: .userInitiated) { try PaprikaImportReader.parse(data: data) }.value
+                    PaprikaShareInbox.removeIfPending(url)
+                    guard !drafts.isEmpty else { status = "This Paprika file contains no importable recipes."; return }
+                    importReview = PaprikaImportReviewSession(drafts: drafts)
+                } catch is CancellationError { return }
+                catch {
+                    PaprikaShareInbox.removeIfPending(url)
+                    status = error.localizedDescription
+                }
+            }
+        } catch { status = "Could not open the selected file: \(error.localizedDescription)" }
+    }
+
+    private func openNextPendingPaprikaShare() {
+        guard incomingPaprikaURL == nil, let nextURL = PaprikaShareInbox.nextPendingURL() else { return }
+        incomingPaprikaURL = nextURL
     }
 
     @MainActor private func loadReminderLists() async {
@@ -88,7 +137,8 @@ struct SettingsView: View {
         let path = UserFiles.directory.appendingPathComponent("recipe-notes-\(stamp).json")
         let markdownPath = UserFiles.directory.appendingPathComponent("recipe-notes-\(stamp).md")
         let json = (try? JSONEncoder.pretty.encode(records)) ?? Data("[]".utf8)
-        let titles = Dictionary(uniqueKeysWithValues: CookbookCatalog.bundled.recipes.map { ($0.id, $0.title) })
+        let allRecipes = CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe)
+        let titles = Dictionary(uniqueKeysWithValues: allRecipes.map { ($0.id, $0.title) })
         let body = records.map { record in
             "## \(titles[record.recipeID] ?? record.recipeID)\n\n- Note ID: `\(record.id.uuidString)`\n- Recipe ID: `\(record.recipeID)`\n- Step ID: \(record.stepID ?? "whole recipe")\n- Created: \(record.createdAt)\n- Updated: \(record.updatedAt)\n\n\(record.text)"
         }.joined(separator: "\n\n---\n\n")
@@ -98,10 +148,11 @@ struct SettingsView: View {
 
 private struct RecipeUsageStatsView: View {
     @Query private var stats: [RecipeUsageStats]
+    @Query private var importedRecords: [ImportedPaprikaRecipe]
     @State private var exportURL: URL?
 
     private var rows: [(recipe: Recipe?, stats: RecipeUsageStats?)] {
-        let catalog = CookbookCatalog.bundled.recipes
+        let catalog = CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe)
         var byID = Dictionary(uniqueKeysWithValues: stats.map { ($0.recipeID, $0) })
         let catalogRows: [(recipe: Recipe?, stats: RecipeUsageStats?)] = catalog.map { (Optional($0), byID.removeValue(forKey: $0.id)) }
         let unmatched = stats.filter { record in !catalog.contains { $0.id == record.recipeID } }
@@ -190,6 +241,7 @@ struct DinnerPlannerView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \PlannedDinnerRecipe.dinnerDate) private var scheduled: [PlannedDinnerRecipe]
     @Query(sort: \DinnerTimeline.updatedAt, order: .reverse) private var saved: [DinnerTimeline]
+    @Query private var importedRecords: [ImportedPaprikaRecipe]
     @State private var selectedIDs = Set<String>()
     @State private var dinnerTime = Date.now
     @State private var plan: [TimelineActivity] = []
@@ -203,7 +255,7 @@ struct DinnerPlannerView: View {
     @State private var isGenerating = false
     @AppStorage("aiProvider") private var aiProvider = "openai"
     @AppStorage("openAIModel") private var openAIModel = "gpt-6-astra"
-    private let recipes = CookbookCatalog.bundled.recipes
+    private var recipes: [Recipe] { CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) }
 
     private var recipeTitles: [String: String] { Dictionary(uniqueKeysWithValues: recipes.map { ($0.id, $0.title) }) }
     private var dinnerGroups: [DinnerDateGroup] {

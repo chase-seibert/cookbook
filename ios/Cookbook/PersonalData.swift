@@ -1,6 +1,22 @@
 import Foundation
 import SwiftData
 
+@Model final class ImportedPaprikaRecipe {
+    @Attribute(.unique) var id: String
+    var paprikaUID: String
+    var recipeData: Data
+    var importedAt: Date
+
+    init(id: String, paprikaUID: String, recipeData: Data, importedAt: Date = .now) {
+        self.id = id
+        self.paprikaUID = paprikaUID
+        self.recipeData = recipeData
+        self.importedAt = importedAt
+    }
+
+    var recipe: Recipe? { try? JSONDecoder().decode(Recipe.self, from: recipeData) }
+}
+
 @Model final class RecipeNote {
     @Attribute(.unique) var id: UUID
     var recipeID: String

@@ -1,0 +1,441 @@
+import Foundation
+import SwiftData
+import SwiftUI
+import UniformTypeIdentifiers
+import UIKit
+
+enum PaprikaFileType {
+    static let supported: [UTType] = [
+        UTType(filenameExtension: "paprikarecipe", conformingTo: .data) ?? .data,
+        UTType(filenameExtension: "paprikarecipes", conformingTo: .data) ?? .data
+    ]
+}
+
+struct PaprikaImportDraft: Identifiable, Sendable {
+    let uid: String
+    let recipe: Recipe
+    let photoData: Data?
+    var id: String { uid }
+}
+
+struct PaprikaImportReviewSession: Identifiable {
+    let id = UUID()
+    let drafts: [PaprikaImportDraft]
+}
+
+enum PaprikaImportError: LocalizedError {
+    case unsupportedFile
+    case invalidArchive(String)
+    case archiveTooLarge
+    case noRecipes
+    case invalidRecipe(String)
+    case imageWriteFailed
+
+    var errorDescription: String? {
+        switch self {
+        case .unsupportedFile: "Choose a Paprika .paprikarecipe or .paprikarecipes file."
+        case .invalidArchive(let reason): "Could not read this Paprika file: \(reason)"
+        case .archiveTooLarge: "This Paprika file exceeds the supported size limits."
+        case .noRecipes: "This Paprika file does not contain any recipes."
+        case .invalidRecipe(let reason): "A recipe in this Paprika file is invalid: \(reason)"
+        case .imageWriteFailed: "A recipe photo could not be saved. No recipes were added."
+        }
+    }
+}
+
+enum PaprikaImportReader {
+    private static let maximumArchiveBytes = 100 * 1024 * 1024
+    private static let maximumEntries = 2_500
+    private static let maximumEntryBytes = 24 * 1024 * 1024
+    private static let maximumTotalRecipeBytes = 80 * 1024 * 1024
+
+    static func parse(data: Data) throws -> [PaprikaImportDraft] {
+        guard data.count <= maximumArchiveBytes else { throw PaprikaImportError.archiveTooLarge }
+        let payloads: [(String, Data)]
+        if data.starts(with: [0x50, 0x4b, 0x03, 0x04]) {
+            payloads = try zipEntries(data)
+        } else if data.starts(with: [0x1f, 0x8b]) {
+            payloads = [("recipe.paprikarecipe", data)]
+        } else {
+            throw PaprikaImportError.unsupportedFile
+        }
+        guard !payloads.isEmpty else { throw PaprikaImportError.noRecipes }
+        var drafts: [PaprikaImportDraft] = []
+        var seenUIDs = Set<String>()
+        var totalBytes = 0
+        for (name, compressed) in payloads {
+            guard compressed.count <= maximumEntryBytes else { throw PaprikaImportError.archiveTooLarge }
+            totalBytes += compressed.count
+            guard totalBytes <= maximumTotalRecipeBytes else { throw PaprikaImportError.archiveTooLarge }
+            let json: Data
+            do { json = try inflate(compressed, windowBits: 15 + 16, expectedSize: gzipSize(compressed)) }
+            catch { throw PaprikaImportError.invalidRecipe("\(name) is not a valid gzip-compressed recipe.") }
+            guard json.count <= maximumEntryBytes else { throw PaprikaImportError.archiveTooLarge }
+            let draft = try decodeRecipe(json, filename: name)
+            guard seenUIDs.insert(draft.uid.lowercased()).inserted else {
+                throw PaprikaImportError.invalidRecipe("the Paprika UID \(draft.uid) appears more than once.")
+            }
+            drafts.append(draft)
+        }
+        return drafts
+    }
+
+    private static func decodeRecipe(_ data: Data, filename: String) throws -> PaprikaImportDraft {
+        guard let object = try? JSONSerialization.jsonObject(with: data), let fields = object as? [String: Any] else {
+            throw PaprikaImportError.invalidRecipe("\(filename) does not contain a JSON recipe.")
+        }
+        func string(_ key: String) -> String { (fields[key] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines) }
+        let uid = string("uid")
+        let title = string("name")
+        guard !uid.isEmpty else { throw PaprikaImportError.invalidRecipe("\(filename) has no Paprika UID.") }
+        guard !title.isEmpty else { throw PaprikaImportError.invalidRecipe("\(filename) has no usable title.") }
+
+        let categoryValues = (fields["categories"] as? [String] ?? []).map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+        let category = categoryValues.first ?? "Imported"
+        let ingredientLines = string("ingredients").components(separatedBy: .newlines).map(cleanLine).filter { !$0.isEmpty }
+        let directionLines = string("directions").components(separatedBy: #"\n\s*\n"#).map(cleanLine).filter { !$0.isEmpty }
+        let notes = string("notes").components(separatedBy: #"\n\s*\n"#).map(cleanLine).filter { !$0.isEmpty }
+        let ingredients = ingredientLines.enumerated().map { index, line in
+            RecipeIngredient(id: "paprika-ingredient-\(index + 1)", quantity: "", name: line, groceryName: line, staple: false, excludeFromGroceries: false)
+        }
+        let steps = directionLines.enumerated().map { index, line in
+            RecipeStep(id: "paprika-step-\(index + 1)", sectionTitle: "", instruction: line, originalInstruction: line, ingredientIDs: [], durationMinutes: nil, active: true)
+        }
+        let reference = string("source_url")
+        let recipe = Recipe(
+            id: "paprika:\(uid.lowercased())",
+            title: title,
+            category: category,
+            collectionTitle: nil,
+            sourceFile: "Paprika import",
+            sourceSection: category,
+            introduction: string("description"),
+            ingredients: ingredients,
+            steps: steps,
+            tips: notes,
+            healthierOptions: [],
+            thumbnailAsset: nil,
+            labelIDs: ["paprika-import"],
+            provenance: RecipeProvenance(type: .paprikaImport, name: string("source").isEmpty ? "Paprika" : string("source"), reference: reference.isEmpty ? nil : reference),
+            menuDescription: nil,
+            menuPairings: nil,
+            servings: string("servings").isEmpty ? nil : string("servings")
+        )
+        let photo = imageData(string("photo_data")) ?? imageData(string("photo_large"))
+        return PaprikaImportDraft(uid: uid, recipe: recipe, photoData: photo)
+    }
+
+    private static func cleanLine(_ value: String) -> String {
+        value.replacingOccurrences(of: "\r", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private static func imageData(_ encoded: String) -> Data? {
+        guard !encoded.isEmpty, let data = Data(base64Encoded: encoded, options: .ignoreUnknownCharacters), data.count <= maximumEntryBytes else { return nil }
+        let isJPEG = data.starts(with: [0xff, 0xd8, 0xff])
+        let isPNG = data.starts(with: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
+        let isGIF = data.starts(with: Array("GIF8".utf8))
+        return (isJPEG || isPNG || isGIF) ? data : nil
+    }
+
+    private struct Entry {
+        let name: String
+        let method: UInt16
+        let flags: UInt16
+        let crc32: UInt32
+        let compressedSize: Int
+        let uncompressedSize: Int
+        let localOffset: Int
+    }
+
+    private static func zipEntries(_ data: Data) throws -> [(String, Data)] {
+        guard let eocd = (max(0, data.count - 65_557)..<data.count).reversed().first(where: { read32(data, $0) == 0x06054b50 }) else {
+            throw PaprikaImportError.invalidArchive("the ZIP directory is missing.")
+        }
+        let count = Int(read16(data, eocd + 10))
+        let directorySize = Int(read32(data, eocd + 12))
+        let directoryOffset = Int(read32(data, eocd + 16))
+        guard count > 0, count <= maximumEntries, directoryOffset >= 0, directorySize >= 0,
+              directoryOffset + directorySize <= eocd, read16(data, eocd + 4) == 0, read16(data, eocd + 6) == 0,
+              read16(data, eocd + 8) == UInt16(count) else {
+            throw PaprikaImportError.invalidArchive("the ZIP directory is invalid or uses an unsupported ZIP64 layout.")
+        }
+        var offset = directoryOffset
+        var entries: [Entry] = []
+        for _ in 0..<count {
+            guard read32(data, offset) == 0x02014b50 else { throw PaprikaImportError.invalidArchive("a ZIP directory entry is malformed.") }
+            let flags = read16(data, offset + 8)
+            let method = read16(data, offset + 10)
+            let crc = read32(data, offset + 16)
+            let compressed = Int(read32(data, offset + 20))
+            let uncompressed = Int(read32(data, offset + 24))
+            let nameLength = Int(read16(data, offset + 28))
+            let extraLength = Int(read16(data, offset + 30))
+            let commentLength = Int(read16(data, offset + 32))
+            let localOffset = Int(read32(data, offset + 42))
+            let end = offset + 46 + nameLength + extraLength + commentLength
+            guard end <= directoryOffset + directorySize, compressed != Int(UInt32.max), uncompressed != Int(UInt32.max), localOffset != Int(UInt32.max), compressed <= maximumEntryBytes, uncompressed <= maximumEntryBytes else {
+                throw PaprikaImportError.archiveTooLarge
+            }
+            let nameData = data.subdata(in: (offset + 46)..<(offset + 46 + nameLength))
+            let name = String(data: nameData, encoding: .utf8) ?? String(data: nameData, encoding: .isoLatin1) ?? ""
+            if name.lowercased().hasSuffix(".paprikarecipe") && !name.hasSuffix("/") {
+                guard flags & 0x0001 == 0, method == 0 || method == 8 else { throw PaprikaImportError.invalidArchive("\(name) is encrypted or uses an unsupported ZIP method.") }
+                entries.append(Entry(name: name, method: method, flags: flags, crc32: crc, compressedSize: compressed, uncompressedSize: uncompressed, localOffset: localOffset))
+            }
+            offset = end
+        }
+        guard offset == directoryOffset + directorySize else { throw PaprikaImportError.invalidArchive("the ZIP directory size does not match its entries.") }
+        guard !entries.isEmpty else { throw PaprikaImportError.noRecipes }
+        return try entries.map { entry in
+            let start = entry.localOffset
+            guard read32(data, start) == 0x04034b50 else { throw PaprikaImportError.invalidArchive("\(entry.name) has a malformed local header.") }
+            let nameLength = Int(read16(data, start + 26))
+            let extraLength = Int(read16(data, start + 28))
+            let body = start + 30 + nameLength + extraLength
+            guard body >= 0, body + entry.compressedSize <= data.count else { throw PaprikaImportError.invalidArchive("\(entry.name) is truncated.") }
+            let compressed = data.subdata(in: body..<(body + entry.compressedSize))
+            let output = entry.method == 0 ? compressed : try inflate(compressed, windowBits: -15, expectedSize: entry.uncompressedSize)
+            guard output.count == entry.uncompressedSize, crc32(output) == entry.crc32 else { throw PaprikaImportError.invalidArchive("\(entry.name) failed its size or checksum check.") }
+            return (entry.name, output)
+        }
+    }
+
+    private static func inflate(_ input: Data, windowBits: Int32, expectedSize: Int?) throws -> Data {
+        let size = expectedSize ?? maximumEntryBytes
+        guard size > 0, size <= maximumEntryBytes, input.count <= maximumEntryBytes else { throw PaprikaImportError.archiveTooLarge }
+        var output = Data(count: size)
+        let outputCapacity = size
+        var outputLength = 0
+        let success = input.withUnsafeBytes { inputBytes in
+            output.withUnsafeMutableBytes { outputBytes in
+                cookbook_inflate(inputBytes.bindMemory(to: UInt8.self).baseAddress, input.count,
+                                 outputBytes.bindMemory(to: UInt8.self).baseAddress, outputCapacity,
+                                 &outputLength, windowBits)
+            }
+        }
+        guard success != 0, outputLength <= size else { throw PaprikaImportError.invalidArchive("compressed data could not be decompressed.") }
+        output.count = outputLength
+        return output
+    }
+
+    private static func gzipSize(_ data: Data) -> Int? {
+        guard data.count >= 18 else { return nil }
+        let value = UInt32(data[data.count - 4]) | UInt32(data[data.count - 3]) << 8 | UInt32(data[data.count - 2]) << 16 | UInt32(data[data.count - 1]) << 24
+        return value == 0 ? nil : Int(value)
+    }
+
+    private static func read16(_ data: Data, _ offset: Int) -> UInt16 {
+        guard offset >= 0, offset + 2 <= data.count else { return 0 }
+        return UInt16(data[offset]) | UInt16(data[offset + 1]) << 8
+    }
+
+    private static func read32(_ data: Data, _ offset: Int) -> UInt32 {
+        guard offset >= 0, offset + 4 <= data.count else { return 0 }
+        return UInt32(data[offset]) | UInt32(data[offset + 1]) << 8 | UInt32(data[offset + 2]) << 16 | UInt32(data[offset + 3]) << 24
+    }
+
+    private static func crc32(_ data: Data) -> UInt32 {
+        var crc = UInt32.max
+        for byte in data {
+            crc ^= UInt32(byte)
+            for _ in 0..<8 { crc = (crc & 1) == 1 ? (crc >> 1) ^ 0xedb88320 : crc >> 1 }
+        }
+        return crc ^ UInt32.max
+    }
+}
+
+private extension String {
+    func components(separatedBy pattern: String) -> [String] {
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return [self] }
+        let range = NSRange(startIndex..., in: self)
+        let pieces = regex.matches(in: self, range: range)
+        var result: [String] = []
+        var cursor = startIndex
+        for piece in pieces {
+            guard let matchRange = Range(piece.range, in: self) else { continue }
+            result.append(String(self[cursor..<matchRange.lowerBound]))
+            cursor = matchRange.upperBound
+        }
+        result.append(String(self[cursor...]))
+        return result
+    }
+}
+
+enum PaprikaImportStore {
+    @MainActor static func add(_ drafts: [PaprikaImportDraft], to container: ModelContainer) throws -> (added: Int, skipped: Int) {
+        let context = ModelContext(container)
+        let existing = try context.fetch(FetchDescriptor<ImportedPaprikaRecipe>())
+        var knownUIDs = Set(existing.map { $0.paprikaUID.lowercased() })
+        let additions = drafts.filter { knownUIDs.insert($0.uid.lowercased()).inserted }
+        let skipped = drafts.count - additions.count
+        guard !additions.isEmpty else { return (0, skipped) }
+        let filesDirectory = UserFiles.directory.appendingPathComponent("PaprikaImports", isDirectory: true)
+        try FileManager.default.createDirectory(at: filesDirectory, withIntermediateDirectories: true)
+        var writtenFiles: [URL] = []
+        do {
+            try context.transaction {
+                for draft in additions {
+                    let encoded = try JSONEncoder().encode(draft.recipe)
+                    context.insert(ImportedPaprikaRecipe(id: draft.recipe.id, paprikaUID: draft.uid, recipeData: encoded))
+                    if let photo = draft.photoData {
+                        let ext = photo.starts(with: [0xff, 0xd8, 0xff]) ? "jpg" : (photo.starts(with: [0x89, 0x50, 0x4e, 0x47]) ? "png" : "gif")
+                        let relativePath = "PaprikaImports/\(UUID().uuidString).\(ext)"
+                        let url = UserFiles.url(for: relativePath)
+                        do { try photo.write(to: url, options: .atomic) }
+                        catch { throw PaprikaImportError.imageWriteFailed }
+                        writtenFiles.append(url)
+                        context.insert(RecipePhoto(recipeID: draft.recipe.id, relativePath: relativePath, isCover: true))
+                    }
+                }
+            }
+            return (additions.count, skipped)
+        } catch {
+            writtenFiles.forEach { try? FileManager.default.removeItem(at: $0) }
+            throw error
+        }
+    }
+}
+
+struct PaprikaImportReviewView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    let session: PaprikaImportReviewSession
+    @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @State private var selectedUIDs: Set<String>
+    @State private var previewDraft: PaprikaImportDraft?
+    @State private var alertMessage: String?
+
+    init(session: PaprikaImportReviewSession) {
+        self.session = session
+        _selectedUIDs = State(initialValue: Set(session.drafts.map(\.uid)))
+    }
+
+    private var existingUIDs: Set<String> { Set(importedRecords.map { $0.paprikaUID.lowercased() }) }
+    private var selectedDrafts: [PaprikaImportDraft] { session.drafts.filter { selectedUIDs.contains($0.uid) && !existingUIDs.contains($0.uid.lowercased()) } }
+    private var isSingle: Bool { session.drafts.count == 1 }
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if isSingle, let draft = session.drafts.first {
+                    VStack(spacing: 12) {
+                        if existingUIDs.contains(draft.uid.lowercased()) {
+                            Label("This recipe was already imported.", systemImage: "checkmark.circle.fill")
+                                .font(.subheadline).foregroundStyle(.secondary).padding(.horizontal)
+                        }
+                        PaprikaRecipePreview(draft: draft)
+                    }
+                } else {
+                    List {
+                        Section {
+                            HStack {
+                                Text("\(selectedDrafts.count) selected").font(.subheadline.weight(.medium))
+                                Spacer()
+                                Button("Select All") { selectedUIDs = Set(session.drafts.filter { !existingUIDs.contains($0.uid.lowercased()) }.map(\.uid)) }
+                                Button("Deselect All") { selectedUIDs.removeAll() }
+                            }
+                        }
+                        Section("\(session.drafts.count) recipes") {
+                            ForEach(session.drafts) { draft in
+                                Button { previewDraft = draft } label: {
+                                    HStack(spacing: 12) {
+                                        VStack(alignment: .leading, spacing: 3) {
+                                            Text(draft.recipe.title).font(.headline).foregroundStyle(.primary)
+                                            Text("\(draft.recipe.category) · \(draft.recipe.ingredients.count) ingredients").font(.caption).foregroundStyle(.secondary)
+                                            if isAlreadyImported(draft) { Text("Already imported").font(.caption).foregroundStyle(.secondary) }
+                                        }
+                                        Spacer(minLength: 8)
+                                        Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)
+                                    }
+                                    .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                                .overlay(alignment: .trailing) {
+                                    checkboxControl(for: draft)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle(isSingle ? "Review Recipe" : "Review Recipes")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(isSingle ? "Add Recipe" : "Add Selected") { addSelected() }
+                        .disabled(selectedDrafts.isEmpty)
+                }
+            }
+            .sheet(item: $previewDraft) { draft in NavigationStack { PaprikaRecipePreview(draft: draft).toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { previewDraft = nil } } } } }
+            .alert("Paprika import", isPresented: Binding(get: { alertMessage != nil }, set: { if !$0 { alertMessage = nil } })) {
+                Button("OK") { alertMessage = nil; if alertMessage == nil { dismiss() } }
+            } message: { Text(alertMessage ?? "") }
+        }
+    }
+
+    private func toggle(_ draft: PaprikaImportDraft) {
+        guard !existingUIDs.contains(draft.uid.lowercased()) else { return }
+        if selectedUIDs.contains(draft.uid) { selectedUIDs.remove(draft.uid) } else { selectedUIDs.insert(draft.uid) }
+    }
+
+    private func isAlreadyImported(_ draft: PaprikaImportDraft) -> Bool {
+        existingUIDs.contains(draft.uid.lowercased())
+    }
+
+    private func checkboxSymbol(for draft: PaprikaImportDraft) -> String {
+        selectedUIDs.contains(draft.uid) || isAlreadyImported(draft) ? "checkmark.circle.fill" : "circle"
+    }
+
+    private func checkboxLabel(for draft: PaprikaImportDraft) -> String {
+        selectedUIDs.contains(draft.uid) ? "Deselect \(draft.recipe.title)" : "Select \(draft.recipe.title)"
+    }
+
+    private func checkboxControl(for draft: PaprikaImportDraft) -> some View {
+        let disabled = isAlreadyImported(draft)
+        let label = checkboxLabel(for: draft)
+        return Button(action: { toggle(draft) }) {
+            Image(systemName: checkboxSymbol(for: draft))
+                .foregroundColor(disabled ? Color.secondary : Color.accentColor)
+                .frame(width: 44, height: 44)
+        }
+        .buttonStyle(.plain)
+        .disabled(disabled)
+        .accessibilityLabel(label)
+    }
+
+    private func addSelected() {
+        do {
+            let result = try PaprikaImportStore.add(selectedDrafts, to: modelContext.container)
+            guard result.added > 0 else { alertMessage = "These recipes were already imported. No duplicate recipes were added."; return }
+            alertMessage = result.skipped > 0 ? "Added \(result.added) recipes. Skipped \(result.skipped) already imported." : "Added \(result.added) recipe\(result.added == 1 ? "" : "s")."
+        } catch { alertMessage = "Could not add the selected recipes. No recipes were added. \(error.localizedDescription)" }
+    }
+}
+
+private struct PaprikaRecipePreview: View {
+    let draft: PaprikaImportDraft
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                Text(draft.recipe.title).font(.system(size: 30, weight: .semibold, design: .serif))
+                if let imageData = draft.photoData, let image = UIImage(data: imageData) {
+                    Image(uiImage: image).resizable().scaledToFill().frame(maxHeight: 250).clipped().clipShape(RoundedRectangle(cornerRadius: 16))
+                }
+                if !draft.recipe.introduction.isEmpty { Text(draft.recipe.introduction).foregroundStyle(.secondary) }
+                if let servings = draft.recipe.servings, !servings.isEmpty { LabeledContent("Servings", value: servings) }
+                Text("Ingredients").font(.title3.weight(.semibold))
+                ForEach(draft.recipe.ingredients) { ingredient in Text(ingredient.name).frame(maxWidth: .infinity, alignment: .leading) }
+                Text("Instructions").font(.title3.weight(.semibold)).padding(.top, 6)
+                ForEach(Array(draft.recipe.steps.enumerated()), id: \.element.id) { index, step in
+                    HStack(alignment: .top, spacing: 10) { Text("\(index + 1).").foregroundStyle(.secondary); Text(step.originalInstruction) }
+                }
+                if !draft.recipe.tips.isEmpty {
+                    Text("Notes").font(.title3.weight(.semibold)).padding(.top, 6)
+                    ForEach(draft.recipe.tips, id: \.self) { Text($0) }
+                }
+            }.padding()
+        }
+    }
+}
