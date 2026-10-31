@@ -473,9 +473,14 @@ struct RecipeDetailView: View {
     @State private var showAddToDinner = false
     @State private var noteToEdit: RecipeNote?
     @State private var pickedPhoto: PhotosPickerItem?
+    @State private var paprikaExportURL: URL?
+    @State private var showPaprikaShare = false
+    @State private var paprikaExportStatus: String?
+    @State private var exportingPaprika = false
     @Environment(\.modelContext) private var modelContext
     @Query private var photos: [RecipePhoto]
     @Query private var notes: [RecipeNote]
+    @Query private var importedRecords: [ImportedPaprikaRecipe]
     init(recipe: Recipe) {
         self.recipe = recipe
         let recipeID = recipe.id
@@ -553,6 +558,7 @@ struct RecipeDetailView: View {
                 PhotosPicker(selection: $pickedPhoto, matching: .images) { Label("Add Photo", systemImage: "camera") }
                 Button { showCamera = true } label: { Label("Take Photo", systemImage: "camera.fill") }.disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
                 Button { showPrint = true } label: { Label("Print Recipe", systemImage: "printer") }
+                Button { Task { await exportPaprikaRecipe() } } label: { Label("Export Paprika File…", systemImage: "square.and.arrow.up") }.disabled(exportingPaprika)
             } label: { Image(systemName: "ellipsis.circle") }
         }}
         .sheet(isPresented: $showGroceries) { GroceryReviewView(recipe: recipe) }
@@ -561,6 +567,12 @@ struct RecipeDetailView: View {
         .sheet(isPresented: $showNote) { NoteEditorView(recipe: recipe) }
         .sheet(isPresented: $showNoteEdit) { if let noteToEdit { NoteEditorView(recipe: recipe, note: noteToEdit) } }
         .sheet(isPresented: $showPrint) { RecipePrintView(recipe: recipe) }
+        .sheet(isPresented: $showPaprikaShare) {
+            if let paprikaExportURL { ActivityView(items: [paprikaExportURL]) }
+        }
+        .alert("Paprika export", isPresented: Binding(get: { paprikaExportStatus != nil }, set: { if !$0 { paprikaExportStatus = nil } })) {
+            Button("OK") { paprikaExportStatus = nil }
+        } message: { Text(paprikaExportStatus ?? "") }
         .sheet(isPresented: $showCamera) {
             CameraCaptureView { image in savePhoto(image) }
         }
@@ -568,6 +580,20 @@ struct RecipeDetailView: View {
     }
 
     private var activeNotes: [RecipeNote] { notes.filter { $0.deletedAt == nil }.sorted { $0.updatedAt > $1.updatedAt } }
+
+    @MainActor private func exportPaprikaRecipe() async {
+        exportingPaprika = true
+        defer { exportingPaprika = false }
+        do {
+            let item = try PaprikaExporter.item(for: recipe, importedRecords: importedRecords, photos: photos)
+            let url = PaprikaExporter.temporaryURL(extension: "paprikarecipe")
+            try await Task.detached(priority: .userInitiated) { try PaprikaExporter.writeRecipe(item, to: url) }.value
+            paprikaExportURL = url
+            // Let the ellipsis menu finish dismissing before presenting another controller.
+            try await Task.sleep(nanoseconds: 300_000_000)
+            showPaprikaShare = true
+        } catch { paprikaExportStatus = "Could not export \(recipe.title): \(error.localizedDescription)" }
+    }
 
     @MainActor private func savePhoto(_ item: PhotosPickerItem?) async {
         guard let item, let data = try? await item.loadTransferable(type: Data.self), let image = UIImage(data: data) else { return }

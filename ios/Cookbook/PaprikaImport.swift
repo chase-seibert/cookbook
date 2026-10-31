@@ -3,6 +3,7 @@ import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 import UIKit
+import CryptoKit
 
 enum PaprikaFileType {
     static let supported: [UTType] = [
@@ -258,6 +259,223 @@ private extension String {
         }
         result.append(String(self[cursor...]))
         return result
+    }
+}
+
+enum PaprikaExportError: LocalizedError {
+    case noRecipes
+    case invalidRecipe(String)
+    case unsupportedPhoto(String)
+    case compressionFailed
+    case archiveTooLarge
+    case archiveFailed
+
+    var errorDescription: String? {
+        switch self {
+        case .noRecipes: "There are no recipes to export."
+        case .invalidRecipe(let title): "Could not encode \(title) as a Paprika recipe."
+        case .unsupportedPhoto(let title): "The cover photo for \(title) is unreadable or is not a supported JPEG, PNG, or GIF image."
+        case .compressionFailed: "Could not compress a Paprika recipe."
+        case .archiveTooLarge: "The Paprika export exceeds the supported file size."
+        case .archiveFailed: "Could not create the Paprika collection archive."
+        }
+    }
+}
+
+struct PaprikaExportItem: Sendable {
+    let recipe: Recipe
+    let uid: String
+    let photoData: Data?
+
+    init(recipe: Recipe, uid: String? = nil, photoData: Data? = nil) {
+        self.recipe = recipe
+        self.uid = uid ?? Self.stableUID(for: recipe.id)
+        self.photoData = photoData
+    }
+
+    private static func stableUID(for recipeID: String) -> String {
+        var bytes = Array(SHA256.hash(data: Data("cookbook-paprika:\(recipeID)".utf8)).prefix(16))
+        bytes[6] = (bytes[6] & 0x0f) | 0x50
+        bytes[8] = (bytes[8] & 0x3f) | 0x80
+        let hex = bytes.map { String(format: "%02X", $0) }
+        return "\(hex[0...3].joined())-\(hex[4...5].joined())-\(hex[6...7].joined())-\(hex[8...9].joined())-\(hex[10...15].joined())"
+    }
+}
+
+enum PaprikaExporter {
+    private static let maximumRecipeBytes = 24 * 1024 * 1024
+    private static let maximumCollectionBytes = 100 * 1024 * 1024
+
+    static func writeRecipe(_ item: PaprikaExportItem, to url: URL) throws {
+        let compressed = try compressedRecipe(item)
+        try compressed.write(to: url, options: .atomic)
+    }
+
+    static func writeCollection(_ items: [PaprikaExportItem], to url: URL) throws {
+        guard !items.isEmpty else { throw PaprikaExportError.noRecipes }
+        let uids = items.map { $0.uid.lowercased() }
+        guard Set(uids).count == uids.count else { throw PaprikaExportError.archiveFailed }
+
+        var entries: [(name: String, data: Data, crc: UInt32, offset: UInt32)] = []
+        var archive = Data()
+        var usedNames = Set<String>()
+        for item in items {
+            let recipe = try compressedRecipe(item)
+            guard recipe.count <= maximumRecipeBytes, archive.count + recipe.count <= maximumCollectionBytes else { throw PaprikaExportError.archiveTooLarge }
+            let name = filename(for: item, usedNames: &usedNames)
+            guard let nameData = name.data(using: .utf8), nameData.count <= Int(UInt16.max), archive.count <= Int(UInt32.max) else { throw PaprikaExportError.archiveTooLarge }
+            let offset = UInt32(archive.count)
+            let crc = crc32(recipe)
+            archive.appendLE(UInt32(0x04034b50))
+            archive.appendLE(UInt16(20))
+            archive.appendLE(UInt16(0x0800))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0x0021))
+            archive.appendLE(crc)
+            archive.appendLE(UInt32(recipe.count))
+            archive.appendLE(UInt32(recipe.count))
+            archive.appendLE(UInt16(nameData.count))
+            archive.appendLE(UInt16(0))
+            archive.append(nameData)
+            archive.append(recipe)
+            entries.append((name, recipe, crc, offset))
+        }
+
+        let directoryOffset = archive.count
+        for entry in entries {
+            let nameData = Data(entry.name.utf8)
+            archive.appendLE(UInt32(0x02014b50))
+            archive.appendLE(UInt16(20))
+            archive.appendLE(UInt16(20))
+            archive.appendLE(UInt16(0x0800))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0x0021))
+            archive.appendLE(entry.crc)
+            archive.appendLE(UInt32(entry.data.count))
+            archive.appendLE(UInt32(entry.data.count))
+            archive.appendLE(UInt16(nameData.count))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt32(0))
+            archive.appendLE(entry.offset)
+            archive.append(nameData)
+        }
+        let directorySize = archive.count - directoryOffset
+        guard entries.count <= Int(UInt16.max), archive.count <= maximumCollectionBytes,
+              directoryOffset <= Int(UInt32.max), directorySize <= Int(UInt32.max) else { throw PaprikaExportError.archiveTooLarge }
+        archive.appendLE(UInt32(0x06054b50))
+        archive.appendLE(UInt16(0))
+        archive.appendLE(UInt16(0))
+        archive.appendLE(UInt16(entries.count))
+        archive.appendLE(UInt16(entries.count))
+        archive.appendLE(UInt32(directorySize))
+        archive.appendLE(UInt32(directoryOffset))
+        archive.appendLE(UInt16(0))
+        try archive.write(to: url, options: .atomic)
+    }
+
+    static func temporaryURL(extension fileExtension: String) -> URL {
+        FileManager.default.temporaryDirectory
+            .appendingPathComponent("Cookbook-\(UUID().uuidString)")
+            .appendingPathExtension(fileExtension)
+    }
+
+    @MainActor static func item(for recipe: Recipe, importedRecords: [ImportedPaprikaRecipe], photos: [RecipePhoto]) throws -> PaprikaExportItem {
+        let uid = importedRecords.first(where: { $0.id == recipe.id })?.paprikaUID
+        var photoData: Data?
+        if let cover = photos.first(where: { $0.recipeID == recipe.id && $0.isCover }) {
+            let source = UserFiles.url(for: cover.relativePath)
+            guard let raw = try? Data(contentsOf: source), let image = UIImage(data: raw), let jpeg = image.jpegData(compressionQuality: 0.9) else {
+                throw PaprikaExportError.unsupportedPhoto(recipe.title)
+            }
+            photoData = jpeg
+        } else if let asset = recipe.thumbnailAsset,
+                  let url = Bundle.main.url(forResource: asset, withExtension: nil, subdirectory: "Thumbnails"),
+                  let image = UIImage(contentsOfFile: url.path),
+                  let jpeg = image.jpegData(compressionQuality: 0.9) {
+            photoData = jpeg
+        }
+        return PaprikaExportItem(recipe: recipe, uid: uid, photoData: photoData)
+    }
+
+    private static func compressedRecipe(_ item: PaprikaExportItem) throws -> Data {
+        if let photo = item.photoData, !isSupportedImage(photo) { throw PaprikaExportError.unsupportedPhoto(item.recipe.title) }
+        let directions = item.recipe.steps.map { step in
+            [step.sectionTitle.isEmpty ? nil : step.sectionTitle, step.originalInstruction]
+                .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: "\n")
+        }.filter { !$0.isEmpty }.joined(separator: "\n\n")
+        let ingredients = item.recipe.ingredients.map { ingredient in
+            [ingredient.quantity, ingredient.name].filter { !$0.isEmpty }.joined(separator: " ")
+        }.joined(separator: "\n")
+        let provenance = item.recipe.provenance
+        let object: [String: Any] = [
+            "uid": item.uid,
+            "name": item.recipe.title,
+            "ingredients": ingredients,
+            "directions": directions,
+            "description": item.recipe.introduction,
+            "notes": item.recipe.tips.joined(separator: "\n\n"),
+            "servings": item.recipe.servings ?? "",
+            "categories": [item.recipe.category],
+            "source": provenance?.name ?? "",
+            "source_url": provenance?.reference ?? "",
+            "photo_data": item.photoData?.base64EncodedString() ?? ""
+        ]
+        let json: Data
+        do { json = try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys, .fragmentsAllowed]) }
+        catch { throw PaprikaExportError.invalidRecipe(item.recipe.title) }
+        guard json.count <= maximumRecipeBytes else { throw PaprikaExportError.archiveTooLarge }
+        let capacity = json.count + max(1024, json.count / 1000 + 128)
+        var compressed = Data(count: capacity)
+        var outputLength = 0
+        let success = json.withUnsafeBytes { input in
+            compressed.withUnsafeMutableBytes { output in
+                cookbook_gzip(input.bindMemory(to: UInt8.self).baseAddress, json.count,
+                              output.bindMemory(to: UInt8.self).baseAddress, capacity, &outputLength)
+            }
+        }
+        guard success != 0, outputLength <= capacity else { throw PaprikaExportError.compressionFailed }
+        compressed.count = outputLength
+        return compressed
+    }
+
+    private static func isSupportedImage(_ data: Data) -> Bool {
+        data.starts(with: [0xff, 0xd8, 0xff]) || data.starts(with: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]) || data.starts(with: Array("GIF8".utf8))
+    }
+
+    private static func filename(for item: PaprikaExportItem, usedNames: inout Set<String>) -> String {
+        let allowed = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_ "))
+        let cleaned = String(item.recipe.title.unicodeScalars.map { allowed.contains($0) ? Character($0) : "-" })
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let base = String((cleaned.isEmpty ? "Recipe" : cleaned).prefix(72))
+        let uidPart = String(item.uid.replacingOccurrences(of: "-", with: "").prefix(8))
+        var candidate = "\(base)-\(uidPart).paprikarecipe"
+        var counter = 2
+        while !usedNames.insert(candidate.lowercased()).inserted {
+            candidate = "\(base)-\(uidPart)-\(counter).paprikarecipe"
+            counter += 1
+        }
+        return candidate
+    }
+
+    private static func crc32(_ data: Data) -> UInt32 {
+        var crc = UInt32.max
+        for byte in data {
+            crc ^= UInt32(byte)
+            for _ in 0..<8 { crc = (crc & 1) == 1 ? (crc >> 1) ^ 0xedb88320 : crc >> 1 }
+        }
+        return crc ^ UInt32.max
+    }
+}
+
+private extension Data {
+    mutating func appendLE<T: FixedWidthInteger>(_ value: T) {
+        var littleEndian = value.littleEndian
+        Swift.withUnsafeBytes(of: &littleEndian) { append(contentsOf: $0) }
     }
 }
 

@@ -13,12 +13,15 @@ struct SettingsView: View {
     @State private var reminderLists: [ReminderListChoice] = []
     @State private var status: String?
     @State private var exportURL: URL?
+    @State private var paprikaExportURL: URL?
+    @State private var exportingPaprika = false
     @State private var markdownURL: URL?
     @State private var personalCredential = ""
     @State private var showingPaprikaImporter = false
     @State private var importReview: PaprikaImportReviewSession?
     @Query(sort: \RecipeNote.updatedAt, order: .reverse) private var notes: [RecipeNote]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query private var recipePhotos: [RecipePhoto]
     private let reminderStore = EKEventStore()
 
     var body: some View {
@@ -45,6 +48,15 @@ struct SettingsView: View {
                 Section("Recipe imports") {
                     Button { showingPaprikaImporter = true } label: { Label("Import Paprika recipes…", systemImage: "square.and.arrow.down") }
                     Text("Review recipes before adding them. Paprika imports stay on this device and are marked internally.").font(.footnote).foregroundStyle(.secondary)
+                }
+                Section("Paprika export") {
+                    Button { Task { await exportAllPaprikaRecipes() } } label: {
+                        Label(exportingPaprika ? "Preparing export…" : "Export all recipes", systemImage: "square.and.arrow.up")
+                    }.disabled(exportingPaprika)
+                    if let paprikaExportURL {
+                        ShareLink(item: paprikaExportURL) { Label("Share Paprika collection", systemImage: "square.and.arrow.up") }
+                    }
+                    Text("Exports the complete bundled and imported recipe library, regardless of browse filters.").font(.footnote).foregroundStyle(.secondary)
                 }
                 Section("Recipe usage") {
                     NavigationLink {
@@ -143,6 +155,20 @@ struct SettingsView: View {
             "## \(titles[record.recipeID] ?? record.recipeID)\n\n- Note ID: `\(record.id.uuidString)`\n- Recipe ID: `\(record.recipeID)`\n- Step ID: \(record.stepID ?? "whole recipe")\n- Created: \(record.createdAt)\n- Updated: \(record.updatedAt)\n\n\(record.text)"
         }.joined(separator: "\n\n---\n\n")
         do { try json.write(to: path, options: .atomic); try Data(("# Cookbook notes\n\n" + body + "\n").utf8).write(to: markdownPath, options: .atomic); exportURL = path; self.markdownURL = markdownPath } catch { status = "Could not export notes: \(error.localizedDescription)" }
+    }
+
+    @MainActor private func exportAllPaprikaRecipes() async {
+        exportingPaprika = true
+        defer { exportingPaprika = false }
+        do {
+            let recipes = CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe)
+            guard !recipes.isEmpty else { throw PaprikaExportError.noRecipes }
+            let items = try recipes.map { try PaprikaExporter.item(for: $0, importedRecords: importedRecords, photos: recipePhotos) }
+            let url = PaprikaExporter.temporaryURL(extension: "paprikarecipes")
+            try await Task.detached(priority: .userInitiated) { try PaprikaExporter.writeCollection(items, to: url) }.value
+            paprikaExportURL = url
+            status = "Prepared a Paprika export with \(items.count) recipes."
+        } catch { status = "Could not export Paprika recipes: \(error.localizedDescription)" }
     }
 }
 
