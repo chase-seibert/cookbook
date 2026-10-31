@@ -15,6 +15,7 @@ struct SettingsView: View {
     @State private var exportURL: URL?
     @State private var paprikaExportURL: URL?
     @State private var exportingPaprika = false
+    @State private var showingPaprikaExportSelector = false
     @State private var markdownURL: URL?
     @State private var showingPaprikaImporter = false
     @State private var importReview: PaprikaImportReviewSession?
@@ -68,8 +69,8 @@ struct SettingsView: View {
                     Text("Choose the Recipes list sections and the default category for unmatched imports.").font(.footnote).foregroundStyle(.secondary)
                 }
                 Section("Paprika export") {
-                    Button { Task { await exportAllPaprikaRecipes() } } label: {
-                        Label(exportingPaprika ? "Preparing export…" : "Export all recipes", systemImage: "square.and.arrow.up")
+                    Button { showingPaprikaExportSelector = true } label: {
+                        Label(exportingPaprika ? "Preparing export…" : "Choose recipes to export…", systemImage: "square.and.arrow.up")
                     }.disabled(exportingPaprika)
                     if let paprikaExportURL {
                         ShareLink(item: paprikaExportURL) { Label("Share Paprika collection", systemImage: "square.and.arrow.up") }
@@ -108,6 +109,26 @@ struct SettingsView: View {
             .onAppear { reminderListName = UserDefaults.standard.string(forKey: "reminderListName") ?? "Not selected" }
             .fileImporter(isPresented: $showingPaprikaImporter, allowedContentTypes: PaprikaFileType.supported, allowsMultipleSelection: false, onCompletion: handlePaprikaSelection)
             .sheet(item: $importReview, onDismiss: openNextPendingPaprikaShare) { session in PaprikaImportReviewView(session: session) }
+            .sheet(isPresented: $showingPaprikaExportSelector) {
+                NavigationStack {
+                    PaprikaExportSelectorView(
+                        recipes: activePaprikaRecipes,
+                        groups: paprikaLabelGroups,
+                        labels: paprikaLabels,
+                        sourceChoices: paprikaExportSources,
+                        collectionChoices: paprikaExportCollections
+                    ) { selectedLabelIDs, selectedSourceIDs, selectedCollectionIDs in
+                        showingPaprikaExportSelector = false
+                        Task {
+                            await exportPaprikaRecipes(
+                                selectedLabelIDs: selectedLabelIDs,
+                                selectedSourceIDs: selectedSourceIDs,
+                                selectedCollectionIDs: selectedCollectionIDs
+                            )
+                        }
+                    }
+                }
+            }
             .onChange(of: incomingPaprikaURL) { _, url in
                 guard let url else { return }
                 incomingPaprikaURL = nil
@@ -179,12 +200,93 @@ struct SettingsView: View {
         do { try json.write(to: path, options: .atomic); try Data(("# Cookbook notes\n\n" + body + "\n").utf8).write(to: markdownPath, options: .atomic); exportURL = path; self.markdownURL = markdownPath } catch { status = "Could not export notes: \(error.localizedDescription)" }
     }
 
-    @MainActor private func exportAllPaprikaRecipes() async {
+    private var activePaprikaRecipes: [Recipe] {
+        let deletedIDs = Set(deletedRecipes.map(\.recipeID))
+        return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) }
+            + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+    }
+
+    private var paprikaLabelGroups: [RecipeLabelGroup] {
+        (CookbookCatalog.bundled.labelGroups ?? []).sorted { $0.order < $1.order }
+    }
+
+    private var paprikaLabels: [RecipeLabel] {
+        (CookbookCatalog.bundled.labels ?? []).sorted {
+            if $0.groupID == $1.groupID { return $0.order < $1.order }
+            let groupOrder = Dictionary(uniqueKeysWithValues: paprikaLabelGroups.map { ($0.id, $0.order) })
+            return (groupOrder[$0.groupID] ?? .max) < (groupOrder[$1.groupID] ?? .max)
+        }
+    }
+
+    private var paprikaExportSources: [PaprikaExportFilterChoice] {
+        let importedIDs = Set(importedRecords.filter { $0.deletedAt == nil && $0.recipe != nil }.map(\.id))
+        var choices: [String: PaprikaExportFilterChoice] = [:]
+        func add(_ id: String, title: String, recipeID: String) {
+            var choice = choices[id] ?? PaprikaExportFilterChoice(id: id, title: title, recipeIDs: [])
+            choice.recipeIDs.insert(recipeID)
+            choices[id] = choice
+        }
+
+        for recipe in activePaprikaRecipes {
+            if importedIDs.contains(recipe.id) { add("paprika-imports", title: "Paprika imports", recipeID: recipe.id) }
+            guard let provenance = recipe.provenance else { continue }
+            switch provenance.type {
+            case .personalCookbook, .cookbookRepository:
+                add("personal-cookbook", title: "Personal cookbook", recipeID: recipe.id)
+            case .paprikaImport:
+                add("paprika-imports", title: "Paprika imports", recipeID: recipe.id)
+                if let source = provenanceSourceName(provenance) {
+                    add("source:\(RecipeLabel.normalize(source))", title: source, recipeID: recipe.id)
+                }
+            case .website, .manual, .other:
+                if let source = provenanceSourceName(provenance) {
+                    add("source:\(RecipeLabel.normalize(source))", title: source, recipeID: recipe.id)
+                }
+            }
+        }
+
+        let priority = ["personal-cookbook": 0, "paprika-imports": 1]
+        return choices.values.sorted {
+            let left = priority[$0.id] ?? 2
+            let right = priority[$1.id] ?? 2
+            if left != right { return left < right }
+            return $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
+    }
+
+    private func provenanceSourceName(_ provenance: RecipeProvenance) -> String? {
+        let source = provenance.tagLabel.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !source.isEmpty,
+              RecipeLabel.normalize(source) != RecipeLabel.normalize("Paprika"),
+              RecipeLabel.normalize(source) != RecipeLabel.normalize("Personal cookbook"),
+              RecipeLabel.normalize(source) != RecipeLabel.normalize("Paprika imports") else { return nil }
+        return source
+    }
+
+    private var paprikaExportCollections: [PaprikaExportFilterChoice] {
+        var recipeIDsByCollection: [String: Set<String>] = [:]
+        var titleByCollection: [String: String] = [:]
+        for recipe in activePaprikaRecipes {
+            guard let title = recipe.collectionTitle?.trimmingCharacters(in: .whitespacesAndNewlines), !title.isEmpty else { continue }
+            let id = RecipeLabel.normalize(title)
+            titleByCollection[id] = title
+            recipeIDsByCollection[id, default: []].insert(recipe.id)
+        }
+        return recipeIDsByCollection.map { id, recipeIDs in
+            PaprikaExportFilterChoice(id: "collection:\(id)", title: titleByCollection[id] ?? id, recipeIDs: recipeIDs)
+        }.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+    }
+
+    @MainActor private func exportPaprikaRecipes(selectedLabelIDs: Set<String>, selectedSourceIDs: Set<String>, selectedCollectionIDs: Set<String>) async {
         exportingPaprika = true
         defer { exportingPaprika = false }
         do {
-            let deletedIDs = Set(deletedRecipes.map(\.recipeID))
-            let recipes = CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+            let recipes = activePaprikaRecipes.filter { recipe in
+                let matchesSource = selectedSourceIDs.isEmpty || paprikaExportSources.contains { selectedSourceIDs.contains($0.id) && $0.recipeIDs.contains(recipe.id) }
+                let matchesCollection = selectedCollectionIDs.isEmpty || paprikaExportCollections.contains { selectedCollectionIDs.contains($0.id) && $0.recipeIDs.contains(recipe.id) }
+                let matchesLabels = selectedLabelIDs.isEmpty || RecipeLabelFilter.matches(recipe, selectedLabelIDs: selectedLabelIDs, groups: paprikaLabelGroups, labels: paprikaLabels)
+                return matchesSource && matchesCollection && matchesLabels
+            }
             guard !recipes.isEmpty else { throw PaprikaExportError.noRecipes }
             let items = try recipes.map { try PaprikaExporter.item(for: $0, importedRecords: importedRecords, photos: recipePhotos) }
             let url = PaprikaExporter.temporaryURL(extension: "paprikarecipes")
@@ -193,6 +295,133 @@ struct SettingsView: View {
             status = "Prepared a Paprika export with \(items.count) recipes."
         } catch { status = "Could not export Paprika recipes: \(error.localizedDescription)" }
     }
+}
+
+private struct PaprikaExportSelectorView: View {
+    let recipes: [Recipe]
+    let groups: [RecipeLabelGroup]
+    let labels: [RecipeLabel]
+    let sourceChoices: [PaprikaExportFilterChoice]
+    let collectionChoices: [PaprikaExportFilterChoice]
+    let onExport: (Set<String>, Set<String>, Set<String>) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var selectedLabelIDs: Set<String> = []
+    @State private var selectedSourceIDs: Set<String> = []
+    @State private var selectedCollectionIDs: Set<String> = []
+
+    private var matchingCount: Int {
+        recipes.filter { recipe in
+            let matchesSource = selectedSourceIDs.isEmpty || sourceChoices.contains { selectedSourceIDs.contains($0.id) && $0.recipeIDs.contains(recipe.id) }
+            let matchesCollection = selectedCollectionIDs.isEmpty || collectionChoices.contains { selectedCollectionIDs.contains($0.id) && $0.recipeIDs.contains(recipe.id) }
+            let matchesBrowseLabels = selectedLabelIDs.isEmpty || RecipeLabelFilter.matches(recipe, selectedLabelIDs: selectedLabelIDs, groups: groups, labels: labels)
+            return matchesSource && matchesCollection && matchesBrowseLabels
+        }.count
+    }
+
+    private var isAllSelected: Bool {
+        selectedSourceIDs.isEmpty && selectedCollectionIDs.isEmpty && selectedLabelIDs.isEmpty
+    }
+
+    var body: some View {
+        List {
+            Section("Selection") {
+                selectionRow(title: "All", isSelected: isAllSelected) { clearSelection() }
+            }
+            if !sourceChoices.isEmpty {
+                Section("Sources") {
+                    ForEach(sourceChoices) { choice in
+                        selectionRow(title: choice.title, isSelected: selectedSourceIDs.contains(choice.id)) {
+                            toggleSource(choice.id)
+                        }
+                    }
+                }
+            }
+            if !collectionChoices.isEmpty {
+                Section("Collections") {
+                    ForEach(collectionChoices) { choice in
+                        selectionRow(title: choice.title, isSelected: selectedCollectionIDs.contains(choice.id)) {
+                            toggleCollection(choice.id)
+                        }
+                    }
+                }
+            }
+            ForEach(groups) { group in
+                Section("\(group.displayName) labels") {
+                    ForEach(labels(in: group)) { label in
+                        selectionRow(title: label.displayName, isSelected: selectedLabelIDs.contains(label.id)) {
+                            toggle(label, in: group)
+                        }
+                    }
+                }
+            }
+            Section {
+                LabeledContent("Recipes to export", value: "\(matchingCount)")
+                Button("Clear selection") { clearSelection() }
+                    .disabled(isAllSelected)
+            } footer: {
+                Text("Choose multiple sources or collections to include any of those choices. Source, collection, and recipe label filters combine together. Recipe labels in the same group match any choice; choices across groups must all match.")
+            }
+        }
+        .navigationTitle("Paprika export")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Export \(matchingCount)") {
+                    onExport(selectedLabelIDs, selectedSourceIDs, selectedCollectionIDs)
+                }
+                .disabled(matchingCount == 0)
+            }
+        }
+    }
+
+    private func labels(in group: RecipeLabelGroup) -> [RecipeLabel] {
+        labels.filter { $0.groupID == group.id }.sorted { $0.order < $1.order }
+    }
+
+    private func toggle(_ label: RecipeLabel, in group: RecipeLabelGroup) {
+        if group.allowsMultiple {
+            if selectedLabelIDs.contains(label.id) { selectedLabelIDs.remove(label.id) }
+            else { selectedLabelIDs.insert(label.id) }
+        } else {
+            selectedLabelIDs = RecipeLabelFilter.togglingSingle(label, selectedLabelIDs: selectedLabelIDs, labels: labels)
+        }
+    }
+
+    private func toggleSource(_ id: String) {
+        if selectedSourceIDs.contains(id) { selectedSourceIDs.remove(id) }
+        else { selectedSourceIDs.insert(id) }
+    }
+
+    private func toggleCollection(_ id: String) {
+        if selectedCollectionIDs.contains(id) { selectedCollectionIDs.remove(id) }
+        else { selectedCollectionIDs.insert(id) }
+    }
+
+    private func clearSelection() {
+        selectedSourceIDs.removeAll()
+        selectedCollectionIDs.removeAll()
+        selectedLabelIDs.removeAll()
+    }
+
+    private func selectionRow(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack {
+                Text(title)
+                Spacer()
+                if isSelected { Image(systemName: "checkmark").foregroundStyle(.tint) }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+}
+
+private struct PaprikaExportFilterChoice: Identifiable, Hashable {
+    let id: String
+    let title: String
+    var recipeIDs: Set<String>
 }
 
 private struct RecipeCategoryManagerView: View {
