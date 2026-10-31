@@ -6,7 +6,7 @@ import UIKit
 @main struct CookbookApp: App {
     var body: some Scene {
         WindowGroup { RootView() }
-        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self])
+        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self, PaprikaImportRun.self, DeletedRecipe.self])
     }
 }
 
@@ -42,11 +42,32 @@ struct RootView: View {
 struct RecipeBrowserView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query private var deletedRecipes: [DeletedRecipe]
+    private let importRunLabelID: String?
+    private let showingDeletedRecipes: Bool
+    private let managesNavigationStack: Bool
+    private let screenTitle: String?
     @State private var query = ""
     @State private var isSearchPresented = false
     @State private var selectedLabelIDs: Set<String> = []
     @State private var selectedDinnerRecipeID: String?
-    private var recipes: [Recipe] { CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) }
+    init(importRunLabelID: String? = nil, showingDeletedRecipes: Bool = false, managesNavigationStack: Bool = true, screenTitle: String? = nil) {
+        self.importRunLabelID = importRunLabelID
+        self.showingDeletedRecipes = showingDeletedRecipes
+        self.managesNavigationStack = managesNavigationStack
+        self.screenTitle = screenTitle
+    }
+
+    private var availableImportedRecords: [ImportedPaprikaRecipe] {
+        importedRecords.filter { showingDeletedRecipes ? $0.deletedAt != nil : $0.deletedAt == nil }
+    }
+    private var recipes: [Recipe] {
+        let importedRecipes = availableImportedRecords.compactMap(\.recipe)
+        let deletedIDs = Set(deletedRecipes.map(\.recipeID))
+        let deletedBundledRecipes = CookbookCatalog.bundled.recipes.filter { deletedIDs.contains($0.id) }
+        if showingDeletedRecipes { return importedRecipes + deletedBundledRecipes }
+        return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecipes
+    }
     private var categoryOrder: [String] {
         var seen = Set(CookbookCatalog.bundled.categoryOrder)
         return CookbookCatalog.bundled.categoryOrder + recipes.map(\.category).filter { seen.insert($0).inserted }
@@ -112,6 +133,7 @@ struct RecipeBrowserView: View {
     private var filtered: [Recipe] {
         recipes.filter { recipe in
             return matchesSearch(recipe) &&
+                (importRunLabelID.map { recipe.browseLabelIDs.contains($0) } ?? true) &&
                 RecipeLabelFilter.matches(recipe, selectedLabelIDs: selectedLabelIDs, groups: labelGroups, labels: labels)
         }
     }
@@ -119,42 +141,50 @@ struct RecipeBrowserView: View {
     var body: some View {
         GeometryReader { geometry in
             let isLandscape = geometry.size.width > geometry.size.height
-            NavigationStack {
-                ZStack {
-                    VStack(spacing: 0) {
-                        browserContent
-                    }
-                    .opacity(isLandscape ? 0 : 1)
-                    .allowsHitTesting(!isLandscape)
-                    .accessibilityHidden(isLandscape)
-
-                    DinnerIdeasLayoutView(recipes: filtered, selectedRecipeID: $selectedDinnerRecipeID)
-                        .opacity(isLandscape ? 1 : 0)
-                        .allowsHitTesting(isLandscape)
-                        .accessibilityHidden(!isLandscape)
-                }
-                .navigationTitle(isLandscape ? "" : "Cookbook")
-                .navigationBarTitleDisplayMode(isSearchPresented ? .inline : .large)
-                .modifier(PresentedRecipeSearch(query: $query, isPresented: $isSearchPresented))
-                .toolbar {
-                    if !isLandscape {
-                        ToolbarItemGroup(placement: .topBarTrailing) {
-                            if !isSearchPresented {
-                                recipeFilterMenu
-                                Button {
-                                    withAnimation(.easeInOut(duration: 0.2)) { isSearchPresented = true }
-                                } label: { Image(systemName: "magnifyingglass") }
-                                    .accessibilityLabel("Search recipes")
-                            }
-                        }
-                    }
-                }
-                .onChange(of: isSearchPresented) { _, isPresented in
-                    if !isPresented { query = "" }
+            Group {
+                if managesNavigationStack {
+                    NavigationStack { browserNavigationContent(isLandscape: isLandscape) }
+                } else {
+                    browserNavigationContent(isLandscape: isLandscape)
                 }
             }
             .toolbar(isLandscape ? .hidden : .visible, for: .navigationBar)
             .toolbar(isLandscape ? .hidden : .visible, for: .tabBar)
+        }
+    }
+
+    private func browserNavigationContent(isLandscape: Bool) -> some View {
+        ZStack {
+            VStack(spacing: 0) {
+                browserContent
+            }
+            .opacity(isLandscape ? 0 : 1)
+            .allowsHitTesting(!isLandscape)
+            .accessibilityHidden(isLandscape)
+
+            DinnerIdeasLayoutView(recipes: filtered, selectedRecipeID: $selectedDinnerRecipeID)
+                .opacity(isLandscape ? 1 : 0)
+                .allowsHitTesting(isLandscape)
+                .accessibilityHidden(!isLandscape)
+        }
+        .navigationTitle(isLandscape ? "" : (screenTitle ?? (showingDeletedRecipes ? "Deleted Recipes" : "Cookbook")))
+        .navigationBarTitleDisplayMode(isSearchPresented ? .inline : .large)
+        .modifier(PresentedRecipeSearch(query: $query, isPresented: $isSearchPresented))
+        .toolbar {
+            if !isLandscape {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    if !isSearchPresented {
+                        recipeFilterMenu
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) { isSearchPresented = true }
+                        } label: { Image(systemName: "magnifyingglass") }
+                            .accessibilityLabel("Search recipes")
+                    }
+                }
+            }
+        }
+        .onChange(of: isSearchPresented) { _, isPresented in
+            if !isPresented { query = "" }
         }
     }
 
@@ -476,11 +506,13 @@ struct RecipeDetailView: View {
     @State private var paprikaExportURL: URL?
     @State private var showPaprikaShare = false
     @State private var paprikaExportStatus: String?
+    @State private var restorationMessage: String?
     @State private var exportingPaprika = false
     @Environment(\.modelContext) private var modelContext
     @Query private var photos: [RecipePhoto]
     @Query private var notes: [RecipeNote]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query private var deletedRecipes: [DeletedRecipe]
     init(recipe: Recipe) {
         self.recipe = recipe
         let recipeID = recipe.id
@@ -492,6 +524,10 @@ struct RecipeDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 Text(recipe.title).font(.system(size: 34, weight: .semibold, design: .serif)).fixedSize(horizontal: false, vertical: true)
+                if isDeleted {
+                    Button { restoreDeletedRecipe() } label: { Label("Restore recipe", systemImage: "arrow.uturn.backward") }
+                        .buttonStyle(.borderedProminent)
+                }
                 if !recipe.introduction.isEmpty { Text(recipe.introduction).font(.body).foregroundStyle(.secondary) }
                 if let servings = recipe.servings, !servings.isEmpty { LabeledContent("Servings", value: servings) }
                 if let cover = photos.first(where: \.isCover), let image = UIImage(contentsOfFile: UserFiles.url(for: cover.relativePath).path) {
@@ -559,6 +595,9 @@ struct RecipeDetailView: View {
                 Button { showCamera = true } label: { Label("Take Photo", systemImage: "camera.fill") }.disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
                 Button { showPrint = true } label: { Label("Print Recipe", systemImage: "printer") }
                 Button { Task { await exportPaprikaRecipe() } } label: { Label("Export Paprika File…", systemImage: "square.and.arrow.up") }.disabled(exportingPaprika)
+                if !isDeleted {
+                    Button(role: .destructive) { deleteRecipe() } label: { Label("Delete Recipe", systemImage: "trash") }
+                }
             } label: { Image(systemName: "ellipsis.circle") }
         }}
         .sheet(isPresented: $showGroceries) { GroceryReviewView(recipe: recipe) }
@@ -573,6 +612,9 @@ struct RecipeDetailView: View {
         .alert("Paprika export", isPresented: Binding(get: { paprikaExportStatus != nil }, set: { if !$0 { paprikaExportStatus = nil } })) {
             Button("OK") { paprikaExportStatus = nil }
         } message: { Text(paprikaExportStatus ?? "") }
+        .alert("Deleted recipe", isPresented: Binding(get: { restorationMessage != nil }, set: { if !$0 { restorationMessage = nil } })) {
+            Button("OK") { restorationMessage = nil }
+        } message: { Text(restorationMessage ?? "") }
         .sheet(isPresented: $showCamera) {
             CameraCaptureView { image in savePhoto(image) }
         }
@@ -580,6 +622,34 @@ struct RecipeDetailView: View {
     }
 
     private var activeNotes: [RecipeNote] { notes.filter { $0.deletedAt == nil }.sorted { $0.updatedAt > $1.updatedAt } }
+    private var deletedImportedRecord: ImportedPaprikaRecipe? { importedRecords.first { $0.id == recipe.id && $0.deletedAt != nil } }
+    private var deletedRecipeRecord: DeletedRecipe? { deletedRecipes.first { $0.recipeID == recipe.id } }
+    private var isDeleted: Bool { deletedImportedRecord != nil || deletedRecipeRecord != nil }
+
+    @MainActor private func deleteRecipe() {
+        do {
+            if let imported = importedRecords.first(where: { $0.id == recipe.id }) {
+                imported.deletedAt = .now
+            } else if deletedRecipeRecord == nil {
+                modelContext.insert(DeletedRecipe(recipeID: recipe.id))
+            }
+            try modelContext.save()
+            restorationMessage = "\(recipe.title) was moved to Deleted recipes."
+        } catch {
+            restorationMessage = "Could not delete \(recipe.title): \(error.localizedDescription)"
+        }
+    }
+
+    @MainActor private func restoreDeletedRecipe() {
+        do {
+            deletedImportedRecord?.deletedAt = nil
+            if let deletedRecipeRecord { modelContext.delete(deletedRecipeRecord) }
+            try modelContext.save()
+            restorationMessage = "\(recipe.title) was restored to your recipe list."
+        } catch {
+            restorationMessage = "Could not restore \(recipe.title): \(error.localizedDescription)"
+        }
+    }
 
     @MainActor private func exportPaprikaRecipe() async {
         exportingPaprika = true

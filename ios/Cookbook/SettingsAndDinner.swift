@@ -21,6 +21,8 @@ struct SettingsView: View {
     @State private var importReview: PaprikaImportReviewSession?
     @Query(sort: \RecipeNote.updatedAt, order: .reverse) private var notes: [RecipeNote]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query private var deletedRecipes: [DeletedRecipe]
+    @Query(sort: \PaprikaImportRun.createdAt, order: .reverse) private var paprikaImportRuns: [PaprikaImportRun]
     @Query private var recipePhotos: [RecipePhoto]
     private let reminderStore = EKEventStore()
 
@@ -48,6 +50,15 @@ struct SettingsView: View {
                 Section("Recipe imports") {
                     Button { showingPaprikaImporter = true } label: { Label("Import Paprika recipes…", systemImage: "square.and.arrow.down") }
                     Text("Review recipes before adding them. Paprika imports stay on this device and are marked internally.").font(.footnote).foregroundStyle(.secondary)
+                    ForEach(paprikaImportRuns.prefix(3), id: \.id) { run in PaprikaImportRunRow(run: run) }
+                    if paprikaImportRuns.count > 3 {
+                        NavigationLink("All Paprika import runs (\(paprikaImportRuns.count))") { PaprikaImportHistoryView() }
+                    }
+                    NavigationLink {
+                        RecipeBrowserView(showingDeletedRecipes: true, managesNavigationStack: false, screenTitle: "Deleted recipes")
+                    } label: {
+                        Label("Deleted recipes (\(importedRecords.filter { $0.deletedAt != nil }.count + deletedRecipes.count))", systemImage: "trash")
+                    }
                 }
                 Section("Paprika export") {
                     Button { Task { await exportAllPaprikaRecipes() } } label: {
@@ -56,7 +67,7 @@ struct SettingsView: View {
                     if let paprikaExportURL {
                         ShareLink(item: paprikaExportURL) { Label("Share Paprika collection", systemImage: "square.and.arrow.up") }
                     }
-                    Text("Exports the complete bundled and imported recipe library, regardless of browse filters.").font(.footnote).foregroundStyle(.secondary)
+                    Text("Exports all active bundled and imported recipes, regardless of browse filters.").font(.footnote).foregroundStyle(.secondary)
                 }
                 Section("Recipe usage") {
                     NavigationLink {
@@ -78,7 +89,7 @@ struct SettingsView: View {
                     }
                     Text("Provider choice is explicit. The on-device option never falls back to the cloud.").font(.footnote).foregroundStyle(.secondary)
                 }
-                Section("About") { LabeledContent("Recipe catalog", value: "\(CookbookCatalog.bundled.recipes.count + importedRecords.compactMap(\.recipe).count) recipes · offline") }
+                Section("About") { LabeledContent("Recipe catalog", value: "\(CookbookCatalog.bundled.recipes.count - deletedRecipes.count + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe).count) recipes · offline") }
             }
             .navigationTitle("Settings")
             .onAppear { reminderListName = UserDefaults.standard.string(forKey: "reminderListName") ?? "Not selected"; loadCredential() }
@@ -161,7 +172,8 @@ struct SettingsView: View {
         exportingPaprika = true
         defer { exportingPaprika = false }
         do {
-            let recipes = CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe)
+            let deletedIDs = Set(deletedRecipes.map(\.recipeID))
+            let recipes = CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
             guard !recipes.isEmpty else { throw PaprikaExportError.noRecipes }
             let items = try recipes.map { try PaprikaExporter.item(for: $0, importedRecords: importedRecords, photos: recipePhotos) }
             let url = PaprikaExporter.temporaryURL(extension: "paprikarecipes")
@@ -175,10 +187,12 @@ struct SettingsView: View {
 private struct RecipeUsageStatsView: View {
     @Query private var stats: [RecipeUsageStats]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query private var deletedRecipes: [DeletedRecipe]
     @State private var exportURL: URL?
 
     private var rows: [(recipe: Recipe?, stats: RecipeUsageStats?)] {
-        let catalog = CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe)
+        let deletedIDs = Set(deletedRecipes.map(\.recipeID))
+        let catalog = CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
         var byID = Dictionary(uniqueKeysWithValues: stats.map { ($0.recipeID, $0) })
         let catalogRows: [(recipe: Recipe?, stats: RecipeUsageStats?)] = catalog.map { (Optional($0), byID.removeValue(forKey: $0.id)) }
         let unmatched = stats.filter { record in !catalog.contains { $0.id == record.recipeID } }
@@ -235,6 +249,60 @@ private struct RecipeUsageStatsView: View {
     private static func csvField(_ value: String) -> String { "\"\(value.replacingOccurrences(of: "\"", with: "\"\""))\"" }
 }
 
+private struct PaprikaImportHistoryView: View {
+    @Query(sort: \PaprikaImportRun.createdAt, order: .reverse) private var runs: [PaprikaImportRun]
+
+    var body: some View {
+        List {
+            if runs.isEmpty {
+                ContentUnavailableView("No Paprika imports yet", systemImage: "square.and.arrow.down", description: Text("Completed imports will appear here."))
+            } else {
+                ForEach(runs) { run in PaprikaImportRunRow(run: run) }
+            }
+        }
+        .navigationTitle("Paprika imports")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private struct PaprikaImportRunRow: View {
+    let run: PaprikaImportRun
+
+    var body: some View {
+        NavigationLink {
+            PaprikaImportRunDetailView(run: run)
+        } label: {
+            VStack(alignment: .leading, spacing: 5) {
+                Text("Paprika file · \(run.createdAt.formatted(date: .abbreviated, time: .shortened)) · run \(run.runNumber)")
+                    .font(.subheadline.weight(.semibold))
+                Text("\(run.importedCount) imported · \(run.skippedCount) skipped\(run.undoneAt == nil ? "" : " · undone")")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+            .padding(.vertical, 4)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct PaprikaImportRunDetailView: View {
+    let run: PaprikaImportRun
+    @Query private var importedRecords: [ImportedPaprikaRecipe]
+
+    private var summary: PaprikaImportSummary {
+        let recipesByID = Dictionary(uniqueKeysWithValues: importedRecords.compactMap { record in
+            record.recipe.map { (record.id, $0.title) }
+        })
+        let titles = run.importedRecipeIDs.compactMap { recipesByID[$0] }
+        return PaprikaImportSummary(runID: run.id, labelID: run.labelID, displayName: run.displayName, importedTitles: titles, skippedRecipes: run.skippedRecipes, wasUndone: run.undoneAt != nil)
+    }
+
+    var body: some View {
+        PaprikaImportSummaryContent(summary: summary)
+            .navigationTitle("Import Summary")
+            .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
 private struct ReminderListChoice: Identifiable { let id: String; let title: String }
 
 private extension JSONEncoder {
@@ -268,6 +336,7 @@ struct DinnerPlannerView: View {
     @Query(sort: \PlannedDinnerRecipe.dinnerDate) private var scheduled: [PlannedDinnerRecipe]
     @Query(sort: \DinnerTimeline.updatedAt, order: .reverse) private var saved: [DinnerTimeline]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query private var deletedRecipes: [DeletedRecipe]
     @State private var selectedIDs = Set<String>()
     @State private var dinnerTime = Date.now
     @State private var plan: [TimelineActivity] = []
@@ -281,7 +350,10 @@ struct DinnerPlannerView: View {
     @State private var isGenerating = false
     @AppStorage("aiProvider") private var aiProvider = "openai"
     @AppStorage("openAIModel") private var openAIModel = "gpt-6-astra"
-    private var recipes: [Recipe] { CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) }
+    private var recipes: [Recipe] {
+        let deletedIDs = Set(deletedRecipes.map(\.recipeID))
+        return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+    }
 
     private var recipeTitles: [String: String] { Dictionary(uniqueKeysWithValues: recipes.map { ($0.id, $0.title) }) }
     private var dinnerGroups: [DinnerDateGroup] {

@@ -480,37 +480,67 @@ private extension Data {
 }
 
 enum PaprikaImportStore {
+    static let fileImportLabelID = "paprika-file-import"
+
     static func normalizedTitle(_ title: String) -> String {
         title.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "en_US_POSIX"))
             .split(whereSeparator: { $0.isWhitespace })
             .joined(separator: " ")
     }
 
-    @MainActor static func add(_ drafts: [PaprikaImportDraft], to container: ModelContainer) throws -> (added: Int, skipped: Int) {
+    @MainActor static func add(_ drafts: [PaprikaImportDraft], selectedUIDs: Set<String>, duplicateUIDs: Set<String>, to container: ModelContainer) throws -> PaprikaImportSummary {
         let context = ModelContext(container)
         let existing = try context.fetch(FetchDescriptor<ImportedPaprikaRecipe>())
+        let runs = try context.fetch(FetchDescriptor<PaprikaImportRun>())
+        let now = Date()
+        let dayKey = localDayKey(for: now)
+        let runNumber = runs.filter { $0.dayKey == dayKey }.map(\.runNumber).max().map { $0 + 1 } ?? 1
+        let runID = UUID().uuidString
+        let runLabelID = String(format: "paprika-run-%@-%02d", dayKey, runNumber)
         var knownUIDs = Set(existing.map { $0.paprikaUID.lowercased() })
         var knownTitles = Set(CookbookCatalog.bundled.recipes.map { normalizedTitle($0.title) })
         knownTitles.formUnion(existing.compactMap(\.recipe).map { normalizedTitle($0.title) })
-        var additions: [PaprikaImportDraft] = []
+        var additions: [(draft: PaprikaImportDraft, duplicate: Bool)] = []
+        var skipped: [PaprikaSkippedRecipe] = []
         for draft in drafts {
             let uid = draft.uid.lowercased()
             let title = normalizedTitle(draft.recipe.title)
-            guard !knownUIDs.contains(uid), !knownTitles.contains(title) else { continue }
+            let sameID = knownUIDs.contains(uid)
+            let sameTitle = knownTitles.contains(title)
+            let isDuplicate = sameID || sameTitle
+            guard selectedUIDs.contains(draft.uid) else {
+                if isDuplicate || duplicateUIDs.contains(draft.uid) {
+                    let reason = sameID && sameTitle ? "Matching Paprika ID and recipe name" : (sameID ? "Matching Paprika ID" : (sameTitle ? "Matching recipe name" : "Duplicate in this import"))
+                    skipped.append(PaprikaSkippedRecipe(uid: draft.uid, title: draft.recipe.title, reason: reason))
+                }
+                continue
+            }
+            guard !isDuplicate || duplicateUIDs.contains(draft.uid) else {
+                let reason = sameID && sameTitle ? "Matching Paprika ID and recipe name" : (sameID ? "Matching Paprika ID" : "Matching recipe name")
+                skipped.append(PaprikaSkippedRecipe(uid: draft.uid, title: draft.recipe.title, reason: reason))
+                continue
+            }
             knownUIDs.insert(uid)
             knownTitles.insert(title)
-            additions.append(draft)
+            additions.append((draft, isDuplicate))
         }
-        let skipped = drafts.count - additions.count
-        guard !additions.isEmpty else { return (0, skipped) }
-        let filesDirectory = UserFiles.directory.appendingPathComponent("PaprikaImports", isDirectory: true)
-        try FileManager.default.createDirectory(at: filesDirectory, withIntermediateDirectories: true)
+        if !additions.isEmpty {
+            let filesDirectory = UserFiles.directory.appendingPathComponent("PaprikaImports", isDirectory: true)
+            try FileManager.default.createDirectory(at: filesDirectory, withIntermediateDirectories: true)
+        }
         var writtenFiles: [URL] = []
+        var importedIDs: [String] = []
         do {
             try context.transaction {
-                for draft in additions {
-                    let encoded = try JSONEncoder().encode(draft.recipe)
-                    context.insert(ImportedPaprikaRecipe(id: draft.recipe.id, paprikaUID: draft.uid, recipeData: encoded))
+                for addition in additions {
+                    let draft = addition.draft
+                    let id = addition.duplicate && existing.contains(where: { $0.paprikaUID.lowercased() == draft.uid.lowercased() })
+                        ? "\(draft.recipe.id):copy:\(UUID().uuidString)"
+                        : draft.recipe.id
+                    let recipe = draft.recipe.addingBrowseLabels([fileImportLabelID, runLabelID], id: id)
+                    let encoded = try JSONEncoder().encode(recipe)
+                    context.insert(ImportedPaprikaRecipe(id: recipe.id, paprikaUID: draft.uid, recipeData: encoded, importedAt: now, paprikaImportRunID: runID))
+                    importedIDs.append(recipe.id)
                     if let photo = draft.photoData {
                         let ext = photo.starts(with: [0xff, 0xd8, 0xff]) ? "jpg" : (photo.starts(with: [0x89, 0x50, 0x4e, 0x47]) ? "png" : "gif")
                         let relativePath = "PaprikaImports/\(UUID().uuidString).\(ext)"
@@ -518,15 +548,75 @@ enum PaprikaImportStore {
                         do { try photo.write(to: url, options: .atomic) }
                         catch { throw PaprikaImportError.imageWriteFailed }
                         writtenFiles.append(url)
-                        context.insert(RecipePhoto(recipeID: draft.recipe.id, relativePath: relativePath, isCover: true))
+                        context.insert(RecipePhoto(recipeID: recipe.id, relativePath: relativePath, isCover: true))
                     }
                 }
+                let importedIDsData = try JSONEncoder().encode(importedIDs)
+                let skippedData = try JSONEncoder().encode(skipped)
+                context.insert(PaprikaImportRun(id: runID, dayKey: dayKey, runNumber: runNumber, labelID: runLabelID, createdAt: now, importedRecipeIDsData: importedIDsData, skippedRecipesData: skippedData, importedCount: importedIDs.count, skippedCount: skipped.count))
             }
-            return (additions.count, skipped)
+            return PaprikaImportSummary(runID: runID, labelID: runLabelID, displayName: "Paprika file · \(now.formatted(date: .abbreviated, time: .shortened)) · run \(runNumber)", importedTitles: additions.map { $0.draft.recipe.title }, skippedRecipes: skipped)
         } catch {
             writtenFiles.forEach { try? FileManager.default.removeItem(at: $0) }
             throw error
         }
+    }
+
+    @MainActor static func undo(_ run: PaprikaImportRun, in context: ModelContext) throws {
+        guard run.undoneAt == nil else { return }
+        let runID = run.id
+        let descriptor = FetchDescriptor<ImportedPaprikaRecipe>(predicate: #Predicate { $0.paprikaImportRunID == runID && $0.deletedAt == nil })
+        let records = try context.fetch(descriptor)
+        let now = Date()
+        try context.transaction {
+            records.forEach { $0.deletedAt = now }
+            run.undoneAt = now
+        }
+    }
+
+    @MainActor static func undo(runID: String, in context: ModelContext) throws {
+        guard let run = try context.fetch(FetchDescriptor<PaprikaImportRun>()).first(where: { $0.id == runID }) else { return }
+        try undo(run, in: context)
+    }
+
+    private static func localDayKey(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = .current
+        formatter.dateFormat = "yyyyMMdd"
+        return formatter.string(from: date)
+    }
+}
+
+struct PaprikaImportSummary: Hashable, Identifiable, Sendable {
+    let runID: String
+    let labelID: String
+    let displayName: String
+    let wasUndone: Bool
+    let importedTitles: [String]
+    let skippedRecipes: [PaprikaSkippedRecipe]
+    var runLabelName: String {
+        let components = labelID.split(separator: "-")
+        guard components.count >= 4 else { return labelID }
+        return "Paprika import · \(components[2]) · run \(components[3])"
+    }
+    init(runID: String, labelID: String, displayName: String, importedTitles: [String], skippedRecipes: [PaprikaSkippedRecipe], wasUndone: Bool = false) {
+        self.runID = runID
+        self.labelID = labelID
+        self.displayName = displayName
+        self.wasUndone = wasUndone
+        self.importedTitles = importedTitles
+        self.skippedRecipes = skippedRecipes
+    }
+    var id: String { runID }
+}
+
+private extension Recipe {
+    func addingBrowseLabels(_ labels: [String], id: String? = nil) -> Recipe {
+        var labelIDs = browseLabelIDs
+        for label in labels where !labelIDs.contains(label) { labelIDs.append(label) }
+        return Recipe(id: id ?? self.id, title: title, category: category, collectionTitle: collectionTitle, sourceFile: sourceFile, sourceSection: sourceSection, introduction: introduction, ingredients: ingredients, steps: steps, tips: tips, healthierOptions: healthierOptions, thumbnailAsset: thumbnailAsset, labelIDs: labelIDs, provenance: provenance, menuDescription: menuDescription, menuPairings: menuPairings, servings: servings)
     }
 }
 
@@ -538,6 +628,8 @@ struct PaprikaImportReviewView: View {
     @State private var selectedUIDs: Set<String>
     @State private var previewDraft: PaprikaImportDraft?
     @State private var alertMessage: String?
+    @State private var completedSummary: PaprikaImportSummary?
+    @State private var didInitializeSelection = false
 
     init(session: PaprikaImportReviewSession) {
         self.session = session
@@ -564,105 +656,198 @@ struct PaprikaImportReviewView: View {
         }
         return duplicates
     }
-    private var selectedDrafts: [PaprikaImportDraft] { session.drafts.filter { selectedUIDs.contains($0.uid) && !duplicateUIDs.contains($0.uid) } }
+    private var selectedCandidates: [PaprikaImportDraft] { session.drafts.filter { selectedUIDs.contains($0.uid) } }
     private var isSingle: Bool { session.drafts.count == 1 }
+    private var primaryActionTitle: String {
+        guard isSingle, let draft = session.drafts.first, duplicateUIDs.contains(draft.uid) else { return isSingle ? "Import Recipe" : "Import Selected" }
+        return selectedUIDs.contains(draft.uid) ? "Import Anyway" : "Skip Duplicate"
+    }
 
     var body: some View {
         NavigationStack {
             Group {
-                if isSingle, let draft = session.drafts.first {
+                if let completedSummary {
+                    PaprikaImportSummaryContent(summary: completedSummary)
+                } else if isSingle, let draft = session.drafts.first {
                     VStack(spacing: 12) {
                         if duplicateUIDs.contains(draft.uid) {
-                            Label("A recipe with this name or Paprika ID is already in your library.", systemImage: "checkmark.circle.fill")
+                            Label("This recipe matches one in your library. It will be skipped unless you select Import Anyway.", systemImage: "exclamationmark.triangle.fill")
                                 .font(.subheadline).foregroundStyle(.secondary).padding(.horizontal)
                         }
                         PaprikaRecipePreview(draft: draft)
+                        selectionRow(for: draft)
                     }
                 } else {
                     List {
                         Section {
                             HStack {
-                                Text("\(selectedDrafts.count) selected").font(.subheadline.weight(.medium))
+                                Text("\(selectedUIDs.count) selected").font(.subheadline.weight(.medium))
                                 Spacer()
-                                Button("Select All") { selectedUIDs = Set(session.drafts.filter { !duplicateUIDs.contains($0.uid) }.map(\.uid)) }
+                                Button("Select All") { selectedUIDs = Set(session.drafts.map(\.uid)) }
                                 Button("Deselect All") { selectedUIDs.removeAll() }
                             }
                         }
-                        Section("\(session.drafts.count) recipes") {
-                            ForEach(session.drafts) { draft in
-                                Button { previewDraft = draft } label: {
-                                    HStack(spacing: 12) {
-                                        VStack(alignment: .leading, spacing: 3) {
-                                            Text(draft.recipe.title).font(.headline).foregroundStyle(.primary)
-                                            Text("\(draft.recipe.category) · \(draft.recipe.ingredients.count) ingredients").font(.caption).foregroundStyle(.secondary)
-                                            if isAlreadyImported(draft) { Text("Duplicate name or Paprika ID").font(.caption).foregroundStyle(.secondary) }
-                                        }
-                                        Spacer(minLength: 8)
-                                        Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)
-                                    }
-                                    .contentShape(Rectangle())
-                                }
-                                .buttonStyle(.plain)
-                                .overlay(alignment: .trailing) {
-                                    checkboxControl(for: draft)
-                                }
+                        let ready = session.drafts.filter { !duplicateUIDs.contains($0.uid) }
+                        let duplicates = session.drafts.filter { duplicateUIDs.contains($0.uid) }
+                        Section("Ready to Import (\(ready.count))") {
+                            ForEach(ready) { draft in recipeRow(draft) }
+                        }
+                        if !duplicates.isEmpty {
+                            Section {
+                                Label("These match recipes already in your library and will be skipped unless you select them to import anyway.", systemImage: "exclamationmark.triangle.fill")
+                                    .font(.subheadline.weight(.medium)).foregroundStyle(.orange)
+                                ForEach(duplicates) { draft in recipeRow(draft) }
+                            } header: {
+                                Text("Duplicates (\(duplicates.count))")
                             }
                         }
                     }
                 }
             }
-            .navigationTitle(isSingle ? "Review Recipe" : "Review Recipes")
+            .navigationTitle(completedSummary == nil ? (isSingle ? "Review Recipe" : "Review Recipes") : "Import Complete")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(isSingle ? "Add Recipe" : "Add Selected") { addSelected() }
-                        .disabled(selectedDrafts.isEmpty)
+                ToolbarItem(placement: .cancellationAction) { Button(completedSummary == nil ? "Cancel" : "Done") { dismiss() } }
+                if completedSummary == nil {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(primaryActionTitle) { addSelected() }
+                            .disabled(selectedCandidates.isEmpty && duplicateUIDs.isEmpty)
+                    }
                 }
             }
             .sheet(item: $previewDraft) { draft in NavigationStack { PaprikaRecipePreview(draft: draft).toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { previewDraft = nil } } } } }
+            .onAppear {
+                if !didInitializeSelection {
+                    selectedUIDs.subtract(duplicateUIDs)
+                    didInitializeSelection = true
+                }
+            }
             .alert("Paprika import", isPresented: Binding(get: { alertMessage != nil }, set: { if !$0 { alertMessage = nil } })) {
                 Button("OK") { alertMessage = nil; if alertMessage == nil { dismiss() } }
             } message: { Text(alertMessage ?? "") }
         }
     }
 
-    private func toggle(_ draft: PaprikaImportDraft) {
-        guard !existingUIDs.contains(draft.uid.lowercased()) else { return }
-        if selectedUIDs.contains(draft.uid) { selectedUIDs.remove(draft.uid) } else { selectedUIDs.insert(draft.uid) }
+    private func recipeRow(_ draft: PaprikaImportDraft) -> some View {
+        HStack(spacing: 8) {
+            Button { previewDraft = draft } label: {
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(draft.recipe.title).font(.headline).foregroundStyle(.primary)
+                        Text("\(draft.recipe.category) · \(draft.recipe.ingredients.count) ingredients").font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer(minLength: 8)
+                    Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            selectionRow(for: draft)
+        }
     }
 
-    private func isAlreadyImported(_ draft: PaprikaImportDraft) -> Bool {
-        duplicateUIDs.contains(draft.uid)
-    }
-
-    private func checkboxSymbol(for draft: PaprikaImportDraft) -> String {
-        selectedUIDs.contains(draft.uid) || isAlreadyImported(draft) ? "checkmark.circle.fill" : "circle"
-    }
-
-    private func checkboxLabel(for draft: PaprikaImportDraft) -> String {
-        isAlreadyImported(draft) ? "\(draft.recipe.title) already exists in your library" : selectedUIDs.contains(draft.uid) ? "Deselect \(draft.recipe.title)" : "Select \(draft.recipe.title)"
-    }
-
-    private func checkboxControl(for draft: PaprikaImportDraft) -> some View {
-        let disabled = isAlreadyImported(draft)
-        let label = checkboxLabel(for: draft)
-        return Button(action: { toggle(draft) }) {
-            Image(systemName: checkboxSymbol(for: draft))
-                .foregroundColor(disabled ? Color.secondary : Color.accentColor)
+    private func selectionRow(for draft: PaprikaImportDraft) -> some View {
+        Button { toggle(draft) } label: {
+            Label(selectedUIDs.contains(draft.uid) ? "Selected" : "Select", systemImage: checkboxSymbol(for: draft))
+                .labelStyle(.iconOnly)
                 .frame(width: 44, height: 44)
         }
         .buttonStyle(.plain)
-        .disabled(disabled)
-        .accessibilityLabel(label)
+        .accessibilityLabel(checkboxLabel(for: draft))
+    }
+
+    private func toggle(_ draft: PaprikaImportDraft) {
+        if selectedUIDs.contains(draft.uid) { selectedUIDs.remove(draft.uid) } else { selectedUIDs.insert(draft.uid) }
+    }
+
+    private func checkboxSymbol(for draft: PaprikaImportDraft) -> String {
+        selectedUIDs.contains(draft.uid) ? "checkmark.circle.fill" : "circle"
+    }
+
+    private func checkboxLabel(for draft: PaprikaImportDraft) -> String {
+        selectedUIDs.contains(draft.uid) ? "Deselect \(draft.recipe.title)" : (duplicateUIDs.contains(draft.uid) ? "Import duplicate \(draft.recipe.title) anyway" : "Select \(draft.recipe.title)")
     }
 
     private func addSelected() {
         do {
-            let result = try PaprikaImportStore.add(selectedDrafts, to: modelContext.container)
-            guard result.added > 0 else { alertMessage = "These recipes already exist in your library by name or Paprika ID. No duplicates were added."; return }
-            alertMessage = result.skipped > 0 ? "Added \(result.added) recipes. Skipped \(result.skipped) with a matching name or Paprika ID." : "Added \(result.added) recipe\(result.added == 1 ? "" : "s")."
+            completedSummary = try PaprikaImportStore.add(session.drafts, selectedUIDs: selectedUIDs, duplicateUIDs: duplicateUIDs, to: modelContext.container)
         } catch { alertMessage = "Could not add the selected recipes. No recipes were added. \(error.localizedDescription)" }
+    }
+}
+
+struct PaprikaImportSummaryContent: View {
+    @Environment(\.modelContext) private var modelContext
+    let summary: PaprikaImportSummary
+    @State private var confirmingUndo = false
+    @State private var undoError: String?
+    @State private var wasUndone: Bool
+
+    init(summary: PaprikaImportSummary) {
+        self.summary = summary
+        _wasUndone = State(initialValue: summary.wasUndone)
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                Text(summary.displayName).font(.headline).foregroundStyle(.secondary)
+                Text("\(summary.importedTitles.count) imported · \(summary.skippedRecipes.count) skipped")
+                    .font(.title2.weight(.semibold))
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("Labels applied").font(.headline)
+                    Text("Paprika file · \(summary.runLabelName)")
+                        .font(.subheadline).foregroundStyle(.secondary)
+                }
+                if !summary.importedTitles.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Imported").font(.headline)
+                        ForEach(Array(summary.importedTitles.enumerated()), id: \.offset) { _, title in
+                            Label(title, systemImage: "checkmark.circle.fill").font(.subheadline)
+                        }
+                    }
+                }
+                if !summary.skippedRecipes.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Skipped").font(.headline)
+                        ForEach(summary.skippedRecipes) { skipped in
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(skipped.title).font(.subheadline.weight(.medium))
+                                Text(skipped.reason).font(.caption).foregroundStyle(.secondary)
+                            }.frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                }
+                if summary.importedTitles.count > 0 {
+                    NavigationLink {
+                        RecipeBrowserView(importRunLabelID: summary.labelID, showingDeletedRecipes: wasUndone, managesNavigationStack: false, screenTitle: wasUndone ? "Deleted recipes" : "Imported recipes")
+                    } label: {
+                        Label(wasUndone ? "View deleted recipes from this import" : "View recipes from this import", systemImage: "line.3.horizontal.decrease.circle")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                if !wasUndone && !summary.importedTitles.isEmpty {
+                    Button("Undo this import", systemImage: "arrow.uturn.backward", role: .destructive) { confirmingUndo = true }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                } else if wasUndone {
+                    Label("This import has been undone", systemImage: "checkmark.circle").foregroundStyle(.secondary)
+                }
+            }.padding()
+        }
+        .confirmationDialog("Undo this Paprika import?", isPresented: $confirmingUndo, titleVisibility: .visible) {
+            Button("Undo import", role: .destructive) {
+                do {
+                    try PaprikaImportStore.undo(runID: summary.runID, in: modelContext)
+                    wasUndone = true
+                } catch { undoError = "Could not undo this import: \(error.localizedDescription)" }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("The \(summary.importedTitles.count) recipes from this run will move to Deleted recipes. You can restore them individually.")
+        }
+        .alert("Paprika import", isPresented: Binding(get: { undoError != nil }, set: { if !$0 { undoError = nil } })) {
+            Button("OK") { undoError = nil }
+        } message: { Text(undoError ?? "") }
     }
 }
 

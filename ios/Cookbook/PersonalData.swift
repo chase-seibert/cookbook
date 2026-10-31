@@ -6,15 +6,66 @@ import SwiftData
     var paprikaUID: String
     var recipeData: Data
     var importedAt: Date
+    var paprikaImportRunID: String?
+    var deletedAt: Date?
 
-    init(id: String, paprikaUID: String, recipeData: Data, importedAt: Date = .now) {
+    init(id: String, paprikaUID: String, recipeData: Data, importedAt: Date = .now, paprikaImportRunID: String? = nil, deletedAt: Date? = nil) {
         self.id = id
         self.paprikaUID = paprikaUID
         self.recipeData = recipeData
         self.importedAt = importedAt
+        self.paprikaImportRunID = paprikaImportRunID
+        self.deletedAt = deletedAt
     }
 
     var recipe: Recipe? { try? JSONDecoder().decode(Recipe.self, from: recipeData) }
+}
+
+@Model final class PaprikaImportRun {
+    @Attribute(.unique) var id: String
+    var dayKey: String
+    var runNumber: Int
+    var labelID: String
+    var createdAt: Date
+    var importedRecipeIDsData: Data
+    var skippedRecipesData: Data
+    var importedCount: Int
+    var skippedCount: Int
+    var undoneAt: Date?
+
+    init(id: String, dayKey: String, runNumber: Int, labelID: String, createdAt: Date = .now, importedRecipeIDsData: Data, skippedRecipesData: Data, importedCount: Int, skippedCount: Int, undoneAt: Date? = nil) {
+        self.id = id
+        self.dayKey = dayKey
+        self.runNumber = runNumber
+        self.labelID = labelID
+        self.createdAt = createdAt
+        self.importedRecipeIDsData = importedRecipeIDsData
+        self.skippedRecipesData = skippedRecipesData
+        self.importedCount = importedCount
+        self.skippedCount = skippedCount
+        self.undoneAt = undoneAt
+    }
+
+    var importedRecipeIDs: [String] { (try? JSONDecoder().decode([String].self, from: importedRecipeIDsData)) ?? [] }
+    var skippedRecipes: [PaprikaSkippedRecipe] { (try? JSONDecoder().decode([PaprikaSkippedRecipe].self, from: skippedRecipesData)) ?? [] }
+    var displayName: String { "Paprika file · \(createdAt.formatted(date: .abbreviated, time: .shortened)) · run \(runNumber)" }
+}
+
+@Model final class DeletedRecipe {
+    @Attribute(.unique) var recipeID: String
+    var deletedAt: Date
+
+    init(recipeID: String, deletedAt: Date = .now) {
+        self.recipeID = recipeID
+        self.deletedAt = deletedAt
+    }
+}
+
+struct PaprikaSkippedRecipe: Codable, Hashable, Identifiable, Sendable {
+    let uid: String
+    let title: String
+    let reason: String
+    var id: String { uid }
 }
 
 @Model final class RecipeNote {
