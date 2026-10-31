@@ -15,6 +15,7 @@ enum PaprikaFileType {
 struct PaprikaImportDraft: Identifiable, Sendable {
     let uid: String
     let recipe: Recipe
+    let sourceCategories: [String]
     let photoData: Data?
     var id: String { uid }
 }
@@ -92,7 +93,7 @@ enum PaprikaImportReader {
         guard !title.isEmpty else { throw PaprikaImportError.invalidRecipe("\(filename) has no usable title.") }
 
         let categoryValues = (fields["categories"] as? [String] ?? []).map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
-        let category = categoryValues.first ?? "Imported"
+        let category = categoryValues.first ?? ""
         let ingredientLines = string("ingredients").components(separatedBy: .newlines).map(cleanLine).filter { !$0.isEmpty }
         let directionLines = string("directions").components(separatedBy: #"\n\s*\n"#).map(cleanLine).filter { !$0.isEmpty }
         let notes = string("notes").components(separatedBy: #"\n\s*\n"#).map(cleanLine).filter { !$0.isEmpty }
@@ -123,7 +124,7 @@ enum PaprikaImportReader {
             servings: string("servings").isEmpty ? nil : string("servings")
         )
         let photo = imageData(string("photo_data")) ?? imageData(string("photo_large"))
-        return PaprikaImportDraft(uid: uid, recipe: recipe, photoData: photo)
+        return PaprikaImportDraft(uid: uid, recipe: recipe, sourceCategories: categoryValues, photoData: photo)
     }
 
     private static func cleanLine(_ value: String) -> String {
@@ -490,6 +491,12 @@ enum PaprikaImportStore {
 
     @MainActor static func add(_ drafts: [PaprikaImportDraft], selectedUIDs: Set<String>, duplicateUIDs: Set<String>, to container: ModelContainer) throws -> PaprikaImportSummary {
         let context = ModelContext(container)
+        try RecipeCategoryStore.seedIfNeeded(in: context)
+        let categories = try context.fetch(FetchDescriptor<RecipeCategory>()).sorted { $0.order < $1.order }
+        let settings = try context.fetch(FetchDescriptor<RecipeCategorySettings>()).first
+        guard let defaultCategory = categories.first(where: { $0.id == settings?.defaultCategoryID }) ?? categories.first else {
+            throw RecipeCategoryError.lastCategory
+        }
         let existing = try context.fetch(FetchDescriptor<ImportedPaprikaRecipe>())
         let runs = try context.fetch(FetchDescriptor<PaprikaImportRun>())
         let now = Date()
@@ -537,9 +544,12 @@ enum PaprikaImportStore {
                     let id = addition.duplicate && existing.contains(where: { $0.paprikaUID.lowercased() == draft.uid.lowercased() })
                         ? "\(draft.recipe.id):copy:\(UUID().uuidString)"
                         : draft.recipe.id
-                    let recipe = draft.recipe.addingBrowseLabels([fileImportLabelID, runLabelID], id: id)
+                    let matchedCategory = RecipeCategoryStore.match(sourceNames: draft.sourceCategories, categories: categories) ?? defaultCategory
+                    guard categories.contains(where: { $0.id == matchedCategory.id }) else { throw RecipeCategoryError.missingCategory }
+                    let recipe = draft.recipe.replacingCategory(matchedCategory.name).addingBrowseLabels([fileImportLabelID, runLabelID], id: id)
                     let encoded = try JSONEncoder().encode(recipe)
                     context.insert(ImportedPaprikaRecipe(id: recipe.id, paprikaUID: draft.uid, recipeData: encoded, importedAt: now, paprikaImportRunID: runID))
+                    context.insert(RecipeCategoryAssignment(recipeID: recipe.id, categoryID: matchedCategory.id))
                     importedIDs.append(recipe.id)
                     if let photo = draft.photoData {
                         let ext = photo.starts(with: [0xff, 0xd8, 0xff]) ? "jpg" : (photo.starts(with: [0x89, 0x50, 0x4e, 0x47]) ? "png" : "gif")
@@ -589,6 +599,12 @@ enum PaprikaImportStore {
     }
 }
 
+private extension Recipe {
+    func replacingCategory(_ value: String) -> Recipe {
+        Recipe(id: id, title: title, category: value, collectionTitle: collectionTitle, sourceFile: sourceFile, sourceSection: sourceSection, introduction: introduction, ingredients: ingredients, steps: steps, tips: tips, healthierOptions: healthierOptions, thumbnailAsset: thumbnailAsset, labelIDs: labelIDs, provenance: provenance, menuDescription: menuDescription, menuPairings: menuPairings, servings: servings)
+    }
+}
+
 struct PaprikaImportSummary: Hashable, Identifiable, Sendable {
     let runID: String
     let labelID: String
@@ -625,6 +641,8 @@ struct PaprikaImportReviewView: View {
     @Environment(\.modelContext) private var modelContext
     let session: PaprikaImportReviewSession
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
+    @Query private var categorySettings: [RecipeCategorySettings]
     @State private var selectedUIDs: Set<String>
     @State private var previewDraft: PaprikaImportDraft?
     @State private var alertMessage: String?
@@ -657,6 +675,17 @@ struct PaprikaImportReviewView: View {
         return duplicates
     }
     private var selectedCandidates: [PaprikaImportDraft] { session.drafts.filter { selectedUIDs.contains($0.uid) } }
+    private var defaultCategory: RecipeCategory? {
+        categories.first(where: { $0.id == categorySettings.first?.defaultCategoryID }) ?? categories.sorted { $0.order < $1.order }.first
+    }
+    private func destinationCategory(for draft: PaprikaImportDraft) -> RecipeCategory? {
+        RecipeCategoryStore.match(sourceNames: draft.sourceCategories, categories: categories) ?? defaultCategory
+    }
+    private func destinationText(for draft: PaprikaImportDraft) -> String {
+        let destination = destinationCategory(for: draft)?.name ?? "No category available"
+        if let source = draft.sourceCategories.first { return "Paprika: \(source) → \(destination)" }
+        return "No Paprika category → \(destination)"
+    }
     private var isSingle: Bool { session.drafts.count == 1 }
     private var primaryActionTitle: String {
         guard isSingle, let draft = session.drafts.first, duplicateUIDs.contains(draft.uid) else { return isSingle ? "Import Recipe" : "Import Selected" }
@@ -674,6 +703,8 @@ struct PaprikaImportReviewView: View {
                             Label("This recipe matches one in your library. It will be skipped unless you select Import Anyway.", systemImage: "exclamationmark.triangle.fill")
                                 .font(.subheadline).foregroundStyle(.secondary).padding(.horizontal)
                         }
+                        Label(destinationText(for: draft), systemImage: "folder")
+                            .font(.subheadline).foregroundStyle(.secondary).padding(.horizontal)
                         PaprikaRecipePreview(draft: draft)
                         selectionRow(for: draft)
                     }
@@ -734,7 +765,7 @@ struct PaprikaImportReviewView: View {
                 HStack(spacing: 12) {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(draft.recipe.title).font(.headline).foregroundStyle(.primary)
-                        Text("\(draft.recipe.category) · \(draft.recipe.ingredients.count) ingredients").font(.caption).foregroundStyle(.secondary)
+                        Text("\(destinationText(for: draft)) · \(draft.recipe.ingredients.count) ingredients").font(.caption).foregroundStyle(.secondary)
                     }
                     Spacer(minLength: 8)
                     Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)

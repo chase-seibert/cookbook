@@ -59,6 +59,14 @@ struct SettingsView: View {
                         Label("Deleted recipes (\(importedRecords.filter { $0.deletedAt != nil }.count + deletedRecipes.count))", systemImage: "trash")
                     }
                 }
+                Section("Recipe categories") {
+                    NavigationLink {
+                        RecipeCategoryManagerView()
+                    } label: {
+                        Label("Manage categories", systemImage: "folder")
+                    }
+                    Text("Choose the Recipes list sections and the default category for unmatched imports.").font(.footnote).foregroundStyle(.secondary)
+                }
                 Section("Paprika export") {
                     Button { Task { await exportAllPaprikaRecipes() } } label: {
                         Label(exportingPaprika ? "Preparing export…" : "Export all recipes", systemImage: "square.and.arrow.up")
@@ -184,6 +192,168 @@ struct SettingsView: View {
             paprikaExportURL = url
             status = "Prepared a Paprika export with \(items.count) recipes."
         } catch { status = "Could not export Paprika recipes: \(error.localizedDescription)" }
+    }
+}
+
+private struct RecipeCategoryManagerView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
+    @Query private var settings: [RecipeCategorySettings]
+    @Query private var assignments: [RecipeCategoryAssignment]
+    @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @State private var newCategoryName = ""
+    @State private var pendingDeleteID: String?
+    @State private var status: String?
+
+    private var defaultCategoryID: String { settings.first?.defaultCategoryID ?? categories.first?.id ?? "" }
+    private var allRecipes: [Recipe] { CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) }
+
+    var body: some View {
+        List {
+            Section("Default for unmatched imports") {
+                if categories.isEmpty {
+                    Text("Categories are still loading.").foregroundStyle(.secondary)
+                } else {
+                    Picker("Default category", selection: Binding(get: { defaultCategoryID }, set: setDefaultCategory)) {
+                        ForEach(categories.sorted { $0.order < $1.order }) { Text($0.name).tag($0.id) }
+                    }
+                }
+                Text("An imported recipe uses a matching existing category. Recipes with no unique match go to this category.").font(.footnote).foregroundStyle(.secondary)
+            }
+            Section("Categories") {
+                ForEach(categories.sorted { $0.order < $1.order }) { category in
+                    NavigationLink {
+                        RecipeCategoryRenameView(category: category)
+                    } label: {
+                        HStack {
+                            Text(category.name)
+                            Spacer()
+                            if category.id == defaultCategoryID { Text("Default").font(.caption).foregroundStyle(.secondary) }
+                            let count = recipeCount(in: category.id)
+                            Text("\(count)").font(.caption.monospacedDigit()).foregroundStyle(.secondary)
+                        }
+                    }
+                    .swipeActions {
+                        Button("Delete", role: .destructive) { pendingDeleteID = category.id }
+                    }
+                }
+                .onMove(perform: moveCategories)
+                HStack {
+                    TextField("New category", text: $newCategoryName)
+                        .submitLabel(.done)
+                        .onSubmit(addCategory)
+                    Button("Add", systemImage: "plus", action: addCategory)
+                        .labelStyle(.iconOnly)
+                        .disabled(newCategoryName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+        }
+        .navigationTitle("Categories")
+        .toolbar { EditButton() }
+        .task {
+            do { try RecipeCategoryStore.seedIfNeeded(in: modelContext) }
+            catch { status = "Could not load categories: \(error.localizedDescription)" }
+        }
+        .confirmationDialog(deletePrompt, isPresented: Binding(get: { pendingDeleteID != nil }, set: { if !$0 { pendingDeleteID = nil } }), titleVisibility: .visible) {
+            if let category = categories.first(where: { $0.id == pendingDeleteID }) {
+                let hasRecipes = recipeCount(in: category.id) > 0
+                let needsReplacement = hasRecipes || category.id == defaultCategoryID
+                if needsReplacement {
+                    ForEach(categories.filter { $0.id != category.id }.sorted { $0.order < $1.order }) { replacement in
+                        Button("Move to \(replacement.name) and delete", role: .destructive) { delete(category, replacingWith: replacement.id) }
+                    }
+                } else {
+                    Button("Delete Category", role: .destructive) { delete(category, replacingWith: categories.first(where: { $0.id != category.id })?.id) }
+                }
+            }
+            Button("Cancel", role: .cancel) { pendingDeleteID = nil }
+        } message: {
+            if let category = categories.first(where: { $0.id == pendingDeleteID }), recipeCount(in: category.id) > 0 {
+                Text("Recipes in \(category.name) will move to the selected category.")
+            } else {
+                Text("This category will be removed from your Recipes list.")
+            }
+        }
+        .alert("Categories", isPresented: Binding(get: { status != nil }, set: { if !$0 { status = nil } })) {
+            Button("OK") { status = nil }
+        } message: { Text(status ?? "") }
+    }
+
+    private var deletePrompt: String {
+        guard let category = categories.first(where: { $0.id == pendingDeleteID }) else { return "Delete category?" }
+        return "Delete \(category.name)?"
+    }
+
+    private func resolvedCategoryID(for recipe: Recipe) -> String {
+        if let assignment = assignments.first(where: { assignment in assignment.recipeID == recipe.id && categories.contains(where: { $0.id == assignment.categoryID }) }) { return assignment.categoryID }
+        return RecipeCategoryStore.match(sourceNames: [recipe.category], categories: categories)?.id ?? defaultCategoryID
+    }
+
+    private func recipeCount(in categoryID: String) -> Int { allRecipes.filter { resolvedCategoryID(for: $0) == categoryID }.count }
+
+    private func setDefaultCategory(_ id: String) {
+        do {
+            if let record = settings.first { record.defaultCategoryID = id }
+            else { modelContext.insert(RecipeCategorySettings(defaultCategoryID: id)) }
+            try modelContext.save()
+        } catch { status = "Could not update the default category: \(error.localizedDescription)" }
+    }
+
+    private func addCategory() {
+        let name = newCategoryName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else { return }
+        guard !categories.contains(where: { RecipeCategoryStore.normalized($0.name) == RecipeCategoryStore.normalized(name) }) else { status = "A category with that name already exists."; return }
+        modelContext.insert(RecipeCategory(id: "user:\(UUID().uuidString)", name: name, order: (categories.map(\.order).max() ?? -1) + 1))
+        do { try modelContext.save(); newCategoryName = "" }
+        catch { status = "Could not add the category: \(error.localizedDescription)" }
+    }
+
+    private func moveCategories(from source: IndexSet, to destination: Int) {
+        var ordered = categories.sorted { $0.order < $1.order }
+        ordered.move(fromOffsets: source, toOffset: destination)
+        for (index, category) in ordered.enumerated() { category.order = index }
+        do { try modelContext.save() }
+        catch { status = "Could not reorder categories: \(error.localizedDescription)" }
+    }
+
+    private func delete(_ category: RecipeCategory, replacingWith replacementID: String?) {
+        do { try RecipeCategoryStore.deleteCategory(category.id, replacingWith: replacementID, in: modelContext); pendingDeleteID = nil }
+        catch { status = "Could not delete the category: \(error.localizedDescription)" }
+    }
+}
+
+private struct RecipeCategoryRenameView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
+    let category: RecipeCategory
+    @State private var name: String
+    @State private var status: String?
+
+    init(category: RecipeCategory) {
+        self.category = category
+        _name = State(initialValue: category.name)
+    }
+
+    var body: some View {
+        Form {
+            Section("Category name") {
+                TextField("Name", text: $name)
+                    .textInputAutocapitalization(.words)
+                    .submitLabel(.done)
+                    .onSubmit(save)
+                Text("Recipes assigned to this category keep their assignment when it is renamed.").font(.footnote).foregroundStyle(.secondary)
+            }
+        }
+        .navigationTitle("Edit Category")
+        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Save", action: save) } }
+        .alert("Category", isPresented: Binding(get: { status != nil }, set: { if !$0 { status = nil } })) {
+            Button("OK") { status = nil }
+        } message: { Text(status ?? "") }
+    }
+
+    private func save() {
+        do { try RecipeCategoryStore.renameCategory(category.id, to: name, in: modelContext); dismiss() }
+        catch { status = error.localizedDescription }
     }
 }
 

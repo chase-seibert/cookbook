@@ -6,14 +6,16 @@ import UIKit
 @main struct CookbookApp: App {
     var body: some Scene {
         WindowGroup { RootView() }
-        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, ImageGenerationRun.self, ImageGenerationEntry.self])
+        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, ImageGenerationRun.self, ImageGenerationEntry.self, RecipeCategory.self, RecipeCategorySettings.self, RecipeCategoryAssignment.self])
     }
 }
 
 struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.modelContext) private var modelContext
     @State private var selectedTab = 0
     @State private var incomingPaprikaURL: URL?
+    @State private var categorySetupError: String?
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -32,6 +34,13 @@ struct RootView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase == .active, selectedTab == 2 { openPendingPaprikaShareIfNeeded() }
         }
+        .task {
+            do { try RecipeCategoryStore.seedIfNeeded(in: modelContext) }
+            catch { categorySetupError = "Could not initialize recipe categories: \(error.localizedDescription)" }
+        }
+        .alert("Recipe categories", isPresented: Binding(get: { categorySetupError != nil }, set: { if !$0 { categorySetupError = nil } })) {
+            Button("OK") { categorySetupError = nil }
+        } message: { Text(categorySetupError ?? "") }
     }
 
     private func openPendingPaprikaShareIfNeeded() {
@@ -44,6 +53,9 @@ struct RecipeBrowserView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var importedRecords: [ImportedPaprikaRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
+    @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
+    @Query private var categorySettings: [RecipeCategorySettings]
+    @Query private var categoryAssignments: [RecipeCategoryAssignment]
     private let importRunLabelID: String?
     private let showingDeletedRecipes: Bool
     private let managesNavigationStack: Bool
@@ -72,10 +84,15 @@ struct RecipeBrowserView: View {
         if showingDeletedRecipes { return importedRecipes + deletedBundledRecipes }
         return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecipes
     }
-    private var categoryOrder: [String] {
-        var seen = Set(CookbookCatalog.bundled.categoryOrder)
-        return CookbookCatalog.bundled.categoryOrder + recipes.map(\.category).filter { seen.insert($0).inserted }
+    private var defaultCategoryID: String { categorySettings.first?.defaultCategoryID ?? categories.first?.id ?? RecipeCategoryStore.fallbackID }
+    private var categoryOrder: [String] { categories.sorted { $0.order < $1.order }.map(\.id) }
+    private func categoryID(for recipe: Recipe) -> String {
+        if let assignment = categoryAssignments.first(where: { $0.recipeID == recipe.id }), categories.contains(where: { $0.id == assignment.categoryID }) {
+            return assignment.categoryID
+        }
+        return RecipeCategoryStore.match(sourceNames: [recipe.category], categories: categories)?.id ?? defaultCategoryID
     }
+    private func categoryName(for id: String) -> String { categories.first(where: { $0.id == id })?.name ?? "General" }
     private var labelGroups: [RecipeLabelGroup] { (CookbookCatalog.bundled.labelGroups ?? []).sorted { $0.order < $1.order } }
     private var labels: [RecipeLabel] { CookbookCatalog.bundled.labels ?? [] }
     private func allLabels(in group: RecipeLabelGroup) -> [RecipeLabel] {
@@ -109,7 +126,7 @@ struct RecipeBrowserView: View {
         query.isEmpty || recipe.title.localizedCaseInsensitiveContains(query) || recipe.ingredients.contains { $0.name.localizedCaseInsensitiveContains(query) }
     }
     private var visibleCategories: [String] {
-        categoryOrder.filter { sectionName in filtered.contains { $0.category == sectionName } }
+        categoryOrder.filter { categoryKey in filtered.contains { categoryID(for: $0) == categoryKey } }
     }
     private func browserGroups(in sectionName: String) -> [BrowserGroup] {
         var result: [BrowserGroup] = []
@@ -119,7 +136,7 @@ struct RecipeBrowserView: View {
             result.append(BrowserGroup(id: "\(sectionName)-regular-\(result.count)", title: nil, recipes: regularRecipes))
             regularRecipes = []
         }
-        for recipe in filtered where recipe.category == sectionName {
+        for recipe in filtered where categoryID(for: recipe) == sectionName {
             if let collectionTitle = recipe.collectionTitle {
                 flushRegular()
                 if let last = result.last, last.title == collectionTitle {
@@ -208,12 +225,12 @@ struct RecipeBrowserView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     ForEach(visibleCategories, id: \.self) { sectionName in
                         VStack(alignment: .leading, spacing: 16) {
-                            Text(sectionName).font(.system(.title2, design: .serif).weight(.semibold))
+                            Text(categoryName(for: sectionName)).font(.system(.title2, design: .serif).weight(.semibold))
                             ForEach(browserGroups(in: sectionName)) { group in
                                 VStack(alignment: .leading, spacing: 10) {
                                     if let title = group.title { Text(title).font(.headline) }
                                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 14)], spacing: 14) {
-                                        ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe) }.buttonStyle(.plain).simultaneousGesture(TapGesture().onEnded { RecipeUsageStore(context: modelContext).recordRecipeOpen(recipe.id) }) }
+                                        ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe, categoryName: categoryName(for: categoryID(for: recipe))) }.buttonStyle(.plain).simultaneousGesture(TapGesture().onEnded { RecipeUsageStore(context: modelContext).recordRecipeOpen(recipe.id) }) }
                                     }
                                 }
                             }
@@ -294,9 +311,11 @@ private struct PresentedRecipeSearch: ViewModifier {
 
 struct RecipeTile: View {
     let recipe: Recipe
+    var categoryName: String? = nil
     @Query private var photos: [RecipePhoto]
-    init(recipe: Recipe) {
+    init(recipe: Recipe, categoryName: String? = nil) {
         self.recipe = recipe
+        self.categoryName = categoryName
         let recipeID = recipe.id
         _photos = Query(filter: #Predicate<RecipePhoto> { $0.recipeID == recipeID && $0.isCover })
     }
@@ -313,7 +332,7 @@ struct RecipeTile: View {
                     .frame(height: 122)
             }
             Text(recipe.title).font(.headline).lineLimit(2).multilineTextAlignment(.leading)
-            Text(recipe.category).font(.caption).foregroundStyle(.secondary)
+            Text(categoryName ?? recipe.category).font(.caption).foregroundStyle(.secondary)
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
 }
@@ -519,6 +538,8 @@ struct RecipeDetailView: View {
     @Query private var notes: [RecipeNote]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
+    @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
+    @Query private var categoryAssignments: [RecipeCategoryAssignment]
     init(recipe: Recipe) {
         self.recipe = recipe
         let recipeID = recipe.id
@@ -597,6 +618,19 @@ struct RecipeDetailView: View {
                 Button { showAddToDinner = true } label: { Label("Add to Dinner…", systemImage: "calendar.badge.plus") }
                 Button { showCooking = true } label: { Label("Start Cooking", systemImage: "play.fill") }
                 Button { showNote = true } label: { Label("Add Note", systemImage: "note.text") }
+                if !isDeleted && !categories.isEmpty {
+                    Menu {
+                        ForEach(categories.sorted { $0.order < $1.order }) { category in
+                            Button {
+                                do { try RecipeCategoryStore.setAssignment(recipeID: recipe.id, categoryID: category.id, in: modelContext) }
+                                catch { restorationMessage = error.localizedDescription }
+                            } label: {
+                                if assignedCategoryID == category.id { Label(category.name, systemImage: "checkmark") }
+                                else { Text(category.name) }
+                            }
+                        }
+                    } label: { Label("Category: \(assignedCategoryName)", systemImage: "folder") }
+                }
                 PhotosPicker(selection: $pickedPhoto, matching: .images) { Label("Add Photo", systemImage: "camera") }
                 Button { showCamera = true } label: { Label("Take Photo", systemImage: "camera.fill") }.disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
                 Button { showPrint = true } label: { Label("Print Recipe", systemImage: "printer") }
@@ -636,6 +670,13 @@ struct RecipeDetailView: View {
     }
 
     private var activeNotes: [RecipeNote] { notes.filter { $0.deletedAt == nil }.sorted { $0.updatedAt > $1.updatedAt } }
+    private var assignedCategoryID: String {
+        categoryAssignments.first(where: { assignment in assignment.recipeID == recipe.id && categories.contains(where: { $0.id == assignment.categoryID }) })?.categoryID
+            ?? RecipeCategoryStore.match(sourceNames: [recipe.category], categories: categories)?.id
+            ?? categories.sorted { $0.order < $1.order }.first?.id
+            ?? RecipeCategoryStore.fallbackID
+    }
+    private var assignedCategoryName: String { categories.first(where: { $0.id == assignedCategoryID })?.name ?? recipe.category }
     private var hasEffectiveImage: Bool {
         if photos.contains(where: { $0.recipeID == recipe.id && $0.isCover }) { return true }
         guard let asset = recipe.thumbnailAsset else { return false }
