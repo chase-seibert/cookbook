@@ -480,11 +480,27 @@ private extension Data {
 }
 
 enum PaprikaImportStore {
+    static func normalizedTitle(_ title: String) -> String {
+        title.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "en_US_POSIX"))
+            .split(whereSeparator: { $0.isWhitespace })
+            .joined(separator: " ")
+    }
+
     @MainActor static func add(_ drafts: [PaprikaImportDraft], to container: ModelContainer) throws -> (added: Int, skipped: Int) {
         let context = ModelContext(container)
         let existing = try context.fetch(FetchDescriptor<ImportedPaprikaRecipe>())
         var knownUIDs = Set(existing.map { $0.paprikaUID.lowercased() })
-        let additions = drafts.filter { knownUIDs.insert($0.uid.lowercased()).inserted }
+        var knownTitles = Set(CookbookCatalog.bundled.recipes.map { normalizedTitle($0.title) })
+        knownTitles.formUnion(existing.compactMap(\.recipe).map { normalizedTitle($0.title) })
+        var additions: [PaprikaImportDraft] = []
+        for draft in drafts {
+            let uid = draft.uid.lowercased()
+            let title = normalizedTitle(draft.recipe.title)
+            guard !knownUIDs.contains(uid), !knownTitles.contains(title) else { continue }
+            knownUIDs.insert(uid)
+            knownTitles.insert(title)
+            additions.append(draft)
+        }
         let skipped = drafts.count - additions.count
         guard !additions.isEmpty else { return (0, skipped) }
         let filesDirectory = UserFiles.directory.appendingPathComponent("PaprikaImports", isDirectory: true)
@@ -529,7 +545,26 @@ struct PaprikaImportReviewView: View {
     }
 
     private var existingUIDs: Set<String> { Set(importedRecords.map { $0.paprikaUID.lowercased() }) }
-    private var selectedDrafts: [PaprikaImportDraft] { session.drafts.filter { selectedUIDs.contains($0.uid) && !existingUIDs.contains($0.uid.lowercased()) } }
+    private var existingTitles: Set<String> {
+        Set(CookbookCatalog.bundled.recipes.map { PaprikaImportStore.normalizedTitle($0.title) })
+            .union(importedRecords.compactMap(\.recipe).map { PaprikaImportStore.normalizedTitle($0.title) })
+    }
+    private var duplicateUIDs: Set<String> {
+        var knownUIDs = existingUIDs
+        var knownTitles = existingTitles
+        var duplicates = Set<String>()
+        for draft in session.drafts {
+            let title = PaprikaImportStore.normalizedTitle(draft.recipe.title)
+            guard !knownUIDs.contains(draft.uid.lowercased()), !knownTitles.contains(title) else {
+                duplicates.insert(draft.uid)
+                continue
+            }
+            knownUIDs.insert(draft.uid.lowercased())
+            knownTitles.insert(title)
+        }
+        return duplicates
+    }
+    private var selectedDrafts: [PaprikaImportDraft] { session.drafts.filter { selectedUIDs.contains($0.uid) && !duplicateUIDs.contains($0.uid) } }
     private var isSingle: Bool { session.drafts.count == 1 }
 
     var body: some View {
@@ -537,8 +572,8 @@ struct PaprikaImportReviewView: View {
             Group {
                 if isSingle, let draft = session.drafts.first {
                     VStack(spacing: 12) {
-                        if existingUIDs.contains(draft.uid.lowercased()) {
-                            Label("This recipe was already imported.", systemImage: "checkmark.circle.fill")
+                        if duplicateUIDs.contains(draft.uid) {
+                            Label("A recipe with this name or Paprika ID is already in your library.", systemImage: "checkmark.circle.fill")
                                 .font(.subheadline).foregroundStyle(.secondary).padding(.horizontal)
                         }
                         PaprikaRecipePreview(draft: draft)
@@ -549,7 +584,7 @@ struct PaprikaImportReviewView: View {
                             HStack {
                                 Text("\(selectedDrafts.count) selected").font(.subheadline.weight(.medium))
                                 Spacer()
-                                Button("Select All") { selectedUIDs = Set(session.drafts.filter { !existingUIDs.contains($0.uid.lowercased()) }.map(\.uid)) }
+                                Button("Select All") { selectedUIDs = Set(session.drafts.filter { !duplicateUIDs.contains($0.uid) }.map(\.uid)) }
                                 Button("Deselect All") { selectedUIDs.removeAll() }
                             }
                         }
@@ -560,7 +595,7 @@ struct PaprikaImportReviewView: View {
                                         VStack(alignment: .leading, spacing: 3) {
                                             Text(draft.recipe.title).font(.headline).foregroundStyle(.primary)
                                             Text("\(draft.recipe.category) · \(draft.recipe.ingredients.count) ingredients").font(.caption).foregroundStyle(.secondary)
-                                            if isAlreadyImported(draft) { Text("Already imported").font(.caption).foregroundStyle(.secondary) }
+                                            if isAlreadyImported(draft) { Text("Duplicate name or Paprika ID").font(.caption).foregroundStyle(.secondary) }
                                         }
                                         Spacer(minLength: 8)
                                         Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)
@@ -598,7 +633,7 @@ struct PaprikaImportReviewView: View {
     }
 
     private func isAlreadyImported(_ draft: PaprikaImportDraft) -> Bool {
-        existingUIDs.contains(draft.uid.lowercased())
+        duplicateUIDs.contains(draft.uid)
     }
 
     private func checkboxSymbol(for draft: PaprikaImportDraft) -> String {
@@ -606,7 +641,7 @@ struct PaprikaImportReviewView: View {
     }
 
     private func checkboxLabel(for draft: PaprikaImportDraft) -> String {
-        selectedUIDs.contains(draft.uid) ? "Deselect \(draft.recipe.title)" : "Select \(draft.recipe.title)"
+        isAlreadyImported(draft) ? "\(draft.recipe.title) already exists in your library" : selectedUIDs.contains(draft.uid) ? "Deselect \(draft.recipe.title)" : "Select \(draft.recipe.title)"
     }
 
     private func checkboxControl(for draft: PaprikaImportDraft) -> some View {
@@ -625,8 +660,8 @@ struct PaprikaImportReviewView: View {
     private func addSelected() {
         do {
             let result = try PaprikaImportStore.add(selectedDrafts, to: modelContext.container)
-            guard result.added > 0 else { alertMessage = "These recipes were already imported. No duplicate recipes were added."; return }
-            alertMessage = result.skipped > 0 ? "Added \(result.added) recipes. Skipped \(result.skipped) already imported." : "Added \(result.added) recipe\(result.added == 1 ? "" : "s")."
+            guard result.added > 0 else { alertMessage = "These recipes already exist in your library by name or Paprika ID. No duplicates were added."; return }
+            alertMessage = result.skipped > 0 ? "Added \(result.added) recipes. Skipped \(result.skipped) with a matching name or Paprika ID." : "Added \(result.added) recipe\(result.added == 1 ? "" : "s")."
         } catch { alertMessage = "Could not add the selected recipes. No recipes were added. \(error.localizedDescription)" }
     }
 }
