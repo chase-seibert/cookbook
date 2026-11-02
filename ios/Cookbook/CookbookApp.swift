@@ -533,6 +533,10 @@ struct RecipeDetailView: View {
     @State private var paprikaExportStatus: String?
     @State private var restorationMessage: String?
     @State private var exportingPaprika = false
+    @State private var recipeDocumentURL: URL?
+    @State private var recipeDocumentStatus: String?
+    @State private var exportingRecipeDocument = false
+    @State private var showRecipeDocumentShare = false
     @Environment(\.modelContext) private var modelContext
     @Query private var photos: [RecipePhoto]
     @Query private var notes: [RecipeNote]
@@ -634,6 +638,8 @@ struct RecipeDetailView: View {
                 PhotosPicker(selection: $pickedPhoto, matching: .images) { Label("Add Photo", systemImage: "camera") }
                 Button { showCamera = true } label: { Label("Take Photo", systemImage: "camera.fill") }.disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
                 Button { showPrint = true } label: { Label("Print Recipe", systemImage: "printer") }
+                Button { Task { await exportRecipeDocument(format: .markdown) } } label: { Label("Export Markdown…", systemImage: "doc.text") }.disabled(exportingRecipeDocument)
+                Button { Task { await exportRecipeDocument(format: .html) } } label: { Label("Export HTML…", systemImage: "chevron.left.forwardslash.chevron.right") }.disabled(exportingRecipeDocument)
                 Button { Task { await exportPaprikaRecipe() } } label: { Label("Export Paprika File…", systemImage: "square.and.arrow.up") }.disabled(exportingPaprika)
                 if !isDeleted {
                     Button { showImageGeneration = true } label: {
@@ -657,6 +663,12 @@ struct RecipeDetailView: View {
         .sheet(isPresented: $showPaprikaShare) {
             if let paprikaExportURL { ActivityView(items: [paprikaExportURL]) }
         }
+        .sheet(isPresented: $showRecipeDocumentShare) {
+            if let recipeDocumentURL { ActivityView(items: [recipeDocumentURL]) }
+        }
+        .alert("Recipe export", isPresented: Binding(get: { recipeDocumentStatus != nil }, set: { if !$0 { recipeDocumentStatus = nil } })) {
+            Button("OK") { recipeDocumentStatus = nil }
+        } message: { Text(recipeDocumentStatus ?? "") }
         .alert("Paprika export", isPresented: Binding(get: { paprikaExportStatus != nil }, set: { if !$0 { paprikaExportStatus = nil } })) {
             Button("OK") { paprikaExportStatus = nil }
         } message: { Text(paprikaExportStatus ?? "") }
@@ -723,6 +735,31 @@ struct RecipeDetailView: View {
             try await Task.sleep(nanoseconds: 300_000_000)
             showPaprikaShare = true
         } catch { paprikaExportStatus = "Could not export \(recipe.title): \(error.localizedDescription)" }
+    }
+
+    private enum RecipeDocumentFormat: Equatable, Sendable {
+        case markdown
+        case html
+    }
+
+    @MainActor private func exportRecipeDocument(format: RecipeDocumentFormat) async {
+        exportingRecipeDocument = true
+        recipeDocumentURL = nil
+        defer { exportingRecipeDocument = false }
+        let fileExtension = format == .markdown ? "md" : "html"
+        let exportRecipe = recipe
+        let url = RecipeDocumentExporter.temporaryURL(for: recipe, extension: fileExtension)
+        do {
+            try await Task.detached(priority: .userInitiated) {
+                switch format {
+                case .markdown: try RecipeDocumentExporter.writeMarkdown(exportRecipe, to: url)
+                case .html: try RecipeDocumentExporter.writeHTML(exportRecipe, to: url)
+                }
+            }.value
+            recipeDocumentURL = url
+            try await Task.sleep(nanoseconds: 300_000_000)
+            showRecipeDocumentShare = true
+        } catch { recipeDocumentStatus = "Could not export \(recipe.title): \(error.localizedDescription)" }
     }
 
     @MainActor private func savePhoto(_ item: PhotosPickerItem?) async {

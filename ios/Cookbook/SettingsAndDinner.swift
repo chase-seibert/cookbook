@@ -13,6 +13,9 @@ struct SettingsView: View {
     @State private var reminderLists: [ReminderListChoice] = []
     @State private var status: String?
     @State private var exportURL: URL?
+    @State private var markdownRecipeExportURL: URL?
+    @State private var htmlRecipeExportURL: URL?
+    @State private var exportingRecipeDocuments = false
     @State private var paprikaExportURL: URL?
     @State private var exportingPaprika = false
     @State private var showingPaprikaExportSelector = false
@@ -76,6 +79,25 @@ struct SettingsView: View {
                         ShareLink(item: paprikaExportURL) { Label("Share Paprika collection", systemImage: "square.and.arrow.up") }
                     }
                     Text("Exports all active bundled and imported recipes, regardless of browse filters.").font(.footnote).foregroundStyle(.secondary)
+                }
+                Section("Recipe exports") {
+                    Button {
+                        Task { await exportRecipeCollection(format: .markdown) }
+                    } label: {
+                        Label(exportingRecipeDocuments ? "Preparing export…" : "Export all recipes as Markdown…", systemImage: "doc.zipper")
+                    }.disabled(exportingRecipeDocuments)
+                    if let markdownRecipeExportURL {
+                        ShareLink(item: markdownRecipeExportURL) { Label("Share Markdown archive", systemImage: "square.and.arrow.up") }
+                    }
+                    Button {
+                        Task { await exportRecipeCollection(format: .html) }
+                    } label: {
+                        Label(exportingRecipeDocuments ? "Preparing export…" : "Export all recipes as HTML…", systemImage: "chevron.left.forwardslash.chevron.right")
+                    }.disabled(exportingRecipeDocuments)
+                    if let htmlRecipeExportURL {
+                        ShareLink(item: htmlRecipeExportURL) { Label("Share HTML cookbook", systemImage: "square.and.arrow.up") }
+                    }
+                    Text("Exports every active bundled and imported recipe, regardless of browse filters. Markdown is a ZIP archive with one recipe per file; HTML is a standalone cookbook.").font(.footnote).foregroundStyle(.secondary)
                 }
                 Section("Recipe usage") {
                     NavigationLink {
@@ -294,6 +316,40 @@ struct SettingsView: View {
             paprikaExportURL = url
             status = "Prepared a Paprika export with \(items.count) recipes."
         } catch { status = "Could not export Paprika recipes: \(error.localizedDescription)" }
+    }
+
+    private enum RecipeCollectionFormat: Equatable, Sendable {
+        case markdown
+        case html
+    }
+
+    @MainActor private func exportRecipeCollection(format: RecipeCollectionFormat) async {
+        exportingRecipeDocuments = true
+        defer { exportingRecipeDocuments = false }
+        switch format {
+        case .markdown: markdownRecipeExportURL = nil
+        case .html: htmlRecipeExportURL = nil
+        }
+        do {
+            let recipes = activePaprikaRecipes
+            guard !recipes.isEmpty else { throw RecipeDocumentExportError.noRecipes }
+            let fileExtension = format == .markdown ? "zip" : "html"
+            let url = RecipeDocumentExporter.temporaryURL(extension: fileExtension)
+            try await Task.detached(priority: .userInitiated) {
+                switch format {
+                case .markdown: try RecipeDocumentExporter.writeMarkdownArchive(recipes, to: url)
+                case .html: try RecipeDocumentExporter.writeHTMLCookbook(recipes, to: url)
+                }
+            }.value
+            switch format {
+            case .markdown:
+                markdownRecipeExportURL = url
+                status = "Prepared a Markdown archive with \(recipes.count) recipes."
+            case .html:
+                htmlRecipeExportURL = url
+                status = "Prepared an HTML cookbook with \(recipes.count) recipes."
+            }
+        } catch { status = "Could not export recipes: \(error.localizedDescription)" }
     }
 }
 

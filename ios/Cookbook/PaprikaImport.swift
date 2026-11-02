@@ -480,6 +480,279 @@ private extension Data {
     }
 }
 
+enum RecipeDocumentExportError: LocalizedError {
+    case noRecipes
+    case archiveTooLarge
+    case archiveFailed
+
+    var errorDescription: String? {
+        switch self {
+        case .noRecipes: "There are no active recipes to export."
+        case .archiveTooLarge: "The Markdown export is too large to package."
+        case .archiveFailed: "Could not create the Markdown archive."
+        }
+    }
+}
+
+enum RecipeDocumentExporter {
+    private struct ArchiveEntry {
+        let name: String
+        let data: Data
+        let crc: UInt32
+        let offset: UInt32
+    }
+
+    static func temporaryURL(extension fileExtension: String) -> URL {
+        FileManager.default.temporaryDirectory
+            .appendingPathComponent("Cookbook-\(UUID().uuidString)")
+            .appendingPathExtension(fileExtension)
+    }
+
+    static func temporaryURL(for recipe: Recipe, extension fileExtension: String) -> URL {
+        var usedNames = Set<String>()
+        let archiveFilename = filename(for: recipe, usedNames: &usedNames)
+        let baseName = URL(fileURLWithPath: archiveFilename).deletingPathExtension().lastPathComponent
+        return FileManager.default.temporaryDirectory
+            .appendingPathComponent("\(baseName)-\(UUID().uuidString)")
+            .appendingPathExtension(fileExtension)
+    }
+
+    static func writeMarkdown(_ recipe: Recipe, to url: URL) throws {
+        try Data(markdown(for: recipe).utf8).write(to: url, options: .atomic)
+    }
+
+    static func writeHTML(_ recipe: Recipe, to url: URL) throws {
+        try Data(html(for: recipe).utf8).write(to: url, options: .atomic)
+    }
+
+    static func writeMarkdownArchive(_ recipes: [Recipe], to url: URL) throws {
+        guard !recipes.isEmpty else { throw RecipeDocumentExportError.noRecipes }
+        guard recipes.count <= Int(UInt16.max) else { throw RecipeDocumentExportError.archiveTooLarge }
+
+        var archive = Data()
+        var entries: [ArchiveEntry] = []
+        var usedNames = Set<String>()
+        for recipe in recipes {
+            let contents = Data(markdown(for: recipe).utf8)
+            let name = filename(for: recipe, usedNames: &usedNames)
+            let nameData = Data(name.utf8)
+            guard nameData.count <= Int(UInt16.max), contents.count <= Int(UInt32.max), archive.count <= Int(UInt32.max) else {
+                throw RecipeDocumentExportError.archiveTooLarge
+            }
+            let offset = UInt32(archive.count)
+            let crc = crc32(contents)
+            archive.appendLE(UInt32(0x04034b50))
+            archive.appendLE(UInt16(20))
+            archive.appendLE(UInt16(0x0800))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0x0021))
+            archive.appendLE(crc)
+            archive.appendLE(UInt32(contents.count))
+            archive.appendLE(UInt32(contents.count))
+            archive.appendLE(UInt16(nameData.count))
+            archive.appendLE(UInt16(0))
+            archive.append(nameData)
+            archive.append(contents)
+            entries.append(ArchiveEntry(name: name, data: contents, crc: crc, offset: offset))
+        }
+
+        let directoryOffset = archive.count
+        for entry in entries {
+            let nameData = Data(entry.name.utf8)
+            archive.appendLE(UInt32(0x02014b50))
+            archive.appendLE(UInt16(20))
+            archive.appendLE(UInt16(20))
+            archive.appendLE(UInt16(0x0800))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0x0021))
+            archive.appendLE(entry.crc)
+            archive.appendLE(UInt32(entry.data.count))
+            archive.appendLE(UInt32(entry.data.count))
+            archive.appendLE(UInt16(nameData.count))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt16(0))
+            archive.appendLE(UInt32(0))
+            archive.appendLE(entry.offset)
+            archive.append(nameData)
+        }
+        let directorySize = archive.count - directoryOffset
+        guard archive.count <= Int(UInt32.max), directoryOffset <= Int(UInt32.max), directorySize <= Int(UInt32.max) else {
+            throw RecipeDocumentExportError.archiveTooLarge
+        }
+        archive.appendLE(UInt32(0x06054b50))
+        archive.appendLE(UInt16(0))
+        archive.appendLE(UInt16(0))
+        archive.appendLE(UInt16(entries.count))
+        archive.appendLE(UInt16(entries.count))
+        archive.appendLE(UInt32(directorySize))
+        archive.appendLE(UInt32(directoryOffset))
+        archive.appendLE(UInt16(0))
+        do { try archive.write(to: url, options: .atomic) }
+        catch { throw RecipeDocumentExportError.archiveFailed }
+    }
+
+    static func writeHTMLCookbook(_ recipes: [Recipe], to url: URL) throws {
+        guard !recipes.isEmpty else { throw RecipeDocumentExportError.noRecipes }
+        let links = recipes.map { recipe in
+            "<li><a href=\"#\(htmlAttribute(recipe.id))\">\(htmlText(recipe.title))</a></li>"
+        }.joined(separator: "\n")
+        let documents = recipes.map { htmlArticle(for: $0, includeDocument: false) }.joined(separator: "\n")
+        let document = """
+        <!doctype html>
+        <html lang="en">
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>Cookbook</title>
+          <style>
+            :root { color-scheme: light dark; font: 16px/1.6 -apple-system, BlinkMacSystemFont, sans-serif; }
+            body { max-width: 48rem; margin: 0 auto; padding: 2rem 1.25rem; }
+            nav { border-bottom: 1px solid #8886; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+            article { padding: 1rem 0 2rem; border-bottom: 1px solid #8886; scroll-margin-top: 1rem; }
+            li { margin: .25rem 0; } .quantity { white-space: nowrap; margin-right: .5rem; color: #888; }
+          </style>
+        </head>
+        <body>
+          <h1>Cookbook</h1>
+          <nav aria-label="Recipes"><h2>Recipes</h2><ol>\(links)</ol></nav>
+          \(documents)
+        </body>
+        </html>
+        """
+        try Data(document.utf8).write(to: url, options: .atomic)
+    }
+
+    static func markdown(for recipe: Recipe) -> String {
+        var sections = ["---", "format: cookbook-recipe/v1", "id: \(yamlScalar(recipe.id))", "---", "", "# \(markdownText(recipe.title))"]
+        let introduction = recipe.introduction.trimmingCharacters(in: .whitespacesAndNewlines)
+        let servings = recipe.servings?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !introduction.isEmpty || !servings.isEmpty {
+            let paragraphs = [introduction, servings.isEmpty ? "" : "Servings: \(servings)"]
+                .filter { !$0.isEmpty }
+                .joined(separator: "\n\n")
+            sections += ["", blockquote(label: "Introduction", text: paragraphs)]
+        }
+        if !recipe.ingredients.isEmpty {
+            sections += ["", "## Ingredients", "", "| Quantity | Ingredient |", "|---|---|"]
+            sections += recipe.ingredients.map { "| \(markdownTableCell($0.quantity)) | \(markdownTableCell($0.name)) |" }
+        }
+        var currentSection: String?
+        for (index, step) in recipe.steps.enumerated() where !step.originalInstruction.isEmpty {
+            let title = step.sectionTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !title.isEmpty, title != currentSection {
+                sections += ["", "## \(markdownText(title))"]
+            } else if index == 0 || currentSection == nil {
+                sections += ["", "## Instructions"]
+            }
+            sections += ["", markdownText(step.originalInstruction)]
+            currentSection = title.isEmpty ? currentSection : title
+        }
+        for tip in recipe.tips where !tip.isEmpty { sections += ["", blockquote(label: "Tip", text: tip)] }
+        for note in recipe.healthierOptions where !note.isEmpty { sections += ["", blockquote(label: "Healthier option", text: note)] }
+        return sections.joined(separator: "\n") + "\n"
+    }
+
+    static func html(for recipe: Recipe) -> String { htmlArticle(for: recipe, includeDocument: true) }
+
+    private static func htmlArticle(for recipe: Recipe, includeDocument: Bool) -> String {
+        let ingredientList = recipe.ingredients.map { ingredient in
+            "<li>\(ingredient.quantity.isEmpty ? "" : "<span class=\"quantity\">\(htmlText(ingredient.quantity))</span>")\(htmlText(ingredient.name))</li>"
+        }.joined(separator: "\n")
+        var steps = ""
+        var currentSection: String?
+        for step in recipe.steps where !step.originalInstruction.isEmpty {
+            let title = step.sectionTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !title.isEmpty, title != currentSection { steps += "<h3>\(htmlText(title))</h3>\n" }
+            steps += "<p>\(htmlText(step.originalInstruction).replacingOccurrences(of: "\n", with: "<br>"))</p>\n"
+            currentSection = title.isEmpty ? currentSection : title
+        }
+        let notes = recipe.tips.map { "<p><strong>Tip:</strong> \(htmlText($0))</p>" }
+            + recipe.healthierOptions.map { "<p><strong>Healthier option:</strong> \(htmlText($0))</p>" }
+        let article = """
+        <article id="\(htmlAttribute(recipe.id))">
+          <h2>\(htmlText(recipe.title))</h2>
+          \(recipe.introduction.isEmpty ? "" : "<p class=\"introduction\">\(htmlText(recipe.introduction))</p>")
+          \(recipe.servings.map { "<p><strong>Servings:</strong> \(htmlText($0))</p>" } ?? "")
+          \(recipe.ingredients.isEmpty ? "" : "<h3>Ingredients</h3><ul>\(ingredientList)</ul>")
+          \(steps.isEmpty ? "" : "<h3>Instructions</h3>\(steps)")
+          \(notes.joined(separator: "\n"))
+        </article>
+        """
+        guard includeDocument else { return article }
+        return """
+        <!doctype html>
+        <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>\(htmlText(recipe.title))</title>
+        <style>:root { color-scheme: light dark; font: 16px/1.6 -apple-system, BlinkMacSystemFont, sans-serif; } body { max-width: 48rem; margin: 0 auto; padding: 2rem 1.25rem; } .quantity { white-space: nowrap; margin-right: .5rem; color: #888; }</style>
+        </head><body><main>\(article.replacingOccurrences(of: "<h2>", with: "<h1>").replacingOccurrences(of: "</h2>", with: "</h1>"))</main></body></html>
+        """
+    }
+
+    private static func filename(for recipe: Recipe, usedNames: inout Set<String>) -> String {
+        let allowed = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")
+        let normalized = recipe.title.folding(options: [.diacriticInsensitive, .widthInsensitive], locale: Locale(identifier: "en_US_POSIX"))
+        let slug = String(normalized.unicodeScalars.map { allowed.contains($0) ? Character($0) : "-" })
+            .split(separator: "-").joined(separator: "-").prefix(64)
+        let idSlug = recipe.id.unicodeScalars.map { allowed.contains($0) ? Character($0) : "-" }.map(String.init).joined()
+        let base = slug.isEmpty ? "Recipe" : String(slug)
+        let suffix = String(idSlug.trimmingCharacters(in: CharacterSet(charactersIn: "-" )).prefix(40))
+        var candidate = "\(base)-\(suffix).md"
+        var counter = 2
+        while !usedNames.insert(candidate.lowercased()).inserted {
+            candidate = "\(base)-\(suffix)-\(counter).md"
+            counter += 1
+        }
+        return candidate
+    }
+
+    private static func yamlScalar(_ value: String) -> String {
+        "\"" + value.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"").replacingOccurrences(of: "\n", with: "\\n") + "\""
+    }
+
+    private static func markdownText(_ value: String) -> String {
+        let escapable = "\\`*_{}[]()#+-.!>|~"
+        var result = ""
+        for scalar in value.unicodeScalars {
+            if scalar.isASCII, escapable.unicodeScalars.contains(scalar) { result.append("\\") }
+            result.append(String(scalar))
+        }
+        return result
+    }
+
+    private static func markdownTableCell(_ value: String) -> String {
+        markdownText(value).replacingOccurrences(of: "\n", with: "<br>")
+    }
+
+    private static func blockquote(label: String, text: String) -> String {
+        let lines = text.components(separatedBy: "\n").enumerated().map { index, line in
+            index == 0 ? "> **\(label):** \(markdownText(line))" : "> \(markdownText(line))"
+        }
+        return lines.joined(separator: "\n")
+    }
+
+    private static func htmlText(_ value: String) -> String {
+        value.replacingOccurrences(of: "&", with: "&amp;")
+            .replacingOccurrences(of: "<", with: "&lt;")
+            .replacingOccurrences(of: ">", with: "&gt;")
+            .replacingOccurrences(of: "\"", with: "&quot;")
+            .replacingOccurrences(of: "'", with: "&#39;")
+    }
+
+    private static func htmlAttribute(_ value: String) -> String { htmlText(value) }
+
+    private static func crc32(_ data: Data) -> UInt32 {
+        var crc = UInt32.max
+        for byte in data {
+            crc ^= UInt32(byte)
+            for _ in 0..<8 { crc = (crc & 1) == 1 ? (crc >> 1) ^ 0xedb88320 : crc >> 1 }
+        }
+        return crc ^ UInt32.max
+    }
+}
+
 enum PaprikaImportStore {
     static let fileImportLabelID = "paprika-file-import"
 
