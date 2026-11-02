@@ -638,7 +638,10 @@ enum RecipeDocumentExporter {
         }
         if !recipe.ingredients.isEmpty {
             sections += ["", "## Ingredients", "", "| Quantity | Ingredient |", "|---|---|"]
-            sections += recipe.ingredients.map { "| \(markdownTableCell($0.quantity)) | \(markdownTableCell($0.name)) |" }
+            sections += recipe.ingredients.map {
+                let columns = NormalizedRecipeColumns(quantity: $0.quantity, ingredient: $0.name)
+                return RecipeIngredientTextNormalizer.markdownRow(for: columns)
+            }
         }
         var currentSection: String?
         for (index, step) in recipe.steps.enumerated() where !step.originalInstruction.isEmpty {
@@ -720,10 +723,6 @@ enum RecipeDocumentExporter {
             result.append(String(scalar))
         }
         return result
-    }
-
-    private static func markdownTableCell(_ value: String) -> String {
-        markdownText(value).replacingOccurrences(of: "\n", with: "<br>")
     }
 
     private static func blockquote(label: String, text: String) -> String {

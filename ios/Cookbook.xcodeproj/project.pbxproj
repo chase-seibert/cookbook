@@ -24,6 +24,9 @@
 		A10000000000000000000016 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000019 /* ShareViewController.swift */; };
 		A10000000000000000000017 /* PaprikaShareInbox.swift in Extension Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000017 /* PaprikaShareInbox.swift */; };
 		A10000000000000000000018 /* ImageGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000023 /* ImageGeneration.swift */; };
+		A10000000000000000000019 /* WebRecipeImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000024 /* WebRecipeImport.swift */; };
+		A10000000000000000000020 /* Action.js in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000025 /* Action.js */; };
+		A10000000000000000000021 /* RecipeIngredientTextNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000026 /* RecipeIngredientTextNormalizer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +54,9 @@
 		B10000000000000000000021 /* Cookbook.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cookbook.entitlements; sourceTree = "<group>"; };
 		B10000000000000000000022 /* ShareExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
 		B10000000000000000000023 /* ImageGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGeneration.swift; sourceTree = "<group>"; };
+		B10000000000000000000024 /* WebRecipeImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRecipeImport.swift; sourceTree = "<group>"; };
+		B10000000000000000000025 /* Action.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Action.js; sourceTree = "<group>"; };
+		B10000000000000000000026 /* RecipeIngredientTextNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeIngredientTextNormalizer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,10 +66,10 @@
 
 /* Begin PBXGroup section */
 		D10000000000000000000001 = {isa = PBXGroup; children = (D10000000000000000000002 /* Cookbook */, D10000000000000000000003 /* Products */, D10000000000000000000005 /* ShareExtension */, B10000000000000000000015 /* libz.tbd */,); sourceTree = "<group>"; };
-		D10000000000000000000002 /* Cookbook */ = {isa = PBXGroup; path = Cookbook; sourceTree = "<group>"; children = (B10000000000000000000001, B10000000000000000000002, B10000000000000000000003, B10000000000000000000004, B10000000000000000000005, B10000000000000000000006, B10000000000000000000009, B10000000000000000000011, B10000000000000000000012, B10000000000000000000013, B10000000000000000000014, B10000000000000000000016 /* Info.plist */, B10000000000000000000017 /* PaprikaShareInbox.swift */, B10000000000000000000021 /* Cookbook.entitlements */, B10000000000000000000023 /* ImageGeneration.swift */, B1000000000000000000000A /* Assets.xcassets */, D10000000000000000000004 /* Resources */,); };
+		D10000000000000000000002 /* Cookbook */ = {isa = PBXGroup; path = Cookbook; sourceTree = "<group>"; children = (B10000000000000000000001, B10000000000000000000002, B10000000000000000000003, B10000000000000000000004, B10000000000000000000005, B10000000000000000000006, B10000000000000000000009, B10000000000000000000011, B10000000000000000000012, B10000000000000000000013, B10000000000000000000014, B10000000000000000000016 /* Info.plist */, B10000000000000000000017 /* PaprikaShareInbox.swift */, B10000000000000000000021 /* Cookbook.entitlements */, B10000000000000000000023 /* ImageGeneration.swift */, B10000000000000000000024 /* WebRecipeImport.swift */, B10000000000000000000026 /* RecipeIngredientTextNormalizer.swift */, B1000000000000000000000A /* Assets.xcassets */, D10000000000000000000004 /* Resources */,); };
 		D10000000000000000000003 /* Products */ = {isa = PBXGroup; children = (B10000000000000000000008 /* Cookbook.app */, B10000000000000000000018 /* ShareExtension.appex */,); name = Products; sourceTree = "<group>"; };
 		D10000000000000000000004 /* Resources */ = {isa = PBXGroup; path = Resources; sourceTree = "<group>"; children = (B10000000000000000000007 /* recipes.json */, B10000000000000000000010 /* Thumbnails */,); };
-		D10000000000000000000005 /* ShareExtension */ = {isa = PBXGroup; path = Cookbook/ShareExtension; sourceTree = "<group>"; children = (B10000000000000000000019 /* ShareViewController.swift */, B10000000000000000000020 /* ShareExtension Info.plist */, B10000000000000000000022 /* ShareExtension.entitlements */,); };
+		D10000000000000000000005 /* ShareExtension */ = {isa = PBXGroup; path = Cookbook/ShareExtension; sourceTree = "<group>"; children = (B10000000000000000000019 /* ShareViewController.swift */, B10000000000000000000020 /* ShareExtension Info.plist */, B10000000000000000000022 /* ShareExtension.entitlements */, B10000000000000000000025 /* Action.js */,); };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -82,11 +88,11 @@
 		C10000000000000000000004 /* Embed App Extensions */ = {isa = PBXCopyFilesBuildPhase; buildActionMask = 2147483647; dstPath = ""; dstSubfolderSpec = 13; files = (A10000000000000000000014 /* ShareExtension.appex in Embed App Extensions */,); name = "Embed App Extensions"; runOnlyForDeploymentPostprocessing = 0; };
 		C10000000000000000000005 /* ShareExtension Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000016 /* ShareViewController.swift in Sources */, A10000000000000000000017 /* PaprikaShareInbox.swift in Extension Sources */,); runOnlyForDeploymentPostprocessing = 0; };
 		C10000000000000000000006 /* ShareExtension Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-		C10000000000000000000007 /* ShareExtension Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		C10000000000000000000007 /* ShareExtension Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000020 /* Action.js in Resources */,); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		C10000000000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* CookbookApp.swift in Sources */, A10000000000000000000002 /* Catalog.swift in Sources */, A10000000000000000000003 /* PersonalData.swift in Sources */, A10000000000000000000004 /* CookingAndGroceries.swift in Sources */, A10000000000000000000005 /* NotesAndPrint.swift in Sources */, A10000000000000000000006 /* SettingsAndDinner.swift in Sources */, A10000000000000000000008 /* AIDinnerPlanner.swift in Sources */, A10000000000000000000011 /* PaprikaImport.swift in Sources */, A10000000000000000000012 /* PaprikaInflate.c in Sources */, A10000000000000000000015 /* PaprikaShareInbox.swift in App Sources */, A10000000000000000000018 /* ImageGeneration.swift in Sources */,); runOnlyForDeploymentPostprocessing = 0; };
+		C10000000000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* CookbookApp.swift in Sources */, A10000000000000000000002 /* Catalog.swift in Sources */, A10000000000000000000003 /* PersonalData.swift in Sources */, A10000000000000000000004 /* CookingAndGroceries.swift in Sources */, A10000000000000000000005 /* NotesAndPrint.swift in Sources */, A10000000000000000000006 /* SettingsAndDinner.swift in Sources */, A10000000000000000000008 /* AIDinnerPlanner.swift in Sources */, A10000000000000000000011 /* PaprikaImport.swift in Sources */, A10000000000000000000012 /* PaprikaInflate.c in Sources */, A10000000000000000000015 /* PaprikaShareInbox.swift in App Sources */, A10000000000000000000018 /* ImageGeneration.swift in Sources */, A10000000000000000000019 /* WebRecipeImport.swift in Sources */, A10000000000000000000021 /* RecipeIngredientTextNormalizer.swift in Sources */,); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */

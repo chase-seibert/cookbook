@@ -149,11 +149,81 @@ enum RecipeLabelFilter {
 
 struct RecipeIngredient: Codable, Identifiable, Hashable, Sendable {
     let id: String
-    let quantity: String
-    let name: String
+    let amount: String
+    let unit: String
+    let description: String
     let groceryName: String
     let staple: Bool
     let excludeFromGroceries: Bool
+    let group: String?
+
+    var quantity: String { amount }
+    var name: String { [unit, description].filter { !$0.isEmpty }.joined(separator: " ") }
+
+    init(id: String, quantity: String, name: String, groceryName: String, staple: Bool, excludeFromGroceries: Bool, group: String? = nil) {
+        let columns = RecipeIngredientTextNormalizer.repairImportedColumns(quantity: quantity, ingredient: name)
+        let normalized = RecipeIngredientTextNormalizer.ingredient(amount: columns.quantity, unit: "", description: columns.ingredient)
+        self.init(id: id, amount: normalized.amount, unit: normalized.unit, description: normalized.description, groceryName: groceryName, staple: staple, excludeFromGroceries: excludeFromGroceries, group: group)
+    }
+
+    init(id: String, amount: String, unit: String, description: String, groceryName: String, staple: Bool, excludeFromGroceries: Bool, group: String? = nil) {
+        let normalized = RecipeIngredientTextNormalizer.ingredient(amount: amount, unit: unit, description: description)
+        self.id = id
+        self.amount = normalized.amount
+        self.unit = normalized.unit
+        self.description = normalized.description
+        self.groceryName = groceryName
+        self.staple = staple
+        self.excludeFromGroceries = excludeFromGroceries
+        self.group = group
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, amount, unit, description, quantity, name, groceryName, staple, excludeFromGroceries, group
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let id = try container.decode(String.self, forKey: .id)
+        let groceryName = try container.decodeIfPresent(String.self, forKey: .groceryName) ?? ""
+        let staple = try container.decodeIfPresent(Bool.self, forKey: .staple) ?? false
+        let excludeFromGroceries = try container.decodeIfPresent(Bool.self, forKey: .excludeFromGroceries) ?? false
+        let group = try container.decodeIfPresent(String.self, forKey: .group)
+        if container.contains(.amount) {
+            self.init(
+                id: id,
+                amount: try container.decodeIfPresent(String.self, forKey: .amount) ?? "",
+                unit: try container.decodeIfPresent(String.self, forKey: .unit) ?? "",
+                description: try container.decodeIfPresent(String.self, forKey: .description) ?? "",
+                groceryName: groceryName,
+                staple: staple,
+                excludeFromGroceries: excludeFromGroceries,
+                group: group
+            )
+        } else {
+            self.init(
+                id: id,
+                quantity: try container.decodeIfPresent(String.self, forKey: .quantity) ?? "",
+                name: try container.decodeIfPresent(String.self, forKey: .name) ?? "",
+                groceryName: groceryName,
+                staple: staple,
+                excludeFromGroceries: excludeFromGroceries,
+                group: group
+            )
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(amount, forKey: .amount)
+        try container.encode(unit, forKey: .unit)
+        try container.encode(description, forKey: .description)
+        try container.encode(groceryName, forKey: .groceryName)
+        try container.encode(staple, forKey: .staple)
+        try container.encode(excludeFromGroceries, forKey: .excludeFromGroceries)
+        try container.encodeIfPresent(group, forKey: .group)
+    }
 }
 
 struct RecipeStep: Codable, Identifiable, Hashable, Sendable {

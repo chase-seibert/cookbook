@@ -4,6 +4,36 @@ enum PaprikaShareInbox {
     static let appGroupIdentifier = "group.com.cseibert.cookbook"
     private static let directoryName = "PendingPaprikaImports"
     private static let maximumFileSize = 100 * 1024 * 1024
+    private static let maximumWebCaptureBytes = 180_000
+
+    struct WebCapture: Codable, Sendable {
+        let url: String
+        let title: String
+        let text: String
+        let imageURL: String?
+        let capturedAt: Date
+    }
+
+    static func enqueueWebCapture(_ capture: WebCapture) throws -> URL {
+        guard let url = URL(string: capture.url), ["http", "https"].contains(url.scheme?.lowercased() ?? ""),
+              capture.url.utf8.count <= 4_096, capture.title.utf8.count <= 2_000,
+              (capture.imageURL?.utf8.count ?? 0) <= 8_192,
+              capture.text.utf8.count <= maximumWebCaptureBytes else { throw ShareInboxError.invalidWebCapture }
+        let directory = try pendingDirectory()
+        let destination = directory.appendingPathComponent("\(UUID().uuidString).webrecipecapture")
+        try JSONEncoder().encode(capture).write(to: destination, options: .atomic)
+        return destination
+    }
+
+    static func readWebCapture(at url: URL) throws -> WebCapture {
+        let directory = try pendingDirectory()
+        guard url.standardizedFileURL.path.hasPrefix(directory.standardizedFileURL.path + "/"), url.pathExtension == "webrecipecapture" else {
+            throw ShareInboxError.invalidWebCapture
+        }
+        let data = try Data(contentsOf: url)
+        guard data.count <= maximumWebCaptureBytes + 8_192 else { throw ShareInboxError.invalidWebCapture }
+        return try JSONDecoder().decode(WebCapture.self, from: data)
+    }
 
     static func enqueue(_ data: Data) throws -> URL {
         guard data.count <= maximumFileSize else { throw ShareInboxError.fileTooLarge }
@@ -36,7 +66,7 @@ enum PaprikaShareInbox {
               ) else { return nil }
 
         return urls
-            .filter { ["paprikarecipe", "paprikarecipes"].contains($0.pathExtension.lowercased()) }
+            .filter { ["paprikarecipe", "paprikarecipes", "webrecipecapture"].contains($0.pathExtension.lowercased()) }
             .sorted {
                 let first = (try? $0.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
                 let second = (try? $1.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantPast
@@ -65,12 +95,14 @@ enum PaprikaShareInbox {
         case fileTooLarge
         case unsupportedFile
         case sharedContainerUnavailable
+        case invalidWebCapture
 
         var errorDescription: String? {
             switch self {
             case .fileTooLarge: "This Paprika file exceeds the 100 MiB import limit."
             case .unsupportedFile: "Choose a Paprika .paprikarecipe or .paprikarecipes file."
             case .sharedContainerUnavailable: "Cookbook could not access its shared import folder."
+            case .invalidWebCapture: "Safari did not provide a valid recipe page capture. Try sharing the page again."
             }
         }
     }

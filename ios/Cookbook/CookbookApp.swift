@@ -6,7 +6,7 @@ import UIKit
 @main struct CookbookApp: App {
     var body: some Scene {
         WindowGroup { RootView() }
-        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, ImageGenerationRun.self, ImageGenerationEntry.self, RecipeCategory.self, RecipeCategorySettings.self, RecipeCategoryAssignment.self])
+        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self, ImportedWebRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, ImageGenerationRun.self, ImageGenerationEntry.self, RecipeCategory.self, RecipeCategorySettings.self, RecipeCategoryAssignment.self])
     }
 }
 
@@ -32,11 +32,12 @@ struct RootView: View {
             if tab == 2 { openPendingPaprikaShareIfNeeded() }
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active, selectedTab == 2 { openPendingPaprikaShareIfNeeded() }
+            if phase == .active { openPendingPaprikaShareIfNeeded() }
         }
         .task {
             do { try RecipeCategoryStore.seedIfNeeded(in: modelContext) }
             catch { categorySetupError = "Could not initialize recipe categories: \(error.localizedDescription)" }
+            openPendingPaprikaShareIfNeeded()
         }
         .alert("Recipe categories", isPresented: Binding(get: { categorySetupError != nil }, set: { if !$0 { categorySetupError = nil } })) {
             Button("OK") { categorySetupError = nil }
@@ -46,12 +47,14 @@ struct RootView: View {
     private func openPendingPaprikaShareIfNeeded() {
         guard incomingPaprikaURL == nil, let url = PaprikaShareInbox.nextPendingURL() else { return }
         incomingPaprikaURL = url
+        selectedTab = 2
     }
 }
 
 struct RecipeBrowserView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query private var importedWebRecords: [ImportedWebRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
     @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
     @Query private var categorySettings: [RecipeCategorySettings]
@@ -78,7 +81,7 @@ struct RecipeBrowserView: View {
         importedRecords.filter { showingDeletedRecipes ? $0.deletedAt != nil : $0.deletedAt == nil }
     }
     private var recipes: [Recipe] {
-        let importedRecipes = availableImportedRecords.compactMap(\.recipe)
+        let importedRecipes = availableImportedRecords.compactMap(\.recipe) + importedWebRecords.filter { showingDeletedRecipes ? $0.deletedAt != nil : $0.deletedAt == nil }.compactMap(\.recipe)
         let deletedIDs = Set(deletedRecipes.map(\.recipeID))
         let deletedBundledRecipes = CookbookCatalog.bundled.recipes.filter { deletedIDs.contains($0.id) }
         if showingDeletedRecipes { return importedRecipes + deletedBundledRecipes }
@@ -518,6 +521,8 @@ private struct DinnerIdeasLayoutView: View {
 
 struct RecipeDetailView: View {
     let recipe: Recipe
+    private let previewOnly: Bool
+    private let previewImage: UIImage?
     @State private var showGroceries = false
     @State private var showNote = false
     @State private var showCamera = false
@@ -541,11 +546,14 @@ struct RecipeDetailView: View {
     @Query private var photos: [RecipePhoto]
     @Query private var notes: [RecipeNote]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query private var importedWebRecords: [ImportedWebRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
     @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
     @Query private var categoryAssignments: [RecipeCategoryAssignment]
-    init(recipe: Recipe) {
+    init(recipe: Recipe, previewOnly: Bool = false, previewImage: UIImage? = nil) {
         self.recipe = recipe
+        self.previewOnly = previewOnly
+        self.previewImage = previewImage
         let recipeID = recipe.id
         _photos = Query(filter: #Predicate<RecipePhoto> { $0.recipeID == recipeID })
         _notes = Query(filter: #Predicate<RecipeNote> { $0.recipeID == recipeID })
@@ -561,15 +569,25 @@ struct RecipeDetailView: View {
                 }
                 if !recipe.introduction.isEmpty { Text(recipe.introduction).font(.body).foregroundStyle(.secondary) }
                 if let servings = recipe.servings, !servings.isEmpty { LabeledContent("Servings", value: servings) }
-                if let cover = photos.first(where: \.isCover), let image = UIImage(contentsOfFile: UserFiles.url(for: cover.relativePath).path) {
+                if let previewImage {
+                    Image(uiImage: previewImage).resizable().scaledToFill().frame(maxHeight: 260).clipped().clipShape(RoundedRectangle(cornerRadius: 18))
+                } else if let cover = photos.first(where: \.isCover), let image = UIImage(contentsOfFile: UserFiles.url(for: cover.relativePath).path) {
                     Image(uiImage: image).resizable().scaledToFill().frame(maxHeight: 260).clipped().clipShape(RoundedRectangle(cornerRadius: 18))
                 }
                 SectionTitle("Ingredients")
                 VStack(alignment: .leading, spacing: 3) {
-                    ForEach(recipe.ingredients) { ingredient in HStack(alignment: .firstTextBaseline, spacing: 4) {
-                        Text(ingredient.quantity).foregroundStyle(.secondary).frame(width: 60, alignment: .trailing)
-                        Text(ingredient.name).frame(maxWidth: .infinity, alignment: .leading)
-                    }.font(.body).frame(maxWidth: .infinity, alignment: .leading).fixedSize(horizontal: false, vertical: true) }
+                    ForEach(Array(recipe.ingredients.enumerated()), id: \.element.id) { index, ingredient in
+                        if let group = ingredient.group, !group.isEmpty,
+                           index == 0 || recipe.ingredients[index - 1].group != ingredient.group {
+                            Text(group).font(.headline).padding(.top, index == 0 ? 0 : 8)
+                        }
+                        HStack(alignment: .firstTextBaseline, spacing: 4) {
+                            Text(ingredient.quantity).foregroundStyle(.secondary)
+                                .frame(width: quantityColumnWidth, alignment: .trailing)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Text(ingredient.name).frame(maxWidth: .infinity, alignment: .leading)
+                        }.font(.body).frame(maxWidth: .infinity, alignment: .leading).fixedSize(horizontal: false, vertical: true)
+                    }
                 }
                 SectionTitle("Instructions")
                 ForEach(Array(recipe.steps.enumerated()), id: \.element.id) { number, step in
@@ -585,15 +603,17 @@ struct RecipeDetailView: View {
                 }
                 ForEach(recipe.tips, id: \.self) { Text("Tip: \($0)").italic().foregroundStyle(.secondary) }
                 ForEach(recipe.healthierOptions, id: \.self) { Text("Healthier option: \($0)").italic().foregroundStyle(.secondary) }
-                SectionTitle("My notes")
-                if activeNotes.isEmpty { Text("No notes yet.").foregroundStyle(.secondary) }
-                ForEach(activeNotes) { note in
-                    Button { noteToEdit = note; showNoteEdit = true } label: {
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(note.text).font(.body).multilineTextAlignment(.leading)
-                            Text(note.updatedAt.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(.secondary)
-                        }.frame(maxWidth: .infinity, alignment: .leading)
-                    }.foregroundStyle(.primary).contextMenu { Button("Delete Note", role: .destructive) { note.deletedAt = .now; note.updatedAt = .now } }
+                if !previewOnly {
+                    SectionTitle("My notes")
+                    if activeNotes.isEmpty { Text("No notes yet.").foregroundStyle(.secondary) }
+                    ForEach(activeNotes) { note in
+                        Button { noteToEdit = note; showNoteEdit = true } label: {
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text(note.text).font(.body).multilineTextAlignment(.leading)
+                                Text(note.updatedAt.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(.secondary)
+                            }.frame(maxWidth: .infinity, alignment: .leading)
+                        }.foregroundStyle(.primary).contextMenu { Button("Delete Note", role: .destructive) { note.deletedAt = .now; note.updatedAt = .now } }
+                    }
                 }
                 if let provenance = recipe.provenance, provenance.type != .paprikaImport {
                     HStack(spacing: 0) {
@@ -608,11 +628,14 @@ struct RecipeDetailView: View {
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("Recipe source: \(provenance.tagLabel)")
                 }
-                Button { showCooking = true } label: { Label("Start cooking", systemImage: "play.fill").frame(maxWidth: .infinity).padding(14).background(.primary, in: Capsule()).foregroundStyle(.background) }
+                if !previewOnly {
+                    Button { showCooking = true } label: { Label("Start cooking", systemImage: "play.fill").frame(maxWidth: .infinity).padding(14).background(.primary, in: Capsule()).foregroundStyle(.background) }
+                }
             }.padding(22)
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            if !previewOnly {
             ToolbarItem(placement: .topBarTrailing) {
                 Button { showCooking = true } label: { Label("Start Cooking", systemImage: "play.fill") }
             }
@@ -651,6 +674,7 @@ struct RecipeDetailView: View {
                 }
             } label: { Image(systemName: "ellipsis.circle") }
         }}
+        }
         .sheet(isPresented: $showGroceries) { GroceryReviewView(recipe: recipe) }
         .sheet(isPresented: $showImageGeneration) {
             NavigationStack { RecipeImageGenerationView(recipes: [recipe], resumeRun: nil) }
@@ -682,6 +706,10 @@ struct RecipeDetailView: View {
     }
 
     private var activeNotes: [RecipeNote] { notes.filter { $0.deletedAt == nil }.sorted { $0.updatedAt > $1.updatedAt } }
+    private var quantityColumnWidth: CGFloat {
+        let longest = recipe.ingredients.map { $0.quantity.count }.max() ?? 0
+        return min(160, max(76, CGFloat(longest) * 6.2))
+    }
     private var assignedCategoryID: String {
         categoryAssignments.first(where: { assignment in assignment.recipeID == recipe.id && categories.contains(where: { $0.id == assignment.categoryID }) })?.categoryID
             ?? RecipeCategoryStore.match(sourceNames: [recipe.category], categories: categories)?.id
@@ -695,12 +723,15 @@ struct RecipeDetailView: View {
         return Bundle.main.url(forResource: asset, withExtension: nil, subdirectory: "Thumbnails") != nil
     }
     private var deletedImportedRecord: ImportedPaprikaRecipe? { importedRecords.first { $0.id == recipe.id && $0.deletedAt != nil } }
+    private var webRecipeRecord: ImportedWebRecipe? { importedWebRecords.first { $0.id == recipe.id } }
     private var deletedRecipeRecord: DeletedRecipe? { deletedRecipes.first { $0.recipeID == recipe.id } }
-    private var isDeleted: Bool { deletedImportedRecord != nil || deletedRecipeRecord != nil }
+    private var isDeleted: Bool { deletedImportedRecord != nil || deletedRecipeRecord != nil || webRecipeRecord?.deletedAt != nil }
 
     @MainActor private func deleteRecipe() {
         do {
-            if let imported = importedRecords.first(where: { $0.id == recipe.id }) {
+            if let webRecipeRecord {
+                webRecipeRecord.deletedAt = .now
+            } else if let imported = importedRecords.first(where: { $0.id == recipe.id }) {
                 imported.deletedAt = .now
             } else if deletedRecipeRecord == nil {
                 modelContext.insert(DeletedRecipe(recipeID: recipe.id))
@@ -715,6 +746,7 @@ struct RecipeDetailView: View {
     @MainActor private func restoreDeletedRecipe() {
         do {
             deletedImportedRecord?.deletedAt = nil
+            webRecipeRecord?.deletedAt = nil
             if let deletedRecipeRecord { modelContext.delete(deletedRecipeRecord) }
             try modelContext.save()
             restorationMessage = "\(recipe.title) was restored to your recipe list."

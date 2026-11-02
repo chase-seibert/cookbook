@@ -1,4 +1,4 @@
-.PHONY: all pdf html latex cookbook-outputs docker-build docker-pdf docker-html docker recipe-pdf recipe-md-validate recipe-md-latex recipe-md-html recipe-md-import-sqlite catalog catalog-check label-test thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
+.PHONY: all pdf html latex cookbook-outputs docker-build docker-pdf docker-html docker recipe-pdf recipe-md-validate recipe-md-latex recipe-md-html recipe-md-import-sqlite catalog catalog-check label-test recipe-import-test thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
 
 DOCKER_PLATFORM ?= linux/amd64
 DOCKER_IMAGE ?= cookbook-latex
@@ -84,7 +84,12 @@ catalog-check:
 
 label-test: catalog-check
 	@set -eu; binary=$$(mktemp /tmp/cookbook-label-tests.XXXXXX); trap 'rm -f "$$binary"' EXIT; \
-	  CLANG_MODULE_CACHE_PATH=/private/tmp/cookbook-label-module-cache swiftc ios/Cookbook/Catalog.swift tests/RecipeLabelTests.swift -o "$$binary"; \
+	  CLANG_MODULE_CACHE_PATH=/private/tmp/cookbook-label-module-cache swiftc ios/Cookbook/RecipeIngredientTextNormalizer.swift ios/Cookbook/Catalog.swift tests/RecipeLabelTests.swift -o "$$binary"; \
+	  "$$binary"
+
+recipe-import-test:
+	@set -eu; binary=$$(mktemp /tmp/cookbook-recipe-import-tests.XXXXXX); trap 'rm -f "$$binary"' EXIT; \
+	  CLANG_MODULE_CACHE_PATH=/private/tmp/cookbook-recipe-import-module-cache swiftc ios/Cookbook/RecipeIngredientTextNormalizer.swift ios/Cookbook/Catalog.swift tests/RecipeIngredientNormalizerTests.swift -o "$$binary"; \
 	  "$$binary"
 
 REMAINING_PERCENT ?=
@@ -124,7 +129,7 @@ phone-launch:
 
 phone-deploy: phone-build phone-install phone-launch
 
-test: catalog-check label-test
+test: catalog-check recipe-import-test label-test
 	xcodebuild -project $(IOS_PROJECT) -scheme $(IOS_SCHEME) -configuration Debug \
 	  -destination '$(GENERIC_SIM_DESTINATION)' -derivedDataPath $(IOS_DERIVED_DATA) \
 	  CODE_SIGNING_ALLOWED=NO test

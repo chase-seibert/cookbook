@@ -22,12 +22,23 @@ struct SettingsView: View {
     @State private var markdownURL: URL?
     @State private var showingPaprikaImporter = false
     @State private var importReview: PaprikaImportReviewSession?
+    @State private var webCapture: PaprikaShareInbox.WebCapture?
+    @State private var webCapturePendingURL: URL?
+    @State private var processingShareURL: URL?
     @Query(sort: \RecipeNote.updatedAt, order: .reverse) private var notes: [RecipeNote]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query(sort: \ImportedWebRecipe.capturedAt, order: .reverse) private var importedWebRecords: [ImportedWebRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
     @Query(sort: \PaprikaImportRun.createdAt, order: .reverse) private var paprikaImportRuns: [PaprikaImportRun]
     @Query private var recipePhotos: [RecipePhoto]
     private let reminderStore = EKEventStore()
+
+    private var activeRecipeCount: Int {
+        let bundledCount = CookbookCatalog.bundled.recipes.count - deletedRecipes.count
+        let paprikaCount = importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe).count
+        let webCaptureCount = importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe).count
+        return bundledCount + paprikaCount + webCaptureCount
+    }
 
     var body: some View {
         NavigationStack {
@@ -50,7 +61,28 @@ struct SettingsView: View {
                     if let markdownURL { ShareLink(item: markdownURL) { Label("Share Markdown companion", systemImage: "doc.text") } }
                     Text("Exports preserve each note's original text, recipe ID, optional step ID, and creation/update timestamps.").font(.footnote).foregroundStyle(.secondary)
                 }
-                Section("Recipe imports") {
+                Section("Safari captures") {
+                    Label("Capture a recipe in Safari", systemImage: "safari")
+                    Text("In Safari, tap Share and choose Cookbook. The page is captured automatically. iOS returns you to Safari after the share extension finishes; open Cookbook to review and save it.").font(.footnote).foregroundStyle(.secondary)
+                    Text("Page text is extracted with your configured OpenAI model. Cookbook also tries the photo URL supplied by Safari, using a normal image request.").font(.footnote).foregroundStyle(.secondary)
+                    ForEach(importedWebRecords.filter { $0.deletedAt == nil }.prefix(3), id: \.id) { record in
+                        if let recipe = record.recipe {
+                            NavigationLink { RecipeDetailView(recipe: recipe) } label: {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(recipe.title)
+                                    Text("\(recipe.provenance?.tagLabel ?? "Safari") · \(record.capturedAt.formatted(date: .abbreviated, time: .shortened))")
+                                        .font(.caption).foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    if importedWebRecords.contains(where: { $0.deletedAt == nil }) {
+                        NavigationLink("All Safari captures (\(importedWebRecords.filter { $0.deletedAt == nil }.count))") {
+                            SafariRecipeImportHistoryView(records: importedWebRecords.filter { $0.deletedAt == nil })
+                        }
+                    }
+                }
+                Section("Paprika file imports") {
                     Button { showingPaprikaImporter = true } label: { Label("Import Paprika recipes…", systemImage: "square.and.arrow.down") }
                     Text("Review recipes before adding them. Paprika imports stay on this device and are marked internally.").font(.footnote).foregroundStyle(.secondary)
                     ForEach(paprikaImportRuns.prefix(3), id: \.id) { run in PaprikaImportRunRow(run: run) }
@@ -60,7 +92,7 @@ struct SettingsView: View {
                     NavigationLink {
                         RecipeBrowserView(showingDeletedRecipes: true, managesNavigationStack: false, screenTitle: "Deleted recipes")
                     } label: {
-                        Label("Deleted recipes (\(importedRecords.filter { $0.deletedAt != nil }.count + deletedRecipes.count))", systemImage: "trash")
+                        Label("Deleted recipes (\(importedRecords.filter { $0.deletedAt != nil }.count + importedWebRecords.filter { $0.deletedAt != nil }.count + deletedRecipes.count))", systemImage: "trash")
                     }
                 }
                 Section("Recipe categories") {
@@ -125,12 +157,27 @@ struct SettingsView: View {
                     }
                     Text("Provider choice is explicit. The on-device option never falls back to the cloud.").font(.footnote).foregroundStyle(.secondary)
                 }
-                Section("About") { LabeledContent("Recipe catalog", value: "\(CookbookCatalog.bundled.recipes.count - deletedRecipes.count + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe).count) recipes · offline") }
+                Section("About") { LabeledContent("Recipe catalog", value: "\(activeRecipeCount) recipes · offline") }
             }
             .navigationTitle("Settings")
-            .onAppear { reminderListName = UserDefaults.standard.string(forKey: "reminderListName") ?? "Not selected" }
+            .onAppear {
+                reminderListName = UserDefaults.standard.string(forKey: "reminderListName") ?? "Not selected"
+                if let incomingPaprikaURL {
+                    processIncomingShare(incomingPaprikaURL)
+                } else if let pendingURL = PaprikaShareInbox.nextPendingURL() {
+                    processIncomingShare(pendingURL)
+                }
+            }
             .fileImporter(isPresented: $showingPaprikaImporter, allowedContentTypes: PaprikaFileType.supported, allowsMultipleSelection: false, onCompletion: handlePaprikaSelection)
             .sheet(item: $importReview, onDismiss: openNextPendingPaprikaShare) { session in PaprikaImportReviewView(session: session) }
+            .sheet(isPresented: Binding(get: { webCapture != nil }, set: { if !$0 { webCapture = nil } }), onDismiss: {
+                if let webCapturePendingURL { PaprikaShareInbox.removeIfPending(webCapturePendingURL) }
+                webCapturePendingURL = nil
+                processingShareURL = nil
+                openNextPendingPaprikaShare()
+            }) {
+                if let webCapture { WebRecipeImportReviewView(capture: webCapture, model: openAIModel) }
+            }
             .sheet(isPresented: $showingPaprikaExportSelector) {
                 NavigationStack {
                     PaprikaExportSelectorView(
@@ -153,8 +200,7 @@ struct SettingsView: View {
             }
             .onChange(of: incomingPaprikaURL) { _, url in
                 guard let url else { return }
-                incomingPaprikaURL = nil
-                importPaprikaFile(url)
+                processIncomingShare(url)
             }
             .alert("Cookbook", isPresented: Binding(get: { status != nil }, set: { if !$0 { status = nil } })) { Button("OK") { status = nil } } message: { Text(status ?? "") }
         }
@@ -170,6 +216,17 @@ struct SettingsView: View {
     }
 
     private func importPaprikaFile(_ url: URL) {
+        if url.pathExtension == "webrecipecapture" {
+            do {
+                webCapture = try PaprikaShareInbox.readWebCapture(at: url)
+                webCapturePendingURL = url
+            } catch {
+                PaprikaShareInbox.removeIfPending(url)
+                processingShareURL = nil
+                status = error.localizedDescription
+            }
+            return
+        }
         let hasAccess = url.startAccessingSecurityScopedResource()
         defer { if hasAccess { url.stopAccessingSecurityScopedResource() } }
         do {
@@ -178,19 +235,32 @@ struct SettingsView: View {
                 do {
                     let drafts = try await Task.detached(priority: .userInitiated) { try PaprikaImportReader.parse(data: data) }.value
                     PaprikaShareInbox.removeIfPending(url)
+                    processingShareURL = nil
                     guard !drafts.isEmpty else { status = "This Paprika file contains no importable recipes."; return }
                     importReview = PaprikaImportReviewSession(drafts: drafts)
-                } catch is CancellationError { return }
+                } catch is CancellationError { processingShareURL = nil; return }
                 catch {
                     PaprikaShareInbox.removeIfPending(url)
+                    processingShareURL = nil
                     status = error.localizedDescription
                 }
             }
-        } catch { status = "Could not open the selected file: \(error.localizedDescription)" }
+        } catch {
+            processingShareURL = nil
+            status = "Could not open the selected file: \(error.localizedDescription)"
+        }
+    }
+
+    private func processIncomingShare(_ url: URL) {
+        incomingPaprikaURL = nil
+        guard processingShareURL != url else { return }
+        processingShareURL = url
+        importPaprikaFile(url)
     }
 
     private func openNextPendingPaprikaShare() {
-        guard incomingPaprikaURL == nil, let nextURL = PaprikaShareInbox.nextPendingURL() else { return }
+        guard incomingPaprikaURL == nil, processingShareURL == nil,
+              let nextURL = PaprikaShareInbox.nextPendingURL() else { return }
         incomingPaprikaURL = nextURL
     }
 
@@ -214,7 +284,7 @@ struct SettingsView: View {
         let path = UserFiles.directory.appendingPathComponent("recipe-notes-\(stamp).json")
         let markdownPath = UserFiles.directory.appendingPathComponent("recipe-notes-\(stamp).md")
         let json = (try? JSONEncoder.pretty.encode(records)) ?? Data("[]".utf8)
-        let allRecipes = CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe)
+        let allRecipes = CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) + importedWebRecords.compactMap(\.recipe)
         let titles = Dictionary(uniqueKeysWithValues: allRecipes.map { ($0.id, $0.title) })
         let body = records.map { record in
             "## \(titles[record.recipeID] ?? record.recipeID)\n\n- Note ID: `\(record.id.uuidString)`\n- Recipe ID: `\(record.recipeID)`\n- Step ID: \(record.stepID ?? "whole recipe")\n- Created: \(record.createdAt)\n- Updated: \(record.updatedAt)\n\n\(record.text)"
@@ -226,6 +296,7 @@ struct SettingsView: View {
         let deletedIDs = Set(deletedRecipes.map(\.recipeID))
         return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) }
             + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+            + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
     }
 
     private var paprikaLabelGroups: [RecipeLabelGroup] {
@@ -350,6 +421,26 @@ struct SettingsView: View {
                 status = "Prepared an HTML cookbook with \(recipes.count) recipes."
             }
         } catch { status = "Could not export recipes: \(error.localizedDescription)" }
+    }
+}
+
+private struct SafariRecipeImportHistoryView: View {
+    let records: [ImportedWebRecipe]
+
+    var body: some View {
+        List(records.sorted { $0.capturedAt > $1.capturedAt }, id: \.id) { record in
+            if let recipe = record.recipe {
+                NavigationLink { RecipeDetailView(recipe: recipe) } label: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(recipe.title).font(.headline)
+                        Text("\(recipe.provenance?.tagLabel ?? "Safari") · \(record.capturedAt.formatted(date: .abbreviated, time: .shortened))")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+        .navigationTitle("Safari Captures")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -486,12 +577,13 @@ private struct RecipeCategoryManagerView: View {
     @Query private var settings: [RecipeCategorySettings]
     @Query private var assignments: [RecipeCategoryAssignment]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query private var importedWebRecords: [ImportedWebRecipe]
     @State private var newCategoryName = ""
     @State private var pendingDeleteID: String?
     @State private var status: String?
 
     private var defaultCategoryID: String { settings.first?.defaultCategoryID ?? categories.first?.id ?? "" }
-    private var allRecipes: [Recipe] { CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) }
+    private var allRecipes: [Recipe] { CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) + importedWebRecords.compactMap(\.recipe) }
 
     var body: some View {
         List {
@@ -645,12 +737,13 @@ private struct RecipeCategoryRenameView: View {
 private struct RecipeUsageStatsView: View {
     @Query private var stats: [RecipeUsageStats]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query private var importedWebRecords: [ImportedWebRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
     @State private var exportURL: URL?
 
     private var rows: [(recipe: Recipe?, stats: RecipeUsageStats?)] {
         let deletedIDs = Set(deletedRecipes.map(\.recipeID))
-        let catalog = CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+        let catalog = CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
         var byID = Dictionary(uniqueKeysWithValues: stats.map { ($0.recipeID, $0) })
         let catalogRows: [(recipe: Recipe?, stats: RecipeUsageStats?)] = catalog.map { (Optional($0), byID.removeValue(forKey: $0.id)) }
         let unmatched = stats.filter { record in !catalog.contains { $0.id == record.recipeID } }
@@ -846,6 +939,7 @@ struct DinnerPlannerView: View {
     @Query(sort: \PlannedDinnerRecipe.dinnerDate) private var scheduled: [PlannedDinnerRecipe]
     @Query(sort: \DinnerTimeline.updatedAt, order: .reverse) private var saved: [DinnerTimeline]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
+    @Query private var importedWebRecords: [ImportedWebRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
     @State private var selectedIDs = Set<String>()
     @State private var dinnerTime = Date.now
@@ -864,7 +958,7 @@ struct DinnerPlannerView: View {
     @AppStorage("openAIModel") private var openAIModel = "gpt-6-astra"
     private var recipes: [Recipe] {
         let deletedIDs = Set(deletedRecipes.map(\.recipeID))
-        return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+        return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
     }
 
     private var recipeTitles: [String: String] { Dictionary(uniqueKeysWithValues: recipes.map { ($0.id, $0.title) }) }
