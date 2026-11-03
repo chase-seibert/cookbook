@@ -223,24 +223,62 @@ struct RecipeBrowserView: View {
                     .buttonStyle(.borderedProminent)
             }
         } else {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    ForEach(visibleCategories, id: \.self) { sectionName in
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text(categoryName(for: sectionName)).font(.system(.title2, design: .serif).weight(.semibold))
-                            ForEach(browserGroups(in: sectionName)) { group in
-                                VStack(alignment: .leading, spacing: 10) {
-                                    if let title = group.title { Text(title).font(.headline) }
-                                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 14)], spacing: 14) {
-                                        ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe) }.buttonStyle(.plain).simultaneousGesture(TapGesture().onEnded { RecipeUsageStore(context: modelContext).recordRecipeOpen(recipe.id) }) }
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        ForEach(visibleCategories, id: \.self) { sectionName in
+                            VStack(alignment: .leading, spacing: 16) {
+                                categoryJumpMenu(sectionName: sectionName, scrollProxy: proxy)
+                                ForEach(browserGroups(in: sectionName)) { group in
+                                    VStack(alignment: .leading, spacing: 10) {
+                                        if let title = group.title { Text(title).font(.headline) }
+                                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 14)], spacing: 14) {
+                                            ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe) }.buttonStyle(.plain).simultaneousGesture(TapGesture().onEnded { RecipeUsageStore(context: modelContext).recordRecipeOpen(recipe.id) }) }
+                                        }
                                     }
                                 }
                             }
+                            .id(sectionName)
                         }
-                    }
-                }.padding()
+                    }.padding()
+                }
             }
         }
+    }
+
+    private func categoryJumpMenu(sectionName: String, scrollProxy: ScrollViewProxy) -> some View {
+        return Menu {
+            ForEach(visibleCategories, id: \.self) { targetSectionID in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        scrollProxy.scrollTo(targetSectionID, anchor: .top)
+                    }
+                } label: {
+                    if targetSectionID == sectionName {
+                        Label(categoryName(for: targetSectionID), systemImage: "checkmark")
+                    } else {
+                        Text(categoryName(for: targetSectionID))
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 7) {
+                Text(categoryName(for: sectionName))
+                    .font(.system(.title2, design: .serif).weight(.semibold))
+                    .foregroundStyle(.primary)
+                Image(systemName: "chevron.down")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.vertical, 6)
+            .contentShape(Rectangle())
+        }
+        .tint(.primary)
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Jump to category")
+        .accessibilityValue(categoryName(for: sectionName))
+        .accessibilityHint("Opens the recipe categories and jumps to the selected section.")
     }
 
     private var recipeFilterMenu: some View {
