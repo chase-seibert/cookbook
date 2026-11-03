@@ -43,7 +43,30 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Groceries") {
+                Section("Library") {
+                    SettingsGroupLabel(title: "Categories")
+                    NavigationLink {
+                        RecipeCategoryManagerView()
+                    } label: {
+                        Label("Manage categories", systemImage: "folder")
+                    }
+                    Text("Choose the Recipes list sections and the default category for unmatched imports.").font(.footnote).foregroundStyle(.secondary)
+                    SettingsGroupLabel(title: "Recipe notes")
+                    Text("\(notes.filter { $0.deletedAt == nil }.count) saved notes")
+                    Button("Export notes with timestamps") { exportNotes() }
+                    if let exportURL { ShareLink(item: exportURL) { Label("Share JSON export", systemImage: "square.and.arrow.up") } }
+                    if let markdownURL { ShareLink(item: markdownURL) { Label("Share Markdown companion", systemImage: "doc.text") } }
+                    Text("Exports preserve each note's original text, recipe ID, optional step ID, and creation/update timestamps.").font(.footnote).foregroundStyle(.secondary)
+                    SettingsGroupLabel(title: "Recipe activity")
+                    NavigationLink {
+                        RecipeUsageStatsView()
+                    } label: {
+                        Label("Recipe popularity counts", systemImage: "chart.bar")
+                    }
+                    Text("Counts are stored on this device only. They are a local usage signal, not cross-user popularity data.").font(.footnote).foregroundStyle(.secondary)
+                }
+                Section("Cooking") {
+                    SettingsGroupLabel(title: "Grocery list")
                     if reminderLists.isEmpty { LabeledContent("Reminders list", value: reminderListName) }
                     else { Picker("Reminders list", selection: $reminderListID) {
                         Text("Select a list").tag("")
@@ -54,14 +77,8 @@ struct SettingsView: View {
                     Button("Load Reminders lists") { Task { await loadReminderLists() } }
                     Text("Cookbook checks the selected list for duplicate incomplete items before adding quantity-free ingredients.").font(.footnote).foregroundStyle(.secondary)
                 }
-                Section("Recipe notes") {
-                    Text("\(notes.filter { $0.deletedAt == nil }.count) saved notes")
-                    Button("Export notes with timestamps") { exportNotes() }
-                    if let exportURL { ShareLink(item: exportURL) { Label("Share JSON export", systemImage: "square.and.arrow.up") } }
-                    if let markdownURL { ShareLink(item: markdownURL) { Label("Share Markdown companion", systemImage: "doc.text") } }
-                    Text("Exports preserve each note's original text, recipe ID, optional step ID, and creation/update timestamps.").font(.footnote).foregroundStyle(.secondary)
-                }
-                Section("Safari captures") {
+                Section("Import & export") {
+                    SettingsGroupLabel(title: "Capture from Safari")
                     Label("Capture a recipe in Safari", systemImage: "safari")
                     Text("In Safari, tap Share and choose Cookbook. The page is captured automatically. iOS returns you to Safari after the share extension finishes; open Cookbook to review and save it.").font(.footnote).foregroundStyle(.secondary)
                     Text("Page text is extracted with your configured OpenAI model. Cookbook also tries the photo URL supplied by Safari, using a normal image request.").font(.footnote).foregroundStyle(.secondary)
@@ -81,8 +98,7 @@ struct SettingsView: View {
                             SafariRecipeImportHistoryView(records: importedWebRecords.filter { $0.deletedAt == nil })
                         }
                     }
-                }
-                Section("Paprika file imports") {
+                    SettingsGroupLabel(title: "Paprika files")
                     Button { showingPaprikaImporter = true } label: { Label("Import Paprika recipes…", systemImage: "square.and.arrow.down") }
                     Text("Review recipes before adding them. Paprika imports stay on this device and are marked internally.").font(.footnote).foregroundStyle(.secondary)
                     ForEach(paprikaImportRuns.prefix(3), id: \.id) { run in PaprikaImportRunRow(run: run) }
@@ -94,16 +110,7 @@ struct SettingsView: View {
                     } label: {
                         Label("Deleted recipes (\(importedRecords.filter { $0.deletedAt != nil }.count + importedWebRecords.filter { $0.deletedAt != nil }.count + deletedRecipes.count))", systemImage: "trash")
                     }
-                }
-                Section("Recipe categories") {
-                    NavigationLink {
-                        RecipeCategoryManagerView()
-                    } label: {
-                        Label("Manage categories", systemImage: "folder")
-                    }
-                    Text("Choose the Recipes list sections and the default category for unmatched imports.").font(.footnote).foregroundStyle(.secondary)
-                }
-                Section("Paprika export") {
+                    SettingsGroupLabel(title: "Export recipes")
                     Button { showingPaprikaExportSelector = true } label: {
                         Label(exportingPaprika ? "Preparing export…" : "Choose recipes to export…", systemImage: "square.and.arrow.up")
                     }.disabled(exportingPaprika)
@@ -111,8 +118,6 @@ struct SettingsView: View {
                         ShareLink(item: paprikaExportURL) { Label("Share Paprika collection", systemImage: "square.and.arrow.up") }
                     }
                     Text("Exports all active bundled and imported recipes, regardless of browse filters.").font(.footnote).foregroundStyle(.secondary)
-                }
-                Section("Recipe exports") {
                     Button {
                         Task { await exportRecipeCollection(format: .markdown) }
                     } label: {
@@ -131,24 +136,16 @@ struct SettingsView: View {
                     }
                     Text("Exports every active bundled and imported recipe, regardless of browse filters. Markdown is a ZIP archive with one recipe per file; HTML is a standalone cookbook.").font(.footnote).foregroundStyle(.secondary)
                 }
-                Section("Recipe usage") {
-                    NavigationLink {
-                        RecipeUsageStatsView()
-                    } label: {
-                        Label("Recipe popularity counts", systemImage: "chart.bar")
-                    }
-                    Text("Counts are stored on this device only. They are a local usage signal, not cross-user popularity data.").font(.footnote).foregroundStyle(.secondary)
-                }
-                OpenAIKeySettingsSection()
-                Section("Recipe images") {
+                Section("AI & images") {
+                    OpenAIKeySettingsSection()
+                    SettingsGroupLabel(title: "Recipe images")
                     NavigationLink {
                         ImageGenerationSettingsView()
                     } label: {
                         Label("Generate missing recipe covers", systemImage: "sparkles")
                     }
                     Text("Choose an image provider and review or undo previous batch runs.").font(.footnote).foregroundStyle(.secondary)
-                }
-                Section("Dinner planning") {
+                    SettingsGroupLabel(title: "Dinner planning")
                     Picker("AI provider", selection: $aiProvider) { Text("OpenAI (cloud)").tag("openai"); Text("On-device").tag("on-device") }
                     if aiProvider == "openai" {
                         TextField("Model", text: $openAIModel).textInputAutocapitalization(.never).autocorrectionDisabled()
@@ -856,6 +853,18 @@ private struct PaprikaImportRunDetailView: View {
 
 private struct ReminderListChoice: Identifiable { let id: String; let title: String }
 
+private struct SettingsGroupLabel: View {
+    let title: String
+
+    var body: some View {
+        Text(title)
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(.secondary)
+            .padding(.top, 10)
+            .listRowSeparator(.hidden)
+    }
+}
+
 private extension JSONEncoder {
     static var pretty: JSONEncoder { let encoder = JSONEncoder(); encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]; return encoder }
 }
@@ -866,7 +875,8 @@ struct OpenAIKeySettingsSection: View {
     @State private var message = ""
 
     var body: some View {
-        Section("OpenAI API key") {
+        Group {
+            SettingsGroupLabel(title: "OpenAI API key")
             Text(hasSavedKey ? "An API key is saved in this device’s Keychain." : "No API key is saved on this device.")
                 .font(.footnote).foregroundStyle(.secondary)
             SecureField("Paste personal API key", text: $credential)

@@ -558,6 +558,12 @@ struct RecipeDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
+                if let previewImage {
+                    Image(uiImage: previewImage).resizable().scaledToFill().frame(maxHeight: 260).clipped().clipShape(RoundedRectangle(cornerRadius: 18))
+                } else if hasEffectiveImage {
+                    RecipeArtwork(recipe: recipe, height: 260)
+                        .clipShape(RoundedRectangle(cornerRadius: 18))
+                }
                 Text(recipe.title).font(.system(size: 34, weight: .semibold, design: .serif)).fixedSize(horizontal: false, vertical: true)
                 if isDeleted {
                     Button { restoreDeletedRecipe() } label: { Label("Restore recipe", systemImage: "arrow.uturn.backward") }
@@ -565,11 +571,6 @@ struct RecipeDetailView: View {
                 }
                 if !recipe.introduction.isEmpty { Text(recipe.introduction).font(.body).foregroundStyle(.secondary) }
                 if let servings = recipe.servings, !servings.isEmpty { LabeledContent("Servings", value: servings) }
-                if let previewImage {
-                    Image(uiImage: previewImage).resizable().scaledToFill().frame(maxHeight: 260).clipped().clipShape(RoundedRectangle(cornerRadius: 18))
-                } else if let cover = photos.first(where: \.isCover), let image = UIImage(contentsOfFile: UserFiles.url(for: cover.relativePath).path) {
-                    Image(uiImage: image).resizable().scaledToFill().frame(maxHeight: 260).clipped().clipShape(RoundedRectangle(cornerRadius: 18))
-                }
                 SectionTitle("Ingredients")
                 VStack(alignment: .leading, spacing: 3) {
                     ForEach(Array(recipe.ingredients.enumerated()), id: \.element.id) { index, ingredient in
