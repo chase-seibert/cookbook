@@ -174,7 +174,6 @@ struct RecipeBrowserView: View {
                 }
             }
             .toolbar(isLandscape ? .hidden : .visible, for: .navigationBar)
-            .toolbar(isLandscape ? .hidden : .visible, for: .tabBar)
         }
     }
 
@@ -233,7 +232,7 @@ struct RecipeBrowserView: View {
                                 VStack(alignment: .leading, spacing: 10) {
                                     if let title = group.title { Text(title).font(.headline) }
                                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 14)], spacing: 14) {
-                                        ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe, categoryName: categoryName(for: categoryID(for: recipe))) }.buttonStyle(.plain).simultaneousGesture(TapGesture().onEnded { RecipeUsageStore(context: modelContext).recordRecipeOpen(recipe.id) }) }
+                                        ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe) }.buttonStyle(.plain).simultaneousGesture(TapGesture().onEnded { RecipeUsageStore(context: modelContext).recordRecipeOpen(recipe.id) }) }
                                     }
                                 }
                             }
@@ -314,11 +313,9 @@ private struct PresentedRecipeSearch: ViewModifier {
 
 struct RecipeTile: View {
     let recipe: Recipe
-    var categoryName: String? = nil
     @Query private var photos: [RecipePhoto]
-    init(recipe: Recipe, categoryName: String? = nil) {
+    init(recipe: Recipe) {
         self.recipe = recipe
-        self.categoryName = categoryName
         let recipeID = recipe.id
         _photos = Query(filter: #Predicate<RecipePhoto> { $0.recipeID == recipeID && $0.isCover })
     }
@@ -335,7 +332,6 @@ struct RecipeTile: View {
                     .frame(height: 122)
             }
             Text(recipe.title).font(.headline).lineLimit(2).multilineTextAlignment(.leading)
-            Text(categoryName ?? recipe.category).font(.caption).foregroundStyle(.secondary)
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
 }
@@ -582,7 +578,9 @@ struct RecipeDetailView: View {
                             Text(group).font(.headline).padding(.top, index == 0 ? 0 : 8)
                         }
                         HStack(alignment: .firstTextBaseline, spacing: 4) {
-                            Text(ingredient.quantity).foregroundStyle(.secondary)
+                            Text(ingredient.quantity)
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(Color(red: 0.32, green: 0.39, blue: 0.27))
                                 .frame(width: quantityColumnWidth, alignment: .trailing)
                                 .fixedSize(horizontal: false, vertical: true)
                             Text(ingredient.name).frame(maxWidth: .infinity, alignment: .leading)
@@ -634,6 +632,7 @@ struct RecipeDetailView: View {
             }.padding(22)
         }
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             if !previewOnly {
             ToolbarItem(placement: .topBarTrailing) {
