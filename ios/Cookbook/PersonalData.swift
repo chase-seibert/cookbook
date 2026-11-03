@@ -80,7 +80,8 @@ enum RecipeCategoryStore {
         let assignedIDs = Set(assignments.map(\.recipeID))
         let imported = try context.fetch(FetchDescriptor<ImportedPaprikaRecipe>())
         let webImported = try context.fetch(FetchDescriptor<ImportedWebRecipe>())
-        let recipes = CookbookCatalog.bundled.recipes + imported.compactMap(\.recipe) + webImported.compactMap(\.recipe)
+        let magazineImported = try context.fetch(FetchDescriptor<ImportedMagazineRecipe>())
+        let recipes = CookbookCatalog.bundled.recipes + imported.compactMap(\.recipe) + webImported.compactMap(\.recipe) + magazineImported.compactMap(\.recipe)
         for recipe in recipes where !assignedIDs.contains(recipe.id) {
             let category = match(sourceNames: [recipe.category], categories: categories) ?? selectedDefault
             context.insert(RecipeCategoryAssignment(recipeID: recipe.id, categoryID: category.id))
@@ -109,7 +110,8 @@ enum RecipeCategoryStore {
         let assignmentsByID = Dictionary(uniqueKeysWithValues: assignments.map { ($0.recipeID, $0) })
         let imported = try context.fetch(FetchDescriptor<ImportedPaprikaRecipe>())
         let webImported = try context.fetch(FetchDescriptor<ImportedWebRecipe>())
-        let recipes = CookbookCatalog.bundled.recipes + imported.compactMap(\.recipe) + webImported.compactMap(\.recipe)
+        let magazineImported = try context.fetch(FetchDescriptor<ImportedMagazineRecipe>())
+        let recipes = CookbookCatalog.bundled.recipes + imported.compactMap(\.recipe) + webImported.compactMap(\.recipe) + magazineImported.compactMap(\.recipe)
         try context.transaction {
             for recipe in recipes {
                 let assignedID = assignmentsByID[recipe.id]?.categoryID
@@ -199,6 +201,22 @@ enum RecipeCategoryError: LocalizedError {
         guard let recipe = try? JSONDecoder().decode(Recipe.self, from: recipeData) else { return nil }
         return WebRecipeIngredientNormalizer.repairLegacyColumns(in: recipe)
     }
+}
+
+@Model final class ImportedMagazineRecipe {
+    @Attribute(.unique) var id: String
+    var recipeData: Data
+    var capturedAt: Date
+    var deletedAt: Date?
+
+    init(id: String, recipeData: Data, capturedAt: Date = .now, deletedAt: Date? = nil) {
+        self.id = id
+        self.recipeData = recipeData
+        self.capturedAt = capturedAt
+        self.deletedAt = deletedAt
+    }
+
+    var recipe: Recipe? { try? JSONDecoder().decode(Recipe.self, from: recipeData) }
 }
 
 @Model final class PaprikaImportRun {

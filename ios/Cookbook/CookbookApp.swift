@@ -6,7 +6,7 @@ import UIKit
 @main struct CookbookApp: App {
     var body: some Scene {
         WindowGroup { RootView() }
-        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self, ImportedWebRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, ImageGenerationRun.self, ImageGenerationEntry.self, RecipeCategory.self, RecipeCategorySettings.self, RecipeCategoryAssignment.self])
+        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self, ImportedWebRecipe.self, ImportedMagazineRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, ImageGenerationRun.self, ImageGenerationEntry.self, RecipeCategory.self, RecipeCategorySettings.self, RecipeCategoryAssignment.self])
     }
 }
 
@@ -55,6 +55,7 @@ struct RecipeBrowserView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var importedRecords: [ImportedPaprikaRecipe]
     @Query private var importedWebRecords: [ImportedWebRecipe]
+    @Query private var importedMagazineRecords: [ImportedMagazineRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
     @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
     @Query private var categorySettings: [RecipeCategorySettings]
@@ -81,7 +82,7 @@ struct RecipeBrowserView: View {
         importedRecords.filter { showingDeletedRecipes ? $0.deletedAt != nil : $0.deletedAt == nil }
     }
     private var recipes: [Recipe] {
-        let importedRecipes = availableImportedRecords.compactMap(\.recipe) + importedWebRecords.filter { showingDeletedRecipes ? $0.deletedAt != nil : $0.deletedAt == nil }.compactMap(\.recipe)
+        let importedRecipes = availableImportedRecords.compactMap(\.recipe) + importedWebRecords.filter { showingDeletedRecipes ? $0.deletedAt != nil : $0.deletedAt == nil }.compactMap(\.recipe) + importedMagazineRecords.filter { showingDeletedRecipes ? $0.deletedAt != nil : $0.deletedAt == nil }.compactMap(\.recipe)
         let deletedIDs = Set(deletedRecipes.map(\.recipeID))
         let deletedBundledRecipes = CookbookCatalog.bundled.recipes.filter { deletedIDs.contains($0.id) }
         if showingDeletedRecipes { return importedRecipes + deletedBundledRecipes }
@@ -581,6 +582,7 @@ struct RecipeDetailView: View {
     @Query private var notes: [RecipeNote]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
     @Query private var importedWebRecords: [ImportedWebRecipe]
+    @Query private var importedMagazineRecords: [ImportedMagazineRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
     @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
     @Query private var categoryAssignments: [RecipeCategoryAssignment]
@@ -763,11 +765,14 @@ struct RecipeDetailView: View {
     private var deletedImportedRecord: ImportedPaprikaRecipe? { importedRecords.first { $0.id == recipe.id && $0.deletedAt != nil } }
     private var webRecipeRecord: ImportedWebRecipe? { importedWebRecords.first { $0.id == recipe.id } }
     private var deletedRecipeRecord: DeletedRecipe? { deletedRecipes.first { $0.recipeID == recipe.id } }
-    private var isDeleted: Bool { deletedImportedRecord != nil || deletedRecipeRecord != nil || webRecipeRecord?.deletedAt != nil }
+    private var magazineRecipeRecord: ImportedMagazineRecipe? { importedMagazineRecords.first { $0.id == recipe.id } }
+    private var isDeleted: Bool { deletedImportedRecord != nil || deletedRecipeRecord != nil || webRecipeRecord?.deletedAt != nil || magazineRecipeRecord?.deletedAt != nil }
 
     @MainActor private func deleteRecipe() {
         do {
-            if let webRecipeRecord {
+            if let magazineRecipeRecord {
+                magazineRecipeRecord.deletedAt = .now
+            } else if let webRecipeRecord {
                 webRecipeRecord.deletedAt = .now
             } else if let imported = importedRecords.first(where: { $0.id == recipe.id }) {
                 imported.deletedAt = .now
@@ -785,6 +790,7 @@ struct RecipeDetailView: View {
         do {
             deletedImportedRecord?.deletedAt = nil
             webRecipeRecord?.deletedAt = nil
+            magazineRecipeRecord?.deletedAt = nil
             if let deletedRecipeRecord { modelContext.delete(deletedRecipeRecord) }
             try modelContext.save()
             restorationMessage = "\(recipe.title) was restored to your recipe list."

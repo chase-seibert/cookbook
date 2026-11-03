@@ -68,7 +68,7 @@ enum WebRecipeImportError: LocalizedError {
         case .requestTooLarge: "This page is too large to process safely. Try Safari’s Reader view or enter the recipe manually."
         case .invalidResponse: "The recipe service returned an unreadable response. The captured page is still available to retry."
         case .incompleteResponse: "The recipe service could not extract a complete recipe. Try again or capture another page."
-        case .invalidRecipe: "The extracted recipe is incomplete or too large to save. Try again or capture another page."
+        case .invalidRecipe: "The extracted recipe could not be validated. Try again or capture a clearer page."
         case .http(let code, let detail): "OpenAI request failed (HTTP \(code)): \(detail)"
         }
     }
@@ -76,7 +76,7 @@ enum WebRecipeImportError: LocalizedError {
 
 enum WebRecipeExtractor {
     private static let amountPattern = try! NSRegularExpression(
-        pattern: #"^\s*(?:(?:\d+\s+)?(?:\d+(?:[./]\d+)?|[¼½¾⅓⅔⅛⅜⅝⅞⅙⅚])(?:\s*(?:-|–|—|to)\s*(?:\d+(?:[./]\d+)?|[¼½¾⅓⅔⅛⅜⅝⅞⅙⅚]))?)\s*$"#,
+        pattern: #"^\s*(?:\d+\s+)?(?:\d+\s*/\s*\d+|\d+(?:[.,]\d+)?|\d+\s*[¼½¾⅓⅔⅛⅜⅝⅞⅙⅚]|[¼½¾⅓⅔⅛⅜⅝⅞⅙⅚])(?:\s*(?:-|–|—|to)\s*(?:\d+\s+)?(?:\d+\s*/\s*\d+|\d+(?:[.,]\d+)?|\d+\s*[¼½¾⅓⅔⅛⅜⅝⅞⅙⅚]|[¼½¾⅓⅔⅛⅜⅝⅞⅙⅚]))?\s*$"#,
         options: [.caseInsensitive]
     )
     static func extract(_ capture: PaprikaShareInbox.WebCapture, model: String, key: String) async throws -> WebRecipeImportDraft {

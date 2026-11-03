@@ -60,6 +60,8 @@ struct RecipeProvenance: Codable, Hashable, Sendable {
             return name ?? type.displayName
         case .paprikaImport:
             return name ?? type.displayName
+        case .magazinePhoto:
+            return "Magazine photo"
         case .personalCookbook, .cookbookRepository:
             return "Personal cookbook"
         case .manual, .other:
@@ -71,6 +73,7 @@ struct RecipeProvenance: Codable, Hashable, Sendable {
 enum RecipeSourceType: String, Codable, Hashable, Sendable {
     case website
     case paprikaImport
+    case magazinePhoto
     case manual
     case personalCookbook
     case cookbookRepository
@@ -80,6 +83,7 @@ enum RecipeSourceType: String, Codable, Hashable, Sendable {
         switch self {
         case .website: "Website"
         case .paprikaImport: "Paprika import"
+        case .magazinePhoto: "Magazine photo"
         case .manual: "Manual entry"
         case .personalCookbook: "Personal cookbook"
         case .cookbookRepository: "Cookbook repository"

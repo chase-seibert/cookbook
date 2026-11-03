@@ -3,6 +3,7 @@ import SwiftData
 import EventKit
 import Security
 import UIKit
+import PhotosUI
 
 struct SettingsView: View {
     @Binding var incomingPaprikaURL: URL?
@@ -23,11 +24,17 @@ struct SettingsView: View {
     @State private var showingPaprikaImporter = false
     @State private var importReview: PaprikaImportReviewSession?
     @State private var webCapture: PaprikaShareInbox.WebCapture?
+    @State private var showingMagazineCamera = false
+    @State private var showingMagazineReview = false
+    @State private var magazineImageData: Data?
+    @State private var magazineCaptureDate: Date?
+    @State private var pickedMagazinePhoto: PhotosPickerItem?
     @State private var webCapturePendingURL: URL?
     @State private var processingShareURL: URL?
     @Query(sort: \RecipeNote.updatedAt, order: .reverse) private var notes: [RecipeNote]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
     @Query(sort: \ImportedWebRecipe.capturedAt, order: .reverse) private var importedWebRecords: [ImportedWebRecipe]
+    @Query(sort: \ImportedMagazineRecipe.capturedAt, order: .reverse) private var importedMagazineRecords: [ImportedMagazineRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
     @Query(sort: \PaprikaImportRun.createdAt, order: .reverse) private var paprikaImportRuns: [PaprikaImportRun]
     @Query private var recipePhotos: [RecipePhoto]
@@ -37,7 +44,8 @@ struct SettingsView: View {
         let bundledCount = CookbookCatalog.bundled.recipes.count - deletedRecipes.count
         let paprikaCount = importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe).count
         let webCaptureCount = importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe).count
-        return bundledCount + paprikaCount + webCaptureCount
+        let magazineCount = importedMagazineRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe).count
+        return bundledCount + paprikaCount + webCaptureCount + magazineCount
     }
 
     var body: some View {
@@ -98,6 +106,31 @@ struct SettingsView: View {
                             SafariRecipeImportHistoryView(records: importedWebRecords.filter { $0.deletedAt == nil })
                         }
                     }
+                    SettingsGroupLabel(title: "Magazine recipe photos")
+                    PhotosPicker(selection: $pickedMagazinePhoto, matching: .images) {
+                        Label("Choose recipe photo…", systemImage: "photo")
+                    }
+                    Button { showingMagazineCamera = true } label: {
+                        Label("Take recipe photo…", systemImage: "camera")
+                    }.disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
+                    Text("Choose one clear recipe page. Cookbook extracts the text with your configured OpenAI model; review and edit it before saving. The photo is sent for extraction and is not kept with the recipe.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    ForEach(importedMagazineRecords.filter { $0.deletedAt == nil }.prefix(3), id: \.id) { record in
+                        if let recipe = record.recipe {
+                            NavigationLink { RecipeDetailView(recipe: recipe) } label: {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(recipe.title)
+                                    Text("Magazine photo · \(record.capturedAt.formatted(date: .abbreviated, time: .shortened))")
+                                        .font(.caption).foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    if importedMagazineRecords.contains(where: { $0.deletedAt == nil }) {
+                        NavigationLink("All magazine photo imports (\(importedMagazineRecords.filter { $0.deletedAt == nil }.count))") {
+                            MagazineRecipeImportHistoryView()
+                        }
+                    }
                     SettingsGroupLabel(title: "Paprika files")
                     Button { showingPaprikaImporter = true } label: { Label("Import Paprika recipes…", systemImage: "square.and.arrow.down") }
                     Text("Review recipes before adding them. Paprika imports stay on this device and are marked internally.").font(.footnote).foregroundStyle(.secondary)
@@ -108,7 +141,7 @@ struct SettingsView: View {
                     NavigationLink {
                         RecipeBrowserView(showingDeletedRecipes: true, managesNavigationStack: false, screenTitle: "Deleted recipes")
                     } label: {
-                        Label("Deleted recipes (\(importedRecords.filter { $0.deletedAt != nil }.count + importedWebRecords.filter { $0.deletedAt != nil }.count + deletedRecipes.count))", systemImage: "trash")
+                        Label("Deleted recipes (\(importedRecords.filter { $0.deletedAt != nil }.count + importedWebRecords.filter { $0.deletedAt != nil }.count + importedMagazineRecords.filter { $0.deletedAt != nil }.count + deletedRecipes.count))", systemImage: "trash")
                     }
                     SettingsGroupLabel(title: "Export recipes")
                     Button { showingPaprikaExportSelector = true } label: {
@@ -167,6 +200,19 @@ struct SettingsView: View {
             }
             .fileImporter(isPresented: $showingPaprikaImporter, allowedContentTypes: PaprikaFileType.supported, allowsMultipleSelection: false, onCompletion: handlePaprikaSelection)
             .sheet(item: $importReview, onDismiss: openNextPendingPaprikaShare) { session in PaprikaImportReviewView(session: session) }
+            .sheet(isPresented: $showingMagazineCamera, onDismiss: {
+                if magazineImageData != nil { showingMagazineReview = true }
+            }) {
+                CameraCaptureView { image in
+                    magazineImageData = MagazineRecipeImage.prepare(image)
+                    magazineCaptureDate = .now
+                }
+            }
+            .sheet(isPresented: $showingMagazineReview, onDismiss: { magazineImageData = nil; magazineCaptureDate = nil }) {
+                if let magazineImageData, let magazineCaptureDate {
+                    MagazineRecipeImportReviewView(imageData: magazineImageData, capturedAt: magazineCaptureDate, model: openAIModel)
+                }
+            }
             .sheet(isPresented: Binding(get: { webCapture != nil }, set: { if !$0 { webCapture = nil } }), onDismiss: {
                 if let webCapturePendingURL { PaprikaShareInbox.removeIfPending(webCapturePendingURL) }
                 webCapturePendingURL = nil
@@ -198,6 +244,21 @@ struct SettingsView: View {
             .onChange(of: incomingPaprikaURL) { _, url in
                 guard let url else { return }
                 processIncomingShare(url)
+            }
+            .onChange(of: pickedMagazinePhoto) { _, item in
+                guard let item else { return }
+                Task {
+                    defer { pickedMagazinePhoto = nil }
+                    guard let data = try? await item.loadTransferable(type: Data.self),
+                          let image = UIImage(data: data),
+                          let prepared = MagazineRecipeImage.prepare(image) else {
+                        status = "That photo could not be opened. Choose a JPEG, PNG, or HEIC image and try again."
+                        return
+                    }
+                    magazineImageData = prepared
+                    magazineCaptureDate = .now
+                    showingMagazineReview = true
+                }
             }
             .alert("Cookbook", isPresented: Binding(get: { status != nil }, set: { if !$0 { status = nil } })) { Button("OK") { status = nil } } message: { Text(status ?? "") }
         }
@@ -281,7 +342,7 @@ struct SettingsView: View {
         let path = UserFiles.directory.appendingPathComponent("recipe-notes-\(stamp).json")
         let markdownPath = UserFiles.directory.appendingPathComponent("recipe-notes-\(stamp).md")
         let json = (try? JSONEncoder.pretty.encode(records)) ?? Data("[]".utf8)
-        let allRecipes = CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) + importedWebRecords.compactMap(\.recipe)
+        let allRecipes = CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) + importedWebRecords.compactMap(\.recipe) + importedMagazineRecords.compactMap(\.recipe)
         let titles = Dictionary(uniqueKeysWithValues: allRecipes.map { ($0.id, $0.title) })
         let body = records.map { record in
             "## \(titles[record.recipeID] ?? record.recipeID)\n\n- Note ID: `\(record.id.uuidString)`\n- Recipe ID: `\(record.recipeID)`\n- Step ID: \(record.stepID ?? "whole recipe")\n- Created: \(record.createdAt)\n- Updated: \(record.updatedAt)\n\n\(record.text)"
@@ -294,6 +355,7 @@ struct SettingsView: View {
         return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) }
             + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
             + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+            + importedMagazineRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
     }
 
     private var paprikaLabelGroups: [RecipeLabelGroup] {
@@ -328,6 +390,8 @@ struct SettingsView: View {
                 if let source = provenanceSourceName(provenance) {
                     add("source:\(RecipeLabel.normalize(source))", title: source, recipeID: recipe.id)
                 }
+            case .magazinePhoto:
+                add("magazine-photos", title: "Magazine photos", recipeID: recipe.id)
             case .website, .manual, .other:
                 if let source = provenanceSourceName(provenance) {
                     add("source:\(RecipeLabel.normalize(source))", title: source, recipeID: recipe.id)
@@ -575,12 +639,13 @@ private struct RecipeCategoryManagerView: View {
     @Query private var assignments: [RecipeCategoryAssignment]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
     @Query private var importedWebRecords: [ImportedWebRecipe]
+    @Query private var importedMagazineRecords: [ImportedMagazineRecipe]
     @State private var newCategoryName = ""
     @State private var pendingDeleteID: String?
     @State private var status: String?
 
     private var defaultCategoryID: String { settings.first?.defaultCategoryID ?? categories.first?.id ?? "" }
-    private var allRecipes: [Recipe] { CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) + importedWebRecords.compactMap(\.recipe) }
+    private var allRecipes: [Recipe] { CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) + importedWebRecords.compactMap(\.recipe) + importedMagazineRecords.compactMap(\.recipe) }
 
     var body: some View {
         List {
@@ -735,12 +800,13 @@ private struct RecipeUsageStatsView: View {
     @Query private var stats: [RecipeUsageStats]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
     @Query private var importedWebRecords: [ImportedWebRecipe]
+    @Query private var importedMagazineRecords: [ImportedMagazineRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
     @State private var exportURL: URL?
 
     private var rows: [(recipe: Recipe?, stats: RecipeUsageStats?)] {
         let deletedIDs = Set(deletedRecipes.map(\.recipeID))
-        let catalog = CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+        let catalog = CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedMagazineRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
         var byID = Dictionary(uniqueKeysWithValues: stats.map { ($0.recipeID, $0) })
         let catalogRows: [(recipe: Recipe?, stats: RecipeUsageStats?)] = catalog.map { (Optional($0), byID.removeValue(forKey: $0.id)) }
         let unmatched = stats.filter { record in !catalog.contains { $0.id == record.recipeID } }
@@ -950,6 +1016,7 @@ struct DinnerPlannerView: View {
     @Query(sort: \DinnerTimeline.updatedAt, order: .reverse) private var saved: [DinnerTimeline]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
     @Query private var importedWebRecords: [ImportedWebRecipe]
+    @Query private var importedMagazineRecords: [ImportedMagazineRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
     @State private var selectedIDs = Set<String>()
     @State private var dinnerTime = Date.now
@@ -968,7 +1035,7 @@ struct DinnerPlannerView: View {
     @AppStorage("openAIModel") private var openAIModel = "gpt-6-astra"
     private var recipes: [Recipe] {
         let deletedIDs = Set(deletedRecipes.map(\.recipeID))
-        return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+        return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedMagazineRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
     }
 
     private var recipeTitles: [String: String] { Dictionary(uniqueKeysWithValues: recipes.map { ($0.id, $0.title) }) }
