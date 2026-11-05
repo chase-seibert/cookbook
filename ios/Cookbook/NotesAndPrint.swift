@@ -54,10 +54,18 @@ struct RecipePrintView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text(recipe.title).font(.system(size: 30, weight: .semibold, design: .serif))
             if !recipe.introduction.isEmpty { Text(recipe.introduction).foregroundStyle(.secondary) }
-            Text("INGREDIENTS").font(.headline).padding(.top, 12)
-            ForEach(recipe.ingredients) { item in Text("\(item.quantity.isEmpty ? "" : item.quantity + "  ")\(item.name)") }
-            Text("METHOD").font(.headline).padding(.top, 12)
-            ForEach(Array(recipe.steps.enumerated()), id: \.element.id) { index, step in Text("\(index + 1).  \(step.originalInstruction)") }
+            ForEach(recipe.orderedContent) { content in
+                if let group = content.group {
+                    VStack(alignment: .leading, spacing: 3) {
+                        if let title = group.title, !title.isEmpty { Text(title).font(.headline) }
+                        ForEach(content.ingredients) { item in Text("\(item.quantity.isEmpty ? "" : item.quantity + "  ")\(item.name)") }
+                    }.padding(.vertical, 3)
+                } else if let step = content.step, let number = content.stepNumber {
+                    Text("\(number + 1).  \(step.originalInstruction)")
+                }
+            }
+            ForEach(recipe.tips, id: \.self) { Text("Tip: \($0)").italic().foregroundStyle(.secondary) }
+            ForEach(recipe.healthierOptions, id: \.self) { Text("Healthier option: \($0)").italic().foregroundStyle(.secondary) }
         }.frame(maxWidth: 620, alignment: .leading).frame(maxWidth: .infinity, alignment: .topLeading)
     }
     private func makePDFAndShare() {
@@ -70,7 +78,17 @@ struct RecipePrintView: View {
         var failedToPaginate = false
         do {
             try renderer.writePDF(to: url) { context in
-                let blocks: [(String, UIFont)] = [(recipe.title, .boldSystemFont(ofSize: 24)), (recipe.introduction, .systemFont(ofSize: 11)), ("INGREDIENTS", .boldSystemFont(ofSize: 14))] + recipe.ingredients.map { ("\($0.quantity)  \($0.name)", .systemFont(ofSize: 11)) } + [("METHOD", .boldSystemFont(ofSize: 14))] + recipe.steps.enumerated().map { ("\($0.offset + 1).  \($0.element.originalInstruction)", .systemFont(ofSize: 11)) }
+                var blocks: [(String, UIFont)] = [(recipe.title, .boldSystemFont(ofSize: 24)), (recipe.introduction, .systemFont(ofSize: 11))]
+                for item in recipe.orderedContent {
+                    if let group = item.group {
+                        if let title = group.title, !title.isEmpty { blocks.append((title, .boldSystemFont(ofSize: 12))) }
+                        blocks += item.ingredients.map { ("\($0.quantity)  \($0.name)", .systemFont(ofSize: 11)) }
+                    } else if let step = item.step, let number = item.stepNumber {
+                        blocks.append(("\(number + 1).  \(step.originalInstruction)", .systemFont(ofSize: 11)))
+                    }
+                }
+                blocks += recipe.tips.map { ("Tip: \($0)", .italicSystemFont(ofSize: 11)) }
+                blocks += recipe.healthierOptions.map { ("Healthier option: \($0)", .italicSystemFont(ofSize: 11)) }
                 let content = NSMutableAttributedString()
                 for (text, font) in blocks where !text.isEmpty {
                     content.append(NSAttributedString(string: text + "\n\n", attributes: [.font: font]))

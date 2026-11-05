@@ -1,5 +1,9 @@
 # Mobile app architecture
 
+For the field-by-field persistence inventory, logical foreign-key map,
+uniqueness/index notes, and generated SQLite schema, see
+[data-model.md](data-model.md).
+
 ## Source and generated data
 
 Markdown files in `recipes/` are the authoritative recipe source. The

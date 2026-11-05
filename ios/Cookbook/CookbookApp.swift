@@ -611,32 +611,34 @@ struct RecipeDetailView: View {
                 }
                 if !recipe.introduction.isEmpty { Text(recipe.introduction).font(.body).foregroundStyle(.secondary) }
                 if let servings = recipe.servings, !servings.isEmpty { LabeledContent("Servings", value: servings) }
-                SectionTitle("Ingredients")
-                VStack(alignment: .leading, spacing: 3) {
-                    ForEach(Array(recipe.ingredients.enumerated()), id: \.element.id) { index, ingredient in
-                        if let group = ingredient.group, !group.isEmpty,
-                           index == 0 || recipe.ingredients[index - 1].group != ingredient.group {
-                            Text(group).font(.headline).padding(.top, index == 0 ? 0 : 8)
-                        }
-                        HStack(alignment: .firstTextBaseline, spacing: 4) {
-                            Text(ingredient.quantity)
-                                .font(.body.weight(.semibold))
-                                .foregroundStyle(Color(red: 0.32, green: 0.39, blue: 0.27))
-                                .frame(width: quantityColumnWidth, alignment: .trailing)
-                                .fixedSize(horizontal: false, vertical: true)
-                            Text(ingredient.name).frame(maxWidth: .infinity, alignment: .leading)
-                        }.font(.body).frame(maxWidth: .infinity, alignment: .leading).fixedSize(horizontal: false, vertical: true)
-                    }
-                }
-                SectionTitle("Instructions")
-                ForEach(Array(recipe.steps.enumerated()), id: \.element.id) { number, step in
-                    VStack(alignment: .leading, spacing: 7) {
-                        if !step.sectionTitle.isEmpty && (number == 0 || recipe.steps[number - 1].sectionTitle != step.sectionTitle) {
-                            Text(step.sectionTitle).font(.headline).padding(.top, 10)
-                        }
-                        HStack(alignment: .top, spacing: 12) {
-                            Text("\(number + 1)").font(.caption.bold()).foregroundStyle(.secondary).padding(.top, 3)
-                            Text(step.originalInstruction).font(.body).fixedSize(horizontal: false, vertical: true)
+                ForEach(recipe.orderedContent) { content in
+                    if let group = content.group {
+                        VStack(alignment: .leading, spacing: 3) {
+                            if let title = group.title, !title.isEmpty {
+                                Text(title).font(.headline).padding(.bottom, 3)
+                            } else if content.id != recipe.orderedContent.first?.id {
+                                Divider().padding(.vertical, 4)
+                            }
+                            ForEach(content.ingredients) { ingredient in
+                                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                                    Text(ingredient.quantity)
+                                        .font(.body.weight(.semibold))
+                                        .foregroundStyle(Color(red: 0.32, green: 0.39, blue: 0.27))
+                                        .frame(width: quantityColumnWidth, alignment: .trailing)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    Text(ingredient.name).frame(maxWidth: .infinity, alignment: .leading)
+                                }.font(.body).frame(maxWidth: .infinity, alignment: .leading).fixedSize(horizontal: false, vertical: true)
+                            }
+                        }.padding(.vertical, 2)
+                    } else if let step = content.step, let number = content.stepNumber {
+                        VStack(alignment: .leading, spacing: 7) {
+                            if !step.sectionTitle.isEmpty && (number == 0 || recipe.steps[number - 1].sectionTitle != step.sectionTitle) {
+                                Text(step.sectionTitle).font(.headline).padding(.top, 10)
+                            }
+                            HStack(alignment: .top, spacing: 12) {
+                                Text("\(number + 1)").font(.caption.bold()).foregroundStyle(.secondary).padding(.top, 3)
+                                Text(step.originalInstruction).font(.body).fixedSize(horizontal: false, vertical: true)
+                            }
                         }
                     }
                 }

@@ -33,7 +33,9 @@ struct Recipe: Codable, Identifiable, Hashable, Sendable {
     let sourceSection: String
     let introduction: String
     let ingredients: [RecipeIngredient]
+    let ingredientGroups: [RecipeIngredientGroup]?
     let steps: [RecipeStep]
+    let contentOrder: [RecipeContentReference]?
     let tips: [String]
     let healthierOptions: [String]
     let thumbnailAsset: String?
@@ -44,6 +46,87 @@ struct Recipe: Codable, Identifiable, Hashable, Sendable {
     let servings: String?
 
     var browseLabelIDs: [String] { labelIDs ?? [] }
+
+    var orderedContent: [RecipeDisplayContent] {
+        let groups = ingredientGroups ?? legacyIngredientGroups
+        let groupByID = Dictionary(groups.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let ingredientByID = Dictionary(ingredients.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let stepByID = Dictionary(steps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let memberships = groups.flatMap(\.ingredientIDs)
+        if let contentOrder, !contentOrder.isEmpty,
+           contentOrder.allSatisfy({ reference in
+               reference.kind == .step ? stepByID[reference.id] != nil : groupByID[reference.id] != nil
+           }),
+           Set(contentOrder.filter { $0.kind == .step }.map(\.id)) == Set(steps.map(\.id)),
+           contentOrder.filter({ $0.kind == .step }).count == steps.count,
+           Set(contentOrder.filter { $0.kind == .ingredientGroup }.map(\.id)) == Set(groups.map(\.id)),
+           contentOrder.filter({ $0.kind == .ingredientGroup }).count == groups.count,
+           groups.count == groupByID.count, ingredients.count == ingredientByID.count, steps.count == stepByID.count,
+           memberships.count == Set(memberships).count,
+           Set(memberships) == Set(ingredients.map(\.id)) {
+            return displayContent(contentOrder, groups: groupByID, ingredients: ingredientByID, steps: stepByID)
+        }
+        let fallback = groups.map { RecipeContentReference(kind: .ingredientGroup, id: $0.id) }
+            + steps.map { RecipeContentReference(kind: .step, id: $0.id) }
+        return displayContent(fallback, groups: groupByID, ingredients: ingredientByID, steps: stepByID)
+    }
+
+    private var legacyIngredientGroups: [RecipeIngredientGroup] {
+        var result: [RecipeIngredientGroup] = []
+        var currentLabel: String?
+        var currentIDs: [String] = []
+        func flush(into groups: inout [RecipeIngredientGroup], label: String?, ids: [String]) {
+            guard !ids.isEmpty else { return }
+            groups.append(RecipeIngredientGroup(id: "legacy-group-\(groups.count + 1)", title: label, ingredientIDs: ids))
+        }
+        for ingredient in ingredients {
+            if !currentIDs.isEmpty && ingredient.group != currentLabel {
+                flush(into: &result, label: currentLabel, ids: currentIDs)
+                currentIDs = []
+            }
+            currentLabel = ingredient.group
+            currentIDs.append(ingredient.id)
+        }
+        flush(into: &result, label: currentLabel, ids: currentIDs)
+        return result
+    }
+
+    private func displayContent(_ references: [RecipeContentReference], groups: [String: RecipeIngredientGroup], ingredients: [String: RecipeIngredient], steps: [String: RecipeStep]) -> [RecipeDisplayContent] {
+        var stepNumber = 0
+        return references.compactMap { reference in
+            switch reference.kind {
+            case .ingredientGroup:
+                guard let group = groups[reference.id] else { return nil }
+                let rows = group.ingredientIDs.compactMap { ingredients[$0] }
+                return rows.isEmpty ? nil : RecipeDisplayContent(id: reference.id, group: group, ingredients: rows, step: nil, stepNumber: nil)
+            case .step:
+                guard let step = steps[reference.id] else { return nil }
+                defer { stepNumber += 1 }
+                return RecipeDisplayContent(id: reference.id, group: nil, ingredients: [], step: step, stepNumber: stepNumber)
+            }
+        }
+    }
+}
+
+struct RecipeIngredientGroup: Codable, Identifiable, Hashable, Sendable {
+    let id: String
+    let title: String?
+    let ingredientIDs: [String]
+}
+
+enum RecipeContentKind: String, Codable, Hashable, Sendable { case ingredientGroup, step }
+
+struct RecipeContentReference: Codable, Hashable, Sendable {
+    let kind: RecipeContentKind
+    let id: String
+}
+
+struct RecipeDisplayContent: Identifiable, Hashable, Sendable {
+    let id: String
+    let group: RecipeIngredientGroup?
+    let ingredients: [RecipeIngredient]
+    let step: RecipeStep?
+    let stepNumber: Int?
 }
 
 struct RecipeProvenance: Codable, Hashable, Sendable {

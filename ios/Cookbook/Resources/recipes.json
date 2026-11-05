@@ -488,6 +488,37 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "caesar-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "caesar-ingredient-1",
+            "caesar-ingredient-2",
+            "caesar-ingredient-3"
+          ]
+        },
+        {
+          "id": "caesar-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "caesar-ingredient-4"
+          ]
+        },
+        {
+          "id": "caesar-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "caesar-ingredient-5",
+            "caesar-ingredient-6",
+            "caesar-ingredient-7",
+            "caesar-ingredient-8",
+            "caesar-ingredient-9",
+            "caesar-ingredient-10",
+            "caesar-ingredient-11"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "caesar-step-1",
@@ -572,6 +603,44 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "caesar-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "caesar-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "caesar-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "caesar-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "caesar-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "caesar-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "caesar-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "caesar-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "caesar-step-6"
         }
       ],
       "tips": [
@@ -730,6 +799,48 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "spinach-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "spinach-ingredient-1"
+          ]
+        },
+        {
+          "id": "spinach-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "spinach-ingredient-2"
+          ]
+        },
+        {
+          "id": "spinach-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "spinach-ingredient-3",
+            "spinach-ingredient-4",
+            "spinach-ingredient-5",
+            "spinach-ingredient-6",
+            "spinach-ingredient-7",
+            "spinach-ingredient-8",
+            "spinach-ingredient-9",
+            "spinach-ingredient-10",
+            "spinach-ingredient-11",
+            "spinach-ingredient-12",
+            "spinach-ingredient-13",
+            "spinach-ingredient-14"
+          ]
+        },
+        {
+          "id": "spinach-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "spinach-ingredient-15",
+            "spinach-ingredient-16"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "spinach-step-1",
@@ -786,6 +897,40 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "spinach-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "spinach-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "spinach-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "spinach-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "spinach-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "spinach-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "spinach-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "spinach-step-4"
         }
       ],
       "tips": [
@@ -882,6 +1027,34 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "kale-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "kale-ingredient-1"
+          ]
+        },
+        {
+          "id": "kale-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "kale-ingredient-2",
+            "kale-ingredient-3",
+            "kale-ingredient-4"
+          ]
+        },
+        {
+          "id": "kale-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "kale-ingredient-5",
+            "kale-ingredient-6",
+            "kale-ingredient-7",
+            "kale-ingredient-8"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "kale-step-1",
@@ -934,6 +1107,36 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "kale-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "kale-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "kale-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "kale-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "kale-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "kale-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "kale-step-4"
         }
       ],
       "tips": [
@@ -998,6 +1201,24 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "quarantine_salad-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "quarantine_salad-ingredient-1",
+            "quarantine_salad-ingredient-2",
+            "quarantine_salad-ingredient-3"
+          ]
+        },
+        {
+          "id": "quarantine_salad-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "quarantine_salad-ingredient-4"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "quarantine_salad-step-1",
@@ -1033,6 +1254,28 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "quarantine_salad-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "quarantine_salad-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "quarantine_salad-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "quarantine_salad-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "quarantine_salad-step-3"
         }
       ],
       "tips": [],
@@ -1147,6 +1390,37 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "couscous-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "couscous-ingredient-1"
+          ]
+        },
+        {
+          "id": "couscous-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "couscous-ingredient-2",
+            "couscous-ingredient-3",
+            "couscous-ingredient-4",
+            "couscous-ingredient-5"
+          ]
+        },
+        {
+          "id": "couscous-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "couscous-ingredient-6",
+            "couscous-ingredient-7",
+            "couscous-ingredient-8",
+            "couscous-ingredient-9",
+            "couscous-ingredient-10",
+            "couscous-ingredient-11"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "couscous-step-1",
@@ -1204,6 +1478,36 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "couscous-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "couscous-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "couscous-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "couscous-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "couscous-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "couscous-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "couscous-step-4"
         }
       ],
       "tips": [],
@@ -1339,6 +1643,39 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "potatosalad-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "potatosalad-ingredient-1",
+            "potatosalad-ingredient-2",
+            "potatosalad-ingredient-3",
+            "potatosalad-ingredient-4"
+          ]
+        },
+        {
+          "id": "potatosalad-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "potatosalad-ingredient-5",
+            "potatosalad-ingredient-6",
+            "potatosalad-ingredient-7",
+            "potatosalad-ingredient-8",
+            "potatosalad-ingredient-9",
+            "potatosalad-ingredient-10",
+            "potatosalad-ingredient-11"
+          ]
+        },
+        {
+          "id": "potatosalad-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "potatosalad-ingredient-12",
+            "potatosalad-ingredient-13"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "potatosalad-step-1",
@@ -1410,6 +1747,40 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "potatosalad-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "potatosalad-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "potatosalad-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "potatosalad-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "potatosalad-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "potatosalad-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "potatosalad-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "potatosalad-step-5"
         }
       ],
       "tips": [],
@@ -1509,6 +1880,35 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "panzanella-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "panzanella-ingredient-1",
+            "panzanella-ingredient-2",
+            "panzanella-ingredient-3"
+          ]
+        },
+        {
+          "id": "panzanella-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "panzanella-ingredient-4",
+            "panzanella-ingredient-5",
+            "panzanella-ingredient-6",
+            "panzanella-ingredient-7"
+          ]
+        },
+        {
+          "id": "panzanella-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "panzanella-ingredient-8",
+            "panzanella-ingredient-9"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "panzanella-step-1",
@@ -1548,6 +1948,32 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "panzanella-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "panzanella-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "panzanella-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "panzanella-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "panzanella-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "panzanella-step-3"
         }
       ],
       "tips": [],
@@ -1646,6 +2072,35 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "southwest-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "southwest-ingredient-1"
+          ]
+        },
+        {
+          "id": "southwest-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "southwest-ingredient-2",
+            "southwest-ingredient-3",
+            "southwest-ingredient-4",
+            "southwest-ingredient-5"
+          ]
+        },
+        {
+          "id": "southwest-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "southwest-ingredient-6",
+            "southwest-ingredient-7",
+            "southwest-ingredient-8",
+            "southwest-ingredient-9"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "southwest-step-1",
@@ -1685,6 +2140,32 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "southwest-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "southwest-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "southwest-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "southwest-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "southwest-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "southwest-step-3"
         }
       ],
       "tips": [
@@ -1769,6 +2250,27 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "brownrice-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "brownrice-ingredient-1"
+          ]
+        },
+        {
+          "id": "brownrice-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "brownrice-ingredient-2",
+            "brownrice-ingredient-3",
+            "brownrice-ingredient-4",
+            "brownrice-ingredient-5",
+            "brownrice-ingredient-6",
+            "brownrice-ingredient-7"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "brownrice-step-1",
@@ -1796,6 +2298,24 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "brownrice-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "brownrice-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "brownrice-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "brownrice-step-2"
         }
       ],
       "tips": [
@@ -1865,6 +2385,19 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "saladdressings-phil-s-famous-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "saladdressings-phil-s-famous-ingredient-1",
+            "saladdressings-phil-s-famous-ingredient-2",
+            "saladdressings-phil-s-famous-ingredient-3",
+            "saladdressings-phil-s-famous-ingredient-4",
+            "saladdressings-phil-s-famous-ingredient-5"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "saladdressings-phil-s-famous-step-1",
@@ -1880,6 +2413,16 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "saladdressings-phil-s-famous-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "saladdressings-phil-s-famous-step-1"
         }
       ],
       "tips": [],
@@ -1937,6 +2480,24 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "saladdressings-lemon-vinaigrette-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "saladdressings-lemon-vinaigrette-ingredient-1"
+          ]
+        },
+        {
+          "id": "saladdressings-lemon-vinaigrette-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "saladdressings-lemon-vinaigrette-ingredient-2",
+            "saladdressings-lemon-vinaigrette-ingredient-3",
+            "saladdressings-lemon-vinaigrette-ingredient-4"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "saladdressings-lemon-vinaigrette-step-1",
@@ -1961,6 +2522,24 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "saladdressings-lemon-vinaigrette-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "saladdressings-lemon-vinaigrette-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "saladdressings-lemon-vinaigrette-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "saladdressings-lemon-vinaigrette-step-2"
         }
       ],
       "tips": [],
@@ -2051,6 +2630,22 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "saladdressings-parmesan-peppercorn-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "saladdressings-parmesan-peppercorn-ingredient-1",
+            "saladdressings-parmesan-peppercorn-ingredient-2",
+            "saladdressings-parmesan-peppercorn-ingredient-3",
+            "saladdressings-parmesan-peppercorn-ingredient-4",
+            "saladdressings-parmesan-peppercorn-ingredient-5",
+            "saladdressings-parmesan-peppercorn-ingredient-6",
+            "saladdressings-parmesan-peppercorn-ingredient-7",
+            "saladdressings-parmesan-peppercorn-ingredient-8"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "saladdressings-parmesan-peppercorn-step-1",
@@ -2069,6 +2664,16 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "saladdressings-parmesan-peppercorn-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "saladdressings-parmesan-peppercorn-step-1"
         }
       ],
       "tips": [],
@@ -2206,6 +2811,52 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "macandcheese-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "macandcheese-ingredient-1",
+            "macandcheese-ingredient-2"
+          ]
+        },
+        {
+          "id": "macandcheese-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "macandcheese-ingredient-3",
+            "macandcheese-ingredient-4",
+            "macandcheese-ingredient-5"
+          ]
+        },
+        {
+          "id": "macandcheese-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "macandcheese-ingredient-6",
+            "macandcheese-ingredient-7",
+            "macandcheese-ingredient-8"
+          ]
+        },
+        {
+          "id": "macandcheese-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "macandcheese-ingredient-9",
+            "macandcheese-ingredient-10",
+            "macandcheese-ingredient-11"
+          ]
+        },
+        {
+          "id": "macandcheese-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "macandcheese-ingredient-12",
+            "macandcheese-ingredient-13",
+            "macandcheese-ingredient-14"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "macandcheese-step-1",
@@ -2283,6 +2934,52 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "macandcheese-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "macandcheese-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "macandcheese-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "macandcheese-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "macandcheese-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "macandcheese-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "macandcheese-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "macandcheese-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "macandcheese-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "macandcheese-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "macandcheese-step-6"
         }
       ],
       "tips": [
@@ -2400,6 +3097,49 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "creammushroom-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "creammushroom-ingredient-1"
+          ]
+        },
+        {
+          "id": "creammushroom-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "creammushroom-ingredient-2",
+            "creammushroom-ingredient-3",
+            "creammushroom-ingredient-4",
+            "creammushroom-ingredient-5"
+          ]
+        },
+        {
+          "id": "creammushroom-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "creammushroom-ingredient-6",
+            "creammushroom-ingredient-7"
+          ]
+        },
+        {
+          "id": "creammushroom-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "creammushroom-ingredient-8",
+            "creammushroom-ingredient-9"
+          ]
+        },
+        {
+          "id": "creammushroom-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "creammushroom-ingredient-10",
+            "creammushroom-ingredient-11"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "creammushroom-step-1",
@@ -2497,6 +3237,60 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "creammushroom-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "creammushroom-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "creammushroom-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "creammushroom-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "creammushroom-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "creammushroom-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "creammushroom-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "creammushroom-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "creammushroom-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "creammushroom-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "creammushroom-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "creammushroom-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "creammushroom-step-8"
         }
       ],
       "tips": [],
@@ -2611,6 +3405,43 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "burgers-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "burgers-ingredient-1",
+            "burgers-ingredient-2",
+            "burgers-ingredient-3"
+          ]
+        },
+        {
+          "id": "burgers-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "burgers-ingredient-4",
+            "burgers-ingredient-5"
+          ]
+        },
+        {
+          "id": "burgers-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "burgers-ingredient-6",
+            "burgers-ingredient-7"
+          ]
+        },
+        {
+          "id": "burgers-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "burgers-ingredient-8",
+            "burgers-ingredient-9",
+            "burgers-ingredient-10",
+            "burgers-ingredient-11"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "burgers-step-1",
@@ -2710,6 +3541,56 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "burgers-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "burgers-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "burgers-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "burgers-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "burgers-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "burgers-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "burgers-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "burgers-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "burgers-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "burgers-step-7"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "burgers-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "burgers-step-8"
         }
       ],
       "tips": [
@@ -2913,6 +3794,66 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "tacos-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "tacos-ingredient-1"
+          ]
+        },
+        {
+          "id": "tacos-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "tacos-ingredient-2",
+            "tacos-ingredient-3",
+            "tacos-ingredient-4",
+            "tacos-ingredient-5",
+            "tacos-ingredient-6",
+            "tacos-ingredient-7",
+            "tacos-ingredient-8"
+          ]
+        },
+        {
+          "id": "tacos-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "tacos-ingredient-9",
+            "tacos-ingredient-10",
+            "tacos-ingredient-11",
+            "tacos-ingredient-12",
+            "tacos-ingredient-13"
+          ]
+        },
+        {
+          "id": "tacos-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "tacos-ingredient-14",
+            "tacos-ingredient-15"
+          ]
+        },
+        {
+          "id": "tacos-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "tacos-ingredient-16",
+            "tacos-ingredient-17",
+            "tacos-ingredient-18"
+          ]
+        },
+        {
+          "id": "tacos-group-6",
+          "title": null,
+          "ingredientIDs": [
+            "tacos-ingredient-19",
+            "tacos-ingredient-20",
+            "tacos-ingredient-21",
+            "tacos-ingredient-22"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "tacos-step-1",
@@ -3036,6 +3977,68 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "tacos-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "tacos-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "tacos-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "tacos-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "tacos-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "tacos-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "tacos-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "tacos-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "tacos-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "tacos-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "tacos-step-7"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "tacos-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "tacos-step-8"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "tacos-group-6"
+        },
+        {
+          "kind": "step",
+          "id": "tacos-step-9"
         }
       ],
       "tips": [],
@@ -3184,6 +4187,47 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "ziti-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "ziti-ingredient-1"
+          ]
+        },
+        {
+          "id": "ziti-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "ziti-ingredient-2",
+            "ziti-ingredient-3",
+            "ziti-ingredient-4",
+            "ziti-ingredient-5",
+            "ziti-ingredient-6",
+            "ziti-ingredient-7",
+            "ziti-ingredient-8"
+          ]
+        },
+        {
+          "id": "ziti-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "ziti-ingredient-9",
+            "ziti-ingredient-10",
+            "ziti-ingredient-11",
+            "ziti-ingredient-12",
+            "ziti-ingredient-13",
+            "ziti-ingredient-14"
+          ]
+        },
+        {
+          "id": "ziti-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "ziti-ingredient-15"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "ziti-step-1",
@@ -3323,6 +4367,64 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "ziti-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "ziti-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "ziti-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "ziti-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "ziti-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "ziti-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "ziti-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "ziti-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "ziti-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "ziti-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "ziti-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "ziti-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "ziti-step-9"
+        },
+        {
+          "kind": "step",
+          "id": "ziti-step-10"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "4295278908769f9baaadb8190ae45c4d3ce247f4463e69ed0daeb5c77cb7f962",
@@ -3420,6 +4522,41 @@
           "groceryName": "Parmesan",
           "staple": false,
           "excludeFromGroceries": false
+        }
+      ],
+      "ingredientGroups": [
+        {
+          "id": "orecchiette-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "orecchiette-ingredient-1",
+            "orecchiette-ingredient-2",
+            "orecchiette-ingredient-3",
+            "orecchiette-ingredient-4"
+          ]
+        },
+        {
+          "id": "orecchiette-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "orecchiette-ingredient-5",
+            "orecchiette-ingredient-6",
+            "orecchiette-ingredient-7"
+          ]
+        },
+        {
+          "id": "orecchiette-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "orecchiette-ingredient-8"
+          ]
+        },
+        {
+          "id": "orecchiette-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "orecchiette-ingredient-9"
+          ]
         }
       ],
       "steps": [
@@ -3525,6 +4662,56 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "orecchiette-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "orecchiette-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "orecchiette-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "orecchiette-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "orecchiette-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "orecchiette-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "orecchiette-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "orecchiette-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "orecchiette-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "orecchiette-step-7"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "orecchiette-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "orecchiette-step-8"
+        }
+      ],
       "tips": [
         "Great with Sriracha."
       ],
@@ -3622,6 +4809,35 @@
           "groceryName": "Butter",
           "staple": false,
           "excludeFromGroceries": false
+        }
+      ],
+      "ingredientGroups": [
+        {
+          "id": "roastchicken-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "roastchicken-ingredient-1",
+            "roastchicken-ingredient-2",
+            "roastchicken-ingredient-3"
+          ]
+        },
+        {
+          "id": "roastchicken-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "roastchicken-ingredient-4"
+          ]
+        },
+        {
+          "id": "roastchicken-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "roastchicken-ingredient-5",
+            "roastchicken-ingredient-6",
+            "roastchicken-ingredient-7",
+            "roastchicken-ingredient-8",
+            "roastchicken-ingredient-9"
+          ]
         }
       ],
       "steps": [
@@ -3771,6 +4987,64 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "roastchicken-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "roastchicken-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "roastchicken-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "roastchicken-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "roastchicken-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "roastchicken-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "roastchicken-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "roastchicken-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "roastchicken-step-7"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "roastchicken-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "roastchicken-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "roastchicken-step-9"
+        },
+        {
+          "kind": "step",
+          "id": "roastchicken-step-10"
+        },
+        {
+          "kind": "step",
+          "id": "roastchicken-step-11"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "28f34034f77dd59041be645e26bbc217acfa19f958aad7a93d2e02cb88c15431",
@@ -3914,6 +5188,53 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "vermichli-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "vermichli-ingredient-1",
+            "vermichli-ingredient-2"
+          ]
+        },
+        {
+          "id": "vermichli-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "vermichli-ingredient-3",
+            "vermichli-ingredient-4"
+          ]
+        },
+        {
+          "id": "vermichli-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "vermichli-ingredient-5",
+            "vermichli-ingredient-6",
+            "vermichli-ingredient-7",
+            "vermichli-ingredient-8",
+            "vermichli-ingredient-9",
+            "vermichli-ingredient-10",
+            "vermichli-ingredient-11"
+          ]
+        },
+        {
+          "id": "vermichli-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "vermichli-ingredient-12"
+          ]
+        },
+        {
+          "id": "vermichli-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "vermichli-ingredient-13",
+            "vermichli-ingredient-14",
+            "vermichli-ingredient-15"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "vermichli-step-1",
@@ -3990,6 +5311,52 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "vermichli-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "vermichli-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "vermichli-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "vermichli-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "vermichli-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "vermichli-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "vermichli-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "vermichli-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "vermichli-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "vermichli-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "vermichli-step-6"
         }
       ],
       "tips": [
@@ -4083,6 +5450,34 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "garlicchilipasta-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "garlicchilipasta-ingredient-1",
+            "garlicchilipasta-ingredient-2",
+            "garlicchilipasta-ingredient-3",
+            "garlicchilipasta-ingredient-4"
+          ]
+        },
+        {
+          "id": "garlicchilipasta-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "garlicchilipasta-ingredient-5"
+          ]
+        },
+        {
+          "id": "garlicchilipasta-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "garlicchilipasta-ingredient-6",
+            "garlicchilipasta-ingredient-7",
+            "garlicchilipasta-ingredient-8"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "garlicchilipasta-step-1",
@@ -4121,6 +5516,32 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "garlicchilipasta-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "garlicchilipasta-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "garlicchilipasta-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "garlicchilipasta-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "garlicchilipasta-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "garlicchilipasta-step-3"
         }
       ],
       "tips": [],
@@ -4284,6 +5705,55 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "pasta_e_ceci-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "pasta_e_ceci-ingredient-1",
+            "pasta_e_ceci-ingredient-2",
+            "pasta_e_ceci-ingredient-3",
+            "pasta_e_ceci-ingredient-4",
+            "pasta_e_ceci-ingredient-5"
+          ]
+        },
+        {
+          "id": "pasta_e_ceci-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "pasta_e_ceci-ingredient-6",
+            "pasta_e_ceci-ingredient-7",
+            "pasta_e_ceci-ingredient-8"
+          ]
+        },
+        {
+          "id": "pasta_e_ceci-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "pasta_e_ceci-ingredient-9",
+            "pasta_e_ceci-ingredient-10",
+            "pasta_e_ceci-ingredient-11"
+          ]
+        },
+        {
+          "id": "pasta_e_ceci-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "pasta_e_ceci-ingredient-12"
+          ]
+        },
+        {
+          "id": "pasta_e_ceci-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "pasta_e_ceci-ingredient-13",
+            "pasta_e_ceci-ingredient-14",
+            "pasta_e_ceci-ingredient-15",
+            "pasta_e_ceci-ingredient-16",
+            "pasta_e_ceci-ingredient-17"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "pasta_e_ceci-step-1",
@@ -4366,6 +5836,52 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "pasta_e_ceci-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "pasta_e_ceci-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "pasta_e_ceci-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pasta_e_ceci-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "pasta_e_ceci-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pasta_e_ceci-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "pasta_e_ceci-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pasta_e_ceci-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "pasta_e_ceci-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pasta_e_ceci-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "pasta_e_ceci-step-6"
         }
       ],
       "tips": [],
@@ -4509,6 +6025,46 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "pizza-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "pizza-ingredient-1",
+            "pizza-ingredient-2",
+            "pizza-ingredient-3",
+            "pizza-ingredient-4"
+          ]
+        },
+        {
+          "id": "pizza-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "pizza-ingredient-5",
+            "pizza-ingredient-6",
+            "pizza-ingredient-7",
+            "pizza-ingredient-8"
+          ]
+        },
+        {
+          "id": "pizza-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "pizza-ingredient-9",
+            "pizza-ingredient-10",
+            "pizza-ingredient-11",
+            "pizza-ingredient-12"
+          ]
+        },
+        {
+          "id": "pizza-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "pizza-ingredient-13",
+            "pizza-ingredient-14"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "pizza-step-1",
@@ -4629,6 +6185,60 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "pizza-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "pizza-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pizza-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "pizza-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "pizza-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "pizza-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pizza-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "pizza-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "pizza-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pizza-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "pizza-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "pizza-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "pizza-step-9"
         }
       ],
       "tips": [],
@@ -4782,6 +6392,48 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "sausage-lentils-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "sausage-lentils-ingredient-1",
+            "sausage-lentils-ingredient-2",
+            "sausage-lentils-ingredient-3"
+          ]
+        },
+        {
+          "id": "sausage-lentils-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "sausage-lentils-ingredient-4",
+            "sausage-lentils-ingredient-5",
+            "sausage-lentils-ingredient-6"
+          ]
+        },
+        {
+          "id": "sausage-lentils-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "sausage-lentils-ingredient-7",
+            "sausage-lentils-ingredient-8",
+            "sausage-lentils-ingredient-9",
+            "sausage-lentils-ingredient-10",
+            "sausage-lentils-ingredient-11",
+            "sausage-lentils-ingredient-12"
+          ]
+        },
+        {
+          "id": "sausage-lentils-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "sausage-lentils-ingredient-13",
+            "sausage-lentils-ingredient-14",
+            "sausage-lentils-ingredient-15",
+            "sausage-lentils-ingredient-16"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "sausage-lentils-step-1",
@@ -4854,6 +6506,44 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "sausage-lentils-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "sausage-lentils-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "sausage-lentils-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "sausage-lentils-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "sausage-lentils-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "sausage-lentils-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "sausage-lentils-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "sausage-lentils-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "sausage-lentils-step-5"
         }
       ],
       "tips": [
@@ -4987,6 +6677,45 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "fiery_green_beans-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "fiery_green_beans-ingredient-1",
+            "fiery_green_beans-ingredient-2",
+            "fiery_green_beans-ingredient-3"
+          ]
+        },
+        {
+          "id": "fiery_green_beans-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "fiery_green_beans-ingredient-4",
+            "fiery_green_beans-ingredient-5"
+          ]
+        },
+        {
+          "id": "fiery_green_beans-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "fiery_green_beans-ingredient-6",
+            "fiery_green_beans-ingredient-7"
+          ]
+        },
+        {
+          "id": "fiery_green_beans-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "fiery_green_beans-ingredient-8",
+            "fiery_green_beans-ingredient-9",
+            "fiery_green_beans-ingredient-10",
+            "fiery_green_beans-ingredient-11",
+            "fiery_green_beans-ingredient-12",
+            "fiery_green_beans-ingredient-13"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "fiery_green_beans-step-1",
@@ -5103,6 +6832,60 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "step",
+          "id": "fiery_green_beans-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "fiery_green_beans-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "fiery_green_beans-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "fiery_green_beans-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "fiery_green_beans-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "fiery_green_beans-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "fiery_green_beans-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "fiery_green_beans-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "fiery_green_beans-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "fiery_green_beans-step-7"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "fiery_green_beans-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "fiery_green_beans-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "fiery_green_beans-step-9"
+        }
+      ],
       "tips": [
         "Using a large cast iron or carbon steel pan will help char the stir fry quickly. Finding the firmest tofu you can is the key to keeping the tofu intact as you cook it. This recipe is from Burma Superstar."
       ],
@@ -5201,6 +6984,41 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "aperto-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "aperto-ingredient-1",
+            "aperto-ingredient-2",
+            "aperto-ingredient-3",
+            "aperto-ingredient-4"
+          ]
+        },
+        {
+          "id": "aperto-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "aperto-ingredient-5"
+          ]
+        },
+        {
+          "id": "aperto-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "aperto-ingredient-6"
+          ]
+        },
+        {
+          "id": "aperto-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "aperto-ingredient-7",
+            "aperto-ingredient-8",
+            "aperto-ingredient-9"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "aperto-step-1",
@@ -5278,6 +7096,48 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "aperto-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "aperto-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "aperto-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "aperto-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "aperto-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "aperto-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "aperto-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "aperto-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "aperto-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "aperto-step-6"
         }
       ],
       "tips": [
@@ -5436,6 +7296,42 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "deepdish-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "deepdish-ingredient-1",
+            "deepdish-ingredient-2",
+            "deepdish-ingredient-3",
+            "deepdish-ingredient-4",
+            "deepdish-ingredient-5",
+            "deepdish-ingredient-6",
+            "deepdish-ingredient-7"
+          ]
+        },
+        {
+          "id": "deepdish-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "deepdish-ingredient-8",
+            "deepdish-ingredient-9",
+            "deepdish-ingredient-10",
+            "deepdish-ingredient-11",
+            "deepdish-ingredient-12",
+            "deepdish-ingredient-13",
+            "deepdish-ingredient-14"
+          ]
+        },
+        {
+          "id": "deepdish-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "deepdish-ingredient-15",
+            "deepdish-ingredient-16"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "deepdish-step-1",
@@ -5581,6 +7477,56 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "deepdish-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "deepdish-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "deepdish-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "deepdish-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "deepdish-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "deepdish-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "deepdish-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "deepdish-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "deepdish-step-7"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "deepdish-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "deepdish-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "deepdish-step-9"
+        }
+      ],
       "tips": [
         "For a variation, skip the sauce, and top with chopped bacon, caramelized onions and thyme. Onions can be caramelized by sautéeing on low for an hour with 3 tablespoons of butter, and a sprinkle of salt and sugar."
       ],
@@ -5706,6 +7652,38 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "lasagna-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "lasagna-ingredient-1",
+            "lasagna-ingredient-2",
+            "lasagna-ingredient-3",
+            "lasagna-ingredient-4",
+            "lasagna-ingredient-5",
+            "lasagna-ingredient-6",
+            "lasagna-ingredient-7",
+            "lasagna-ingredient-8"
+          ]
+        },
+        {
+          "id": "lasagna-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "lasagna-ingredient-9",
+            "lasagna-ingredient-10"
+          ]
+        },
+        {
+          "id": "lasagna-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "lasagna-ingredient-11",
+            "lasagna-ingredient-12"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "lasagna-step-1",
@@ -5820,6 +7798,56 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "lasagna-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "lasagna-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "lasagna-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "lasagna-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "lasagna-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "lasagna-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "lasagna-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "lasagna-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "lasagna-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "lasagna-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "lasagna-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "lasagna-step-9"
         }
       ],
       "tips": [],
@@ -6003,6 +8031,63 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "enchilada-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "enchilada-ingredient-1",
+            "enchilada-ingredient-2"
+          ]
+        },
+        {
+          "id": "enchilada-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "enchilada-ingredient-3",
+            "enchilada-ingredient-4",
+            "enchilada-ingredient-5",
+            "enchilada-ingredient-6",
+            "enchilada-ingredient-7",
+            "enchilada-ingredient-8",
+            "enchilada-ingredient-9"
+          ]
+        },
+        {
+          "id": "enchilada-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "enchilada-ingredient-10"
+          ]
+        },
+        {
+          "id": "enchilada-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "enchilada-ingredient-11",
+            "enchilada-ingredient-12",
+            "enchilada-ingredient-13",
+            "enchilada-ingredient-14"
+          ]
+        },
+        {
+          "id": "enchilada-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "enchilada-ingredient-15",
+            "enchilada-ingredient-16",
+            "enchilada-ingredient-17",
+            "enchilada-ingredient-18"
+          ]
+        },
+        {
+          "id": "enchilada-group-6",
+          "title": null,
+          "ingredientIDs": [
+            "enchilada-ingredient-19"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "enchilada-step-1",
@@ -6143,6 +8228,76 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "enchilada-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "enchilada-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "enchilada-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "enchilada-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "enchilada-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "enchilada-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "enchilada-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "enchilada-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "enchilada-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "enchilada-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "enchilada-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "enchilada-step-7"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "enchilada-group-6"
+        },
+        {
+          "kind": "step",
+          "id": "enchilada-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "enchilada-step-9"
+        },
+        {
+          "kind": "step",
+          "id": "enchilada-step-10"
+        },
+        {
+          "kind": "step",
+          "id": "enchilada-step-11"
         }
       ],
       "tips": [],
@@ -6292,6 +8447,53 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "tomatillo-enchilada-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "tomatillo-enchilada-ingredient-1",
+            "tomatillo-enchilada-ingredient-2",
+            "tomatillo-enchilada-ingredient-3"
+          ]
+        },
+        {
+          "id": "tomatillo-enchilada-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "tomatillo-enchilada-ingredient-4",
+            "tomatillo-enchilada-ingredient-5",
+            "tomatillo-enchilada-ingredient-6",
+            "tomatillo-enchilada-ingredient-7",
+            "tomatillo-enchilada-ingredient-8",
+            "tomatillo-enchilada-ingredient-9"
+          ]
+        },
+        {
+          "id": "tomatillo-enchilada-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "tomatillo-enchilada-ingredient-10",
+            "tomatillo-enchilada-ingredient-11"
+          ]
+        },
+        {
+          "id": "tomatillo-enchilada-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "tomatillo-enchilada-ingredient-12"
+          ]
+        },
+        {
+          "id": "tomatillo-enchilada-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "tomatillo-enchilada-ingredient-13",
+            "tomatillo-enchilada-ingredient-14",
+            "tomatillo-enchilada-ingredient-15"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "tomatillo-enchilada-step-1",
@@ -6390,6 +8592,60 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "tomatillo-enchilada-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "tomatillo-enchilada-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "tomatillo-enchilada-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "tomatillo-enchilada-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "tomatillo-enchilada-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "tomatillo-enchilada-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "tomatillo-enchilada-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "tomatillo-enchilada-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "tomatillo-enchilada-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "tomatillo-enchilada-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "tomatillo-enchilada-step-7"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "tomatillo-enchilada-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "tomatillo-enchilada-step-8"
         }
       ],
       "tips": [],
@@ -6586,6 +8842,65 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "chili-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "chili-ingredient-1",
+            "chili-ingredient-2"
+          ]
+        },
+        {
+          "id": "chili-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "chili-ingredient-3",
+            "chili-ingredient-4",
+            "chili-ingredient-5",
+            "chili-ingredient-6",
+            "chili-ingredient-7",
+            "chili-ingredient-8",
+            "chili-ingredient-9"
+          ]
+        },
+        {
+          "id": "chili-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "chili-ingredient-10",
+            "chili-ingredient-11",
+            "chili-ingredient-12",
+            "chili-ingredient-13",
+            "chili-ingredient-14"
+          ]
+        },
+        {
+          "id": "chili-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "chili-ingredient-15"
+          ]
+        },
+        {
+          "id": "chili-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "chili-ingredient-16",
+            "chili-ingredient-17"
+          ]
+        },
+        {
+          "id": "chili-group-6",
+          "title": null,
+          "ingredientIDs": [
+            "chili-ingredient-18",
+            "chili-ingredient-19",
+            "chili-ingredient-20",
+            "chili-ingredient-21"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "chili-step-1",
@@ -6693,6 +9008,64 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "chili-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "chili-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chili-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "chili-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chili-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "chili-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "chili-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chili-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "chili-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "chili-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chili-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "chili-step-7"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chili-group-6"
+        },
+        {
+          "kind": "step",
+          "id": "chili-step-8"
         }
       ],
       "tips": [],
@@ -6858,6 +9231,49 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "pulledpork-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "pulledpork-ingredient-1",
+            "pulledpork-ingredient-2",
+            "pulledpork-ingredient-3",
+            "pulledpork-ingredient-4",
+            "pulledpork-ingredient-5",
+            "pulledpork-ingredient-6",
+            "pulledpork-ingredient-7"
+          ]
+        },
+        {
+          "id": "pulledpork-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "pulledpork-ingredient-8"
+          ]
+        },
+        {
+          "id": "pulledpork-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "pulledpork-ingredient-9",
+            "pulledpork-ingredient-10"
+          ]
+        },
+        {
+          "id": "pulledpork-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "pulledpork-ingredient-11",
+            "pulledpork-ingredient-12",
+            "pulledpork-ingredient-13",
+            "pulledpork-ingredient-14",
+            "pulledpork-ingredient-15",
+            "pulledpork-ingredient-16",
+            "pulledpork-ingredient-17"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "pulledpork-step-1",
@@ -7020,6 +9436,68 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "pulledpork-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "pulledpork-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pulledpork-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "pulledpork-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "pulledpork-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pulledpork-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "pulledpork-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "pulledpork-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "pulledpork-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pulledpork-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "pulledpork-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "pulledpork-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "pulledpork-step-9"
+        },
+        {
+          "kind": "step",
+          "id": "pulledpork-step-10"
+        },
+        {
+          "kind": "step",
+          "id": "pulledpork-step-11"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "1aaa048d317c463cfbb6c97cca9cd8d1232fe37be11a26b842b8c860bf75857a",
@@ -7129,6 +9607,43 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "potroast-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "potroast-ingredient-1"
+          ]
+        },
+        {
+          "id": "potroast-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "potroast-ingredient-2",
+            "potroast-ingredient-3",
+            "potroast-ingredient-4",
+            "potroast-ingredient-5",
+            "potroast-ingredient-6"
+          ]
+        },
+        {
+          "id": "potroast-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "potroast-ingredient-7",
+            "potroast-ingredient-8",
+            "potroast-ingredient-9"
+          ]
+        },
+        {
+          "id": "potroast-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "potroast-ingredient-10",
+            "potroast-ingredient-11"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "potroast-step-1",
@@ -7203,6 +9718,48 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "potroast-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "potroast-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "potroast-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "potroast-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "potroast-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "potroast-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "potroast-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "potroast-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "potroast-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "potroast-group-4"
         }
       ],
       "tips": [
@@ -7351,6 +9908,41 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "pho-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "pho-ingredient-1",
+            "pho-ingredient-2",
+            "pho-ingredient-3",
+            "pho-ingredient-4",
+            "pho-ingredient-5"
+          ]
+        },
+        {
+          "id": "pho-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "pho-ingredient-6",
+            "pho-ingredient-7",
+            "pho-ingredient-8",
+            "pho-ingredient-9",
+            "pho-ingredient-10",
+            "pho-ingredient-11",
+            "pho-ingredient-12"
+          ]
+        },
+        {
+          "id": "pho-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "pho-ingredient-13",
+            "pho-ingredient-14",
+            "pho-ingredient-15"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "pho-step-1",
@@ -7426,6 +10018,40 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "pho-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "pho-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "pho-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "pho-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pho-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "pho-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pho-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "pho-step-5"
         }
       ],
       "tips": [
@@ -7585,6 +10211,66 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "pork_ramen-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "pork_ramen-ingredient-1",
+            "pork_ramen-ingredient-2"
+          ]
+        },
+        {
+          "id": "pork_ramen-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "pork_ramen-ingredient-3"
+          ]
+        },
+        {
+          "id": "pork_ramen-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "pork_ramen-ingredient-4",
+            "pork_ramen-ingredient-5",
+            "pork_ramen-ingredient-6",
+            "pork_ramen-ingredient-7"
+          ]
+        },
+        {
+          "id": "pork_ramen-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "pork_ramen-ingredient-8"
+          ]
+        },
+        {
+          "id": "pork_ramen-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "pork_ramen-ingredient-9"
+          ]
+        },
+        {
+          "id": "pork_ramen-group-6",
+          "title": null,
+          "ingredientIDs": [
+            "pork_ramen-ingredient-10",
+            "pork_ramen-ingredient-11"
+          ]
+        },
+        {
+          "id": "pork_ramen-group-7",
+          "title": null,
+          "ingredientIDs": [
+            "pork_ramen-ingredient-12",
+            "pork_ramen-ingredient-13",
+            "pork_ramen-ingredient-14",
+            "pork_ramen-ingredient-15",
+            "pork_ramen-ingredient-16"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "pork_ramen-step-1",
@@ -7693,6 +10379,72 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "pork_ramen-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "pork_ramen-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pork_ramen-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "pork_ramen-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pork_ramen-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "pork_ramen-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pork_ramen-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "pork_ramen-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "pork_ramen-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pork_ramen-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "pork_ramen-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "pork_ramen-step-7"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pork_ramen-group-6"
+        },
+        {
+          "kind": "step",
+          "id": "pork_ramen-step-8"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pork_ramen-group-7"
+        },
+        {
+          "kind": "step",
+          "id": "pork_ramen-step-9"
         }
       ],
       "tips": [
@@ -7848,6 +10600,36 @@
           "groceryName": "Frozen peas",
           "staple": false,
           "excludeFromGroceries": false
+        }
+      ],
+      "ingredientGroups": [
+        {
+          "id": "pot_pie-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "pot_pie-ingredient-1",
+            "pot_pie-ingredient-2",
+            "pot_pie-ingredient-3",
+            "pot_pie-ingredient-4",
+            "pot_pie-ingredient-5"
+          ]
+        },
+        {
+          "id": "pot_pie-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "pot_pie-ingredient-6",
+            "pot_pie-ingredient-7",
+            "pot_pie-ingredient-8",
+            "pot_pie-ingredient-9",
+            "pot_pie-ingredient-10",
+            "pot_pie-ingredient-11",
+            "pot_pie-ingredient-12",
+            "pot_pie-ingredient-13",
+            "pot_pie-ingredient-14",
+            "pot_pie-ingredient-15",
+            "pot_pie-ingredient-16"
+          ]
         }
       ],
       "steps": [
@@ -8044,6 +10826,56 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "pot_pie-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "pot_pie-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "pot_pie-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "pot_pie-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pot_pie-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "pot_pie-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "pot_pie-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "pot_pie-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "pot_pie-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "pot_pie-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "pot_pie-step-9"
+        },
+        {
+          "kind": "step",
+          "id": "pot_pie-step-10"
+        }
+      ],
       "tips": [
         "You can either use a rotisserie chicken, or chicken breasts that you bake or boil. Shredded chicken is better in the dish than chopped."
       ],
@@ -8215,6 +11047,56 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "yellow_curry-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "yellow_curry-ingredient-1",
+            "yellow_curry-ingredient-2",
+            "yellow_curry-ingredient-3"
+          ]
+        },
+        {
+          "id": "yellow_curry-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "yellow_curry-ingredient-4",
+            "yellow_curry-ingredient-5",
+            "yellow_curry-ingredient-6",
+            "yellow_curry-ingredient-7",
+            "yellow_curry-ingredient-8"
+          ]
+        },
+        {
+          "id": "yellow_curry-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "yellow_curry-ingredient-9",
+            "yellow_curry-ingredient-10",
+            "yellow_curry-ingredient-11",
+            "yellow_curry-ingredient-12",
+            "yellow_curry-ingredient-13",
+            "yellow_curry-ingredient-14"
+          ]
+        },
+        {
+          "id": "yellow_curry-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "yellow_curry-ingredient-15"
+          ]
+        },
+        {
+          "id": "yellow_curry-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "yellow_curry-ingredient-16",
+            "yellow_curry-ingredient-17",
+            "yellow_curry-ingredient-18"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "yellow_curry-step-1",
@@ -8328,6 +11210,60 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "yellow_curry-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "yellow_curry-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "yellow_curry-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "yellow_curry-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "yellow_curry-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "yellow_curry-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "yellow_curry-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "yellow_curry-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "yellow_curry-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "yellow_curry-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "yellow_curry-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "yellow_curry-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "yellow_curry-step-8"
         }
       ],
       "tips": [],
@@ -8459,6 +11395,51 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "beef_stew-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "beef_stew-ingredient-1",
+            "beef_stew-ingredient-2",
+            "beef_stew-ingredient-3",
+            "beef_stew-ingredient-4"
+          ]
+        },
+        {
+          "id": "beef_stew-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "beef_stew-ingredient-5"
+          ]
+        },
+        {
+          "id": "beef_stew-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "beef_stew-ingredient-6",
+            "beef_stew-ingredient-7"
+          ]
+        },
+        {
+          "id": "beef_stew-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "beef_stew-ingredient-8",
+            "beef_stew-ingredient-9",
+            "beef_stew-ingredient-10",
+            "beef_stew-ingredient-11"
+          ]
+        },
+        {
+          "id": "beef_stew-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "beef_stew-ingredient-12",
+            "beef_stew-ingredient-13"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "beef_stew-step-1",
@@ -8562,6 +11543,60 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "beef_stew-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "beef_stew-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "beef_stew-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "beef_stew-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "beef_stew-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "beef_stew-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "beef_stew-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "beef_stew-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "beef_stew-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "beef_stew-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "beef_stew-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "beef_stew-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "beef_stew-step-8"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "343cbe3397d93d641d39b5f6a35176458cca7bc2bccf7c2c89007640c08d2d8f",
@@ -8636,6 +11671,32 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "pasta_ouva-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "pasta_ouva-ingredient-1",
+            "pasta_ouva-ingredient-2"
+          ]
+        },
+        {
+          "id": "pasta_ouva-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "pasta_ouva-ingredient-3",
+            "pasta_ouva-ingredient-4"
+          ]
+        },
+        {
+          "id": "pasta_ouva-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "pasta_ouva-ingredient-5",
+            "pasta_ouva-ingredient-6"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "pasta_ouva-step-1",
@@ -8684,6 +11745,36 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "pasta_ouva-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "pasta_ouva-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pasta_ouva-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "pasta_ouva-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pasta_ouva-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "pasta_ouva-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "pasta_ouva-step-4"
         }
       ],
       "tips": [],
@@ -8846,6 +11937,67 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "cashew_chicken-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "cashew_chicken-ingredient-1",
+            "cashew_chicken-ingredient-2",
+            "cashew_chicken-ingredient-3",
+            "cashew_chicken-ingredient-4",
+            "cashew_chicken-ingredient-5"
+          ]
+        },
+        {
+          "id": "cashew_chicken-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "cashew_chicken-ingredient-6"
+          ]
+        },
+        {
+          "id": "cashew_chicken-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "cashew_chicken-ingredient-7"
+          ]
+        },
+        {
+          "id": "cashew_chicken-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "cashew_chicken-ingredient-8",
+            "cashew_chicken-ingredient-9",
+            "cashew_chicken-ingredient-10"
+          ]
+        },
+        {
+          "id": "cashew_chicken-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "cashew_chicken-ingredient-11"
+          ]
+        },
+        {
+          "id": "cashew_chicken-group-6",
+          "title": null,
+          "ingredientIDs": [
+            "cashew_chicken-ingredient-12",
+            "cashew_chicken-ingredient-13",
+            "cashew_chicken-ingredient-14",
+            "cashew_chicken-ingredient-15",
+            "cashew_chicken-ingredient-16"
+          ]
+        },
+        {
+          "id": "cashew_chicken-group-7",
+          "title": null,
+          "ingredientIDs": [
+            "cashew_chicken-ingredient-17"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "cashew_chicken-step-1",
@@ -8987,6 +12139,80 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "cashew_chicken-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "cashew_chicken-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "cashew_chicken-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "cashew_chicken-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "cashew_chicken-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "cashew_chicken-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "cashew_chicken-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "cashew_chicken-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "cashew_chicken-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "cashew_chicken-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "cashew_chicken-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "cashew_chicken-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "cashew_chicken-step-8"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "cashew_chicken-group-6"
+        },
+        {
+          "kind": "step",
+          "id": "cashew_chicken-step-9"
+        },
+        {
+          "kind": "step",
+          "id": "cashew_chicken-step-10"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "cashew_chicken-group-7"
+        },
+        {
+          "kind": "step",
+          "id": "cashew_chicken-step-11"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "0260d0c6f65ac4a780e6f128dc6827ad600f8b1fc5a79e9c6a3d96fc48b463f5",
@@ -9112,6 +12338,50 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "pad_see_ew-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "pad_see_ew-ingredient-1"
+          ]
+        },
+        {
+          "id": "pad_see_ew-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "pad_see_ew-ingredient-2",
+            "pad_see_ew-ingredient-3",
+            "pad_see_ew-ingredient-4"
+          ]
+        },
+        {
+          "id": "pad_see_ew-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "pad_see_ew-ingredient-5",
+            "pad_see_ew-ingredient-6"
+          ]
+        },
+        {
+          "id": "pad_see_ew-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "pad_see_ew-ingredient-7",
+            "pad_see_ew-ingredient-8",
+            "pad_see_ew-ingredient-9",
+            "pad_see_ew-ingredient-10",
+            "pad_see_ew-ingredient-11"
+          ]
+        },
+        {
+          "id": "pad_see_ew-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "pad_see_ew-ingredient-12"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "pad_see_ew-step-1",
@@ -9222,6 +12492,64 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "pad_see_ew-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "pad_see_ew-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pad_see_ew-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "pad_see_ew-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pad_see_ew-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "pad_see_ew-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pad_see_ew-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "pad_see_ew-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "pad_see_ew-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pad_see_ew-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "pad_see_ew-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "pad_see_ew-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "pad_see_ew-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "pad_see_ew-step-9"
         }
       ],
       "tips": [],
@@ -9360,6 +12688,34 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "braised_chicken_thighs-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "braised_chicken_thighs-ingredient-1",
+            "braised_chicken_thighs-ingredient-2",
+            "braised_chicken_thighs-ingredient-3",
+            "braised_chicken_thighs-ingredient-4",
+            "braised_chicken_thighs-ingredient-5"
+          ]
+        },
+        {
+          "id": "braised_chicken_thighs-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "braised_chicken_thighs-ingredient-6",
+            "braised_chicken_thighs-ingredient-7",
+            "braised_chicken_thighs-ingredient-8",
+            "braised_chicken_thighs-ingredient-9",
+            "braised_chicken_thighs-ingredient-10",
+            "braised_chicken_thighs-ingredient-11",
+            "braised_chicken_thighs-ingredient-12",
+            "braised_chicken_thighs-ingredient-13",
+            "braised_chicken_thighs-ingredient-14"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "braised_chicken_thighs-step-1",
@@ -9413,6 +12769,28 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "braised_chicken_thighs-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "braised_chicken_thighs-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "braised_chicken_thighs-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "braised_chicken_thighs-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "braised_chicken_thighs-step-3"
         }
       ],
       "tips": [],
@@ -9535,6 +12913,50 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "chicken_parmesan-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_parmesan-ingredient-1",
+            "chicken_parmesan-ingredient-2",
+            "chicken_parmesan-ingredient-3"
+          ]
+        },
+        {
+          "id": "chicken_parmesan-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_parmesan-ingredient-4",
+            "chicken_parmesan-ingredient-5"
+          ]
+        },
+        {
+          "id": "chicken_parmesan-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_parmesan-ingredient-6",
+            "chicken_parmesan-ingredient-7",
+            "chicken_parmesan-ingredient-8",
+            "chicken_parmesan-ingredient-9",
+            "chicken_parmesan-ingredient-10"
+          ]
+        },
+        {
+          "id": "chicken_parmesan-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_parmesan-ingredient-11"
+          ]
+        },
+        {
+          "id": "chicken_parmesan-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_parmesan-ingredient-12"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "chicken_parmesan-step-1",
@@ -9621,6 +13043,56 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "step",
+          "id": "chicken_parmesan-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_parmesan-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_parmesan-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_parmesan-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_parmesan-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_parmesan-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_parmesan-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_parmesan-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_parmesan-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_parmesan-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_parmesan-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_parmesan-step-7"
         }
       ],
       "tips": [],
@@ -9863,6 +13335,53 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "panko_mahi_mahi-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "panko_mahi_mahi-ingredient-1",
+            "panko_mahi_mahi-ingredient-2",
+            "panko_mahi_mahi-ingredient-3",
+            "panko_mahi_mahi-ingredient-4",
+            "panko_mahi_mahi-ingredient-5",
+            "panko_mahi_mahi-ingredient-6",
+            "panko_mahi_mahi-ingredient-7",
+            "panko_mahi_mahi-ingredient-8",
+            "panko_mahi_mahi-ingredient-9",
+            "panko_mahi_mahi-ingredient-10"
+          ]
+        },
+        {
+          "id": "panko_mahi_mahi-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "panko_mahi_mahi-ingredient-11",
+            "panko_mahi_mahi-ingredient-12",
+            "panko_mahi_mahi-ingredient-13",
+            "panko_mahi_mahi-ingredient-14",
+            "panko_mahi_mahi-ingredient-15",
+            "panko_mahi_mahi-ingredient-16",
+            "panko_mahi_mahi-ingredient-17",
+            "panko_mahi_mahi-ingredient-18",
+            "panko_mahi_mahi-ingredient-19",
+            "panko_mahi_mahi-ingredient-20",
+            "panko_mahi_mahi-ingredient-21"
+          ]
+        },
+        {
+          "id": "panko_mahi_mahi-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "panko_mahi_mahi-ingredient-22",
+            "panko_mahi_mahi-ingredient-23",
+            "panko_mahi_mahi-ingredient-24",
+            "panko_mahi_mahi-ingredient-25",
+            "panko_mahi_mahi-ingredient-26",
+            "panko_mahi_mahi-ingredient-27"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "panko_mahi_mahi-step-1",
@@ -9908,6 +13427,32 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "panko_mahi_mahi-group-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "panko_mahi_mahi-group-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "panko_mahi_mahi-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "panko_mahi_mahi-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "panko_mahi_mahi-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "panko_mahi_mahi-step-3"
         }
       ],
       "tips": [],
@@ -10078,6 +13623,49 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "chicken_kebabs-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_kebabs-ingredient-1",
+            "chicken_kebabs-ingredient-2",
+            "chicken_kebabs-ingredient-3",
+            "chicken_kebabs-ingredient-4",
+            "chicken_kebabs-ingredient-5",
+            "chicken_kebabs-ingredient-6",
+            "chicken_kebabs-ingredient-7",
+            "chicken_kebabs-ingredient-8"
+          ]
+        },
+        {
+          "id": "chicken_kebabs-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_kebabs-ingredient-9"
+          ]
+        },
+        {
+          "id": "chicken_kebabs-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_kebabs-ingredient-10",
+            "chicken_kebabs-ingredient-11",
+            "chicken_kebabs-ingredient-12",
+            "chicken_kebabs-ingredient-13",
+            "chicken_kebabs-ingredient-14",
+            "chicken_kebabs-ingredient-15"
+          ]
+        },
+        {
+          "id": "chicken_kebabs-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_kebabs-ingredient-16",
+            "chicken_kebabs-ingredient-17"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "chicken_kebabs-step-1",
@@ -10193,6 +13781,56 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_kebabs-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_kebabs-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_kebabs-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_kebabs-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_kebabs-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_kebabs-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_kebabs-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_kebabs-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_kebabs-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_kebabs-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_kebabs-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_kebabs-step-8"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "5ea46f8657e655ab8886dcfd140b8021a82483f70dd02ec6e7d9f5b16c4eaad1",
@@ -10302,6 +13940,42 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "chicken_piccata-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_piccata-ingredient-1",
+            "chicken_piccata-ingredient-2"
+          ]
+        },
+        {
+          "id": "chicken_piccata-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_piccata-ingredient-3",
+            "chicken_piccata-ingredient-4"
+          ]
+        },
+        {
+          "id": "chicken_piccata-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_piccata-ingredient-5",
+            "chicken_piccata-ingredient-6",
+            "chicken_piccata-ingredient-7",
+            "chicken_piccata-ingredient-8"
+          ]
+        },
+        {
+          "id": "chicken_piccata-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "chicken_piccata-ingredient-9",
+            "chicken_piccata-ingredient-10"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "chicken_piccata-step-1",
@@ -10378,6 +14052,48 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_piccata-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_piccata-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_piccata-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_piccata-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_piccata-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_piccata-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_piccata-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_piccata-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chicken_piccata-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "chicken_piccata-step-6"
         }
       ],
       "tips": [],
@@ -10519,6 +14235,52 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "orange_chicken-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "orange_chicken-ingredient-1",
+            "orange_chicken-ingredient-2"
+          ]
+        },
+        {
+          "id": "orange_chicken-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "orange_chicken-ingredient-3",
+            "orange_chicken-ingredient-4",
+            "orange_chicken-ingredient-5",
+            "orange_chicken-ingredient-6",
+            "orange_chicken-ingredient-7",
+            "orange_chicken-ingredient-8",
+            "orange_chicken-ingredient-9"
+          ]
+        },
+        {
+          "id": "orange_chicken-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "orange_chicken-ingredient-10"
+          ]
+        },
+        {
+          "id": "orange_chicken-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "orange_chicken-ingredient-11",
+            "orange_chicken-ingredient-12"
+          ]
+        },
+        {
+          "id": "orange_chicken-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "orange_chicken-ingredient-13",
+            "orange_chicken-ingredient-14"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "orange_chicken-step-1",
@@ -10583,6 +14345,48 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "orange_chicken-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "orange_chicken-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "orange_chicken-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "orange_chicken-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "orange_chicken-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "orange_chicken-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "orange_chicken-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "orange_chicken-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "orange_chicken-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "orange_chicken-step-5"
         }
       ],
       "tips": [],
@@ -11024,6 +14828,126 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "turkey-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "turkey-ingredient-1",
+            "turkey-ingredient-2",
+            "turkey-ingredient-3",
+            "turkey-ingredient-4",
+            "turkey-ingredient-5",
+            "turkey-ingredient-6",
+            "turkey-ingredient-7",
+            "turkey-ingredient-8",
+            "turkey-ingredient-9",
+            "turkey-ingredient-10",
+            "turkey-ingredient-11",
+            "turkey-ingredient-12",
+            "turkey-ingredient-13",
+            "turkey-ingredient-14",
+            "turkey-ingredient-15",
+            "turkey-ingredient-16",
+            "turkey-ingredient-17"
+          ]
+        },
+        {
+          "id": "turkey-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "turkey-ingredient-18",
+            "turkey-ingredient-19",
+            "turkey-ingredient-20"
+          ]
+        },
+        {
+          "id": "turkey-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "turkey-ingredient-21"
+          ]
+        },
+        {
+          "id": "turkey-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "turkey-ingredient-22",
+            "turkey-ingredient-23",
+            "turkey-ingredient-24",
+            "turkey-ingredient-25",
+            "turkey-ingredient-26",
+            "turkey-ingredient-27",
+            "turkey-ingredient-28",
+            "turkey-ingredient-29"
+          ]
+        },
+        {
+          "id": "turkey-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "turkey-ingredient-30"
+          ]
+        },
+        {
+          "id": "turkey-group-6",
+          "title": null,
+          "ingredientIDs": [
+            "turkey-ingredient-31",
+            "turkey-ingredient-32",
+            "turkey-ingredient-33",
+            "turkey-ingredient-34",
+            "turkey-ingredient-35",
+            "turkey-ingredient-36",
+            "turkey-ingredient-37"
+          ]
+        },
+        {
+          "id": "turkey-group-7",
+          "title": null,
+          "ingredientIDs": [
+            "turkey-ingredient-38",
+            "turkey-ingredient-39",
+            "turkey-ingredient-40",
+            "turkey-ingredient-41"
+          ]
+        },
+        {
+          "id": "turkey-group-8",
+          "title": null,
+          "ingredientIDs": [
+            "turkey-ingredient-42",
+            "turkey-ingredient-43",
+            "turkey-ingredient-44"
+          ]
+        },
+        {
+          "id": "turkey-group-9",
+          "title": null,
+          "ingredientIDs": [
+            "turkey-ingredient-45",
+            "turkey-ingredient-46"
+          ]
+        },
+        {
+          "id": "turkey-group-10",
+          "title": null,
+          "ingredientIDs": [
+            "turkey-ingredient-47",
+            "turkey-ingredient-48",
+            "turkey-ingredient-49",
+            "turkey-ingredient-50"
+          ]
+        },
+        {
+          "id": "turkey-group-11",
+          "title": null,
+          "ingredientIDs": [
+            "turkey-ingredient-51",
+            "turkey-ingredient-52"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "turkey-step-1",
@@ -11298,6 +15222,136 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "step",
+          "id": "turkey-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "turkey-group-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "turkey-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "turkey-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "turkey-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "turkey-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "turkey-group-6"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-7"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "turkey-group-7"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-8"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "turkey-group-8"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-9"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-10"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-11"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "turkey-group-9"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-12"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "turkey-group-10"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-13"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "turkey-group-11"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-14"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-15"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-16"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-17"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-18"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-19"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-20"
+        },
+        {
+          "kind": "step",
+          "id": "turkey-step-21"
+        }
+      ],
       "tips": [
         "Try using two different kinds of bread. I've had good luck with Brioche, challah, sourdough and rye. Don't stretch it to three loaves, the stuffing will be dry. Pre-sliced bread is OK.",
         "I think this recipe for gravy without using the pan drippings is even better than with the pan drippings, and it allows you to absorb all the drippings into the stuffing.",
@@ -11462,6 +15516,61 @@
           "groceryName": "Fontina cheese",
           "staple": false,
           "excludeFromGroceries": false
+        }
+      ],
+      "ingredientGroups": [
+        {
+          "id": "ham-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "ham-ingredient-1",
+            "ham-ingredient-2",
+            "ham-ingredient-3",
+            "ham-ingredient-4",
+            "ham-ingredient-5"
+          ]
+        },
+        {
+          "id": "ham-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "ham-ingredient-6"
+          ]
+        },
+        {
+          "id": "ham-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "ham-ingredient-7"
+          ]
+        },
+        {
+          "id": "ham-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "ham-ingredient-8",
+            "ham-ingredient-9",
+            "ham-ingredient-10",
+            "ham-ingredient-11",
+            "ham-ingredient-12",
+            "ham-ingredient-13",
+            "ham-ingredient-14"
+          ]
+        },
+        {
+          "id": "ham-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "ham-ingredient-15"
+          ]
+        },
+        {
+          "id": "ham-group-6",
+          "title": null,
+          "ingredientIDs": [
+            "ham-ingredient-16",
+            "ham-ingredient-17"
+          ]
         }
       ],
       "steps": [
@@ -11632,6 +15741,84 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "ham-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "ham-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "ham-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-9"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-10"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "ham-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-11"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "ham-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-12"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "ham-group-6"
+        },
+        {
+          "kind": "step",
+          "id": "ham-step-13"
+        }
+      ],
       "tips": [
         "You can't really over-cook a ham. I cook for 20 minutes a pound which develops a better crust. Spiral precut hand are fine.",
         "I like a strong garlic flavor in these which is non-traditional. Use a larger baking dish for quicker cooking and more browning. The whole thing takes about 2 hours. If you add the cheese initially it will break and eat greasey."
@@ -11773,6 +15960,46 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "beef_tenderloin-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "beef_tenderloin-ingredient-1"
+          ]
+        },
+        {
+          "id": "beef_tenderloin-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "beef_tenderloin-ingredient-2",
+            "beef_tenderloin-ingredient-3"
+          ]
+        },
+        {
+          "id": "beef_tenderloin-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "beef_tenderloin-ingredient-4",
+            "beef_tenderloin-ingredient-5",
+            "beef_tenderloin-ingredient-6",
+            "beef_tenderloin-ingredient-7",
+            "beef_tenderloin-ingredient-8",
+            "beef_tenderloin-ingredient-9",
+            "beef_tenderloin-ingredient-10"
+          ]
+        },
+        {
+          "id": "beef_tenderloin-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "beef_tenderloin-ingredient-11",
+            "beef_tenderloin-ingredient-12",
+            "beef_tenderloin-ingredient-13",
+            "beef_tenderloin-ingredient-14"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "beef_tenderloin-step-1",
@@ -11882,6 +16109,56 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "beef_tenderloin-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "beef_tenderloin-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "beef_tenderloin-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "beef_tenderloin-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "beef_tenderloin-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "beef_tenderloin-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "beef_tenderloin-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "beef_tenderloin-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "beef_tenderloin-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "beef_tenderloin-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "beef_tenderloin-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "beef_tenderloin-step-8"
+        }
+      ],
       "tips": [
         "A good sauce to serve with is another jar of horseradish, enough heavy cream to loosen, and salt and pepper to taste. Optional minced green apple and red onion."
       ],
@@ -11988,6 +16265,30 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "christmas-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "christmas-ingredient-1",
+            "christmas-ingredient-2",
+            "christmas-ingredient-3",
+            "christmas-ingredient-4",
+            "christmas-ingredient-5",
+            "christmas-ingredient-6",
+            "christmas-ingredient-7",
+            "christmas-ingredient-8",
+            "christmas-ingredient-9"
+          ]
+        },
+        {
+          "id": "christmas-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "christmas-ingredient-10"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "christmas-step-1",
@@ -12069,6 +16370,36 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "christmas-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "christmas-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "christmas-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "christmas-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "christmas-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "christmas-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "christmas-step-5"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "7202fdfba579c3abc7c75211a923d0d645d26aae8bc2368e2d35e0f0be04fb53",
@@ -12134,6 +16465,19 @@
           "groceryName": "Flour",
           "staple": true,
           "excludeFromGroceries": false
+        }
+      ],
+      "ingredientGroups": [
+        {
+          "id": "cheesecake-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "cheesecake-ingredient-1",
+            "cheesecake-ingredient-2",
+            "cheesecake-ingredient-3",
+            "cheesecake-ingredient-4",
+            "cheesecake-ingredient-5"
+          ]
         }
       ],
       "steps": [
@@ -12222,6 +16566,36 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "step",
+          "id": "cheesecake-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "cheesecake-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "cheesecake-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "cheesecake-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "cheesecake-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "cheesecake-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "cheesecake-step-6"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "35433a4a8ac0897693dda94a4b7039a55c6279cf8baa12fec6a9deba179dcaac",
@@ -12290,6 +16664,32 @@
           "groceryName": "Vegetable oil",
           "staple": true,
           "excludeFromGroceries": false
+        }
+      ],
+      "ingredientGroups": [
+        {
+          "id": "pancakes-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "pancakes-ingredient-1",
+            "pancakes-ingredient-2"
+          ]
+        },
+        {
+          "id": "pancakes-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "pancakes-ingredient-3",
+            "pancakes-ingredient-4",
+            "pancakes-ingredient-5"
+          ]
+        },
+        {
+          "id": "pancakes-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "pancakes-ingredient-6"
+          ]
         }
       ],
       "steps": [
@@ -12387,6 +16787,52 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "pancakes-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "pancakes-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pancakes-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "pancakes-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "pancakes-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "pancakes-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "pancakes-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "pancakes-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "pancakes-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "pancakes-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "pancakes-step-8"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "ab5f831246d1461e077e9a19bdc8767ba77d11487e6614ceccb15407e9d9bf81",
@@ -12440,6 +16886,18 @@
           "groceryName": "Kosher salt",
           "staple": true,
           "excludeFromGroceries": false
+        }
+      ],
+      "ingredientGroups": [
+        {
+          "id": "bread-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "bread-ingredient-1",
+            "bread-ingredient-2",
+            "bread-ingredient-3",
+            "bread-ingredient-4"
+          ]
         }
       ],
       "steps": [
@@ -12598,6 +17056,56 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "bread-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "bread-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "bread-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "bread-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "bread-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "bread-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "bread-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "bread-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "bread-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "bread-step-9"
+        },
+        {
+          "kind": "step",
+          "id": "bread-step-10"
+        },
+        {
+          "kind": "step",
+          "id": "bread-step-11"
+        }
+      ],
       "tips": [
         "You can increase the speed of the rising step by placing the loaf in a very low oven at 100°. Many home ovens do not go that low. In that case, you can preheat to a low heat, turn the oven off, and leave the door open. Either way, place a very wet paper towel on top of the loaf to keep the surface from drying out."
       ],
@@ -12718,6 +17226,38 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "flatbread-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "flatbread-ingredient-1",
+            "flatbread-ingredient-2"
+          ]
+        },
+        {
+          "id": "flatbread-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "flatbread-ingredient-3",
+            "flatbread-ingredient-4",
+            "flatbread-ingredient-5",
+            "flatbread-ingredient-6"
+          ]
+        },
+        {
+          "id": "flatbread-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "flatbread-ingredient-7",
+            "flatbread-ingredient-8",
+            "flatbread-ingredient-9",
+            "flatbread-ingredient-10",
+            "flatbread-ingredient-11",
+            "flatbread-ingredient-12"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "flatbread-step-1",
@@ -12802,6 +17342,44 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "flatbread-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "flatbread-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "flatbread-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "flatbread-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "flatbread-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "flatbread-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "flatbread-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "flatbread-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "flatbread-step-6"
         }
       ],
       "tips": [],
@@ -12917,6 +17495,43 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "prosciutto_cheese_bread-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "prosciutto_cheese_bread-ingredient-1",
+            "prosciutto_cheese_bread-ingredient-2",
+            "prosciutto_cheese_bread-ingredient-3"
+          ]
+        },
+        {
+          "id": "prosciutto_cheese_bread-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "prosciutto_cheese_bread-ingredient-4",
+            "prosciutto_cheese_bread-ingredient-5",
+            "prosciutto_cheese_bread-ingredient-6",
+            "prosciutto_cheese_bread-ingredient-7"
+          ]
+        },
+        {
+          "id": "prosciutto_cheese_bread-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "prosciutto_cheese_bread-ingredient-8",
+            "prosciutto_cheese_bread-ingredient-9",
+            "prosciutto_cheese_bread-ingredient-10"
+          ]
+        },
+        {
+          "id": "prosciutto_cheese_bread-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "prosciutto_cheese_bread-ingredient-11"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "prosciutto_cheese_bread-step-1",
@@ -13007,6 +17622,52 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "step",
+          "id": "prosciutto_cheese_bread-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "prosciutto_cheese_bread-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "prosciutto_cheese_bread-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "prosciutto_cheese_bread-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "prosciutto_cheese_bread-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "prosciutto_cheese_bread-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "prosciutto_cheese_bread-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "prosciutto_cheese_bread-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "prosciutto_cheese_bread-step-6"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "prosciutto_cheese_bread-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "prosciutto_cheese_bread-step-7"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "643bd9b00eb8c8816e176a88f899bcf7e8d9e64ba83c63d8a5429fbd2debfd98",
@@ -13079,6 +17740,26 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "banana_muffins-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "banana_muffins-ingredient-1",
+            "banana_muffins-ingredient-2",
+            "banana_muffins-ingredient-3",
+            "banana_muffins-ingredient-4"
+          ]
+        },
+        {
+          "id": "banana_muffins-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "banana_muffins-ingredient-5",
+            "banana_muffins-ingredient-6"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "banana_muffins-step-1",
@@ -13126,6 +17807,32 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "step",
+          "id": "banana_muffins-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "banana_muffins-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "banana_muffins-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "banana_muffins-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "banana_muffins-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "banana_muffins-step-4"
         }
       ],
       "tips": [],
@@ -13294,6 +18001,56 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "cinnamon_bun-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "cinnamon_bun-ingredient-1",
+            "cinnamon_bun-ingredient-2",
+            "cinnamon_bun-ingredient-3",
+            "cinnamon_bun-ingredient-4"
+          ]
+        },
+        {
+          "id": "cinnamon_bun-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "cinnamon_bun-ingredient-5",
+            "cinnamon_bun-ingredient-6",
+            "cinnamon_bun-ingredient-7"
+          ]
+        },
+        {
+          "id": "cinnamon_bun-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "cinnamon_bun-ingredient-8",
+            "cinnamon_bun-ingredient-9",
+            "cinnamon_bun-ingredient-10"
+          ]
+        },
+        {
+          "id": "cinnamon_bun-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "cinnamon_bun-ingredient-11",
+            "cinnamon_bun-ingredient-12",
+            "cinnamon_bun-ingredient-13"
+          ]
+        },
+        {
+          "id": "cinnamon_bun-group-5",
+          "title": null,
+          "ingredientIDs": [
+            "cinnamon_bun-ingredient-14",
+            "cinnamon_bun-ingredient-15",
+            "cinnamon_bun-ingredient-16",
+            "cinnamon_bun-ingredient-17",
+            "cinnamon_bun-ingredient-18"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "cinnamon_bun-step-1",
@@ -13429,6 +18186,68 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "cinnamon_bun-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "cinnamon_bun-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "cinnamon_bun-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "cinnamon_bun-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "cinnamon_bun-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "cinnamon_bun-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "cinnamon_bun-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "cinnamon_bun-step-5"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "cinnamon_bun-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "cinnamon_bun-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "cinnamon_bun-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "cinnamon_bun-step-8"
+        },
+        {
+          "kind": "step",
+          "id": "cinnamon_bun-step-9"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "cinnamon_bun-group-5"
+        },
+        {
+          "kind": "step",
+          "id": "cinnamon_bun-step-10"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "07009adba90f1aef7a71ff82f58c80bded5a9dcb2cbc917dfc5e169bd0f7066c",
@@ -13506,6 +18325,33 @@
           "groceryName": "Buttermilk",
           "staple": false,
           "excludeFromGroceries": false
+        }
+      ],
+      "ingredientGroups": [
+        {
+          "id": "biscuits-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "biscuits-ingredient-1",
+            "biscuits-ingredient-2",
+            "biscuits-ingredient-3",
+            "biscuits-ingredient-4",
+            "biscuits-ingredient-5"
+          ]
+        },
+        {
+          "id": "biscuits-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "biscuits-ingredient-6"
+          ]
+        },
+        {
+          "id": "biscuits-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "biscuits-ingredient-7"
+          ]
         }
       ],
       "steps": [
@@ -13598,6 +18444,52 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "step",
+          "id": "biscuits-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "biscuits-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "biscuits-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "biscuits-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "biscuits-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "biscuits-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "biscuits-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "biscuits-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "biscuits-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "biscuits-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "biscuits-step-8"
         }
       ],
       "tips": [],
@@ -13759,6 +18651,49 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "yelllow_cake-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "yelllow_cake-ingredient-1",
+            "yelllow_cake-ingredient-2",
+            "yelllow_cake-ingredient-3",
+            "yelllow_cake-ingredient-4"
+          ]
+        },
+        {
+          "id": "yelllow_cake-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "yelllow_cake-ingredient-5",
+            "yelllow_cake-ingredient-6",
+            "yelllow_cake-ingredient-7",
+            "yelllow_cake-ingredient-8",
+            "yelllow_cake-ingredient-9"
+          ]
+        },
+        {
+          "id": "yelllow_cake-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "yelllow_cake-ingredient-10"
+          ]
+        },
+        {
+          "id": "yelllow_cake-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "yelllow_cake-ingredient-11",
+            "yelllow_cake-ingredient-12",
+            "yelllow_cake-ingredient-13",
+            "yelllow_cake-ingredient-14",
+            "yelllow_cake-ingredient-15",
+            "yelllow_cake-ingredient-16",
+            "yelllow_cake-ingredient-17"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "yelllow_cake-step-1",
@@ -13871,6 +18806,60 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "step",
+          "id": "yelllow_cake-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "yelllow_cake-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "yelllow_cake-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "yelllow_cake-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "yelllow_cake-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "yelllow_cake-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "yelllow_cake-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "yelllow_cake-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "yelllow_cake-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "yelllow_cake-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "yelllow_cake-step-8"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "yelllow_cake-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "yelllow_cake-step-9"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "e757773da62b3feeb71b91aaae9a3db741d76690067354855ad1478373e22dec",
@@ -13924,6 +18913,24 @@
           "groceryName": "Dried dill",
           "staple": false,
           "excludeFromGroceries": false
+        }
+      ],
+      "ingredientGroups": [
+        {
+          "id": "omelet-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "omelet-ingredient-1",
+            "omelet-ingredient-2"
+          ]
+        },
+        {
+          "id": "omelet-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "omelet-ingredient-3",
+            "omelet-ingredient-4"
+          ]
         }
       ],
       "steps": [
@@ -13986,6 +18993,36 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "omelet-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "omelet-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "omelet-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "omelet-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "omelet-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "omelet-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "omelet-step-5"
         }
       ],
       "tips": [],
@@ -14065,6 +19102,27 @@
           "groceryName": "Pepper",
           "staple": true,
           "excludeFromGroceries": false
+        }
+      ],
+      "ingredientGroups": [
+        {
+          "id": "stock-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "stock-ingredient-1",
+            "stock-ingredient-2",
+            "stock-ingredient-3"
+          ]
+        },
+        {
+          "id": "stock-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "stock-ingredient-4",
+            "stock-ingredient-5",
+            "stock-ingredient-6",
+            "stock-ingredient-7"
+          ]
         }
       ],
       "steps": [
@@ -14177,6 +19235,48 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "stock-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "stock-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "stock-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "stock-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "stock-step-4"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "stock-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "stock-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "stock-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "stock-step-7"
+        },
+        {
+          "kind": "step",
+          "id": "stock-step-8"
+        }
+      ],
       "tips": [
         "You can also add any protein and/or bones you have on hand. A chicken or turkey carcass is the usual option.",
         "The gelatin serves to give the stock a better mouth feel. You can get the same effect by using a lot of bones; gelatin will naturally be extracted from the bone marrow."
@@ -14242,6 +19342,19 @@
           "groceryName": "Non-chlorinated water",
           "staple": false,
           "excludeFromGroceries": false
+        }
+      ],
+      "ingredientGroups": [
+        {
+          "id": "pickles-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "pickles-ingredient-1",
+            "pickles-ingredient-2",
+            "pickles-ingredient-3",
+            "pickles-ingredient-4",
+            "pickles-ingredient-5"
+          ]
         }
       ],
       "steps": [
@@ -14321,6 +19434,32 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "pickles-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "pickles-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "pickles-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "pickles-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "pickles-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "pickles-step-5"
+        }
+      ],
       "tips": [
         "You will know if your pickles are good by smell. It should smell strong, but pleasant. It should not smell spoiled or rotten."
       ],
@@ -14394,6 +19533,20 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "adobo-green-adobo-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "adobo-green-adobo-ingredient-1",
+            "adobo-green-adobo-ingredient-2",
+            "adobo-green-adobo-ingredient-3",
+            "adobo-green-adobo-ingredient-4",
+            "adobo-green-adobo-ingredient-5",
+            "adobo-green-adobo-ingredient-6"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "adobo-green-adobo-step-1",
@@ -14442,6 +19595,24 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "adobo-green-adobo-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "adobo-green-adobo-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "adobo-green-adobo-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "adobo-green-adobo-step-3"
         }
       ],
       "tips": [],
@@ -14497,6 +19668,18 @@
           "groceryName": "Kosher salt",
           "staple": true,
           "excludeFromGroceries": false
+        }
+      ],
+      "ingredientGroups": [
+        {
+          "id": "adobo-red-adobo-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "adobo-red-adobo-ingredient-1",
+            "adobo-red-adobo-ingredient-2",
+            "adobo-red-adobo-ingredient-3",
+            "adobo-red-adobo-ingredient-4"
+          ]
         }
       ],
       "steps": [
@@ -14557,6 +19740,28 @@
           "active": true
         }
       ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "adobo-red-adobo-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "adobo-red-adobo-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "adobo-red-adobo-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "adobo-red-adobo-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "adobo-red-adobo-step-4"
+        }
+      ],
       "tips": [],
       "healthierOptions": [],
       "sourceHash": "d6519bf93eb56b2a6194f8f18ac480d93265e4e9f17cc9a365738d0114d8615b",
@@ -14604,6 +19809,17 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "plums-plum-jam-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "plums-plum-jam-ingredient-1",
+            "plums-plum-jam-ingredient-2",
+            "plums-plum-jam-ingredient-3"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "plums-plum-jam-step-1",
@@ -14630,6 +19846,20 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "plums-plum-jam-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "plums-plum-jam-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "plums-plum-jam-step-2"
         }
       ],
       "tips": [],
@@ -14670,6 +19900,16 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "plums-plum-preserves-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "plums-plum-preserves-ingredient-1",
+            "plums-plum-preserves-ingredient-2"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "plums-plum-preserves-step-1",
@@ -14682,6 +19922,16 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "plums-plum-preserves-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "plums-plum-preserves-step-1"
         }
       ],
       "tips": [],
@@ -14722,6 +19972,16 @@
           "excludeFromGroceries": true
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "plums-plum-mixer-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "plums-plum-mixer-ingredient-1",
+            "plums-plum-mixer-ingredient-2"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "plums-plum-mixer-step-1",
@@ -14734,6 +19994,16 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "plums-plum-mixer-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "plums-plum-mixer-step-1"
         }
       ],
       "tips": [],
@@ -14798,6 +20068,19 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "cocktails-whiskey-sour-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "cocktails-whiskey-sour-ingredient-1",
+            "cocktails-whiskey-sour-ingredient-2",
+            "cocktails-whiskey-sour-ingredient-3",
+            "cocktails-whiskey-sour-ingredient-4",
+            "cocktails-whiskey-sour-ingredient-5"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "cocktails-whiskey-sour-step-1",
@@ -14813,6 +20096,16 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "cocktails-whiskey-sour-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "cocktails-whiskey-sour-step-1"
         }
       ],
       "tips": [],
@@ -14870,6 +20163,18 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "cocktails-paloma-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "cocktails-paloma-ingredient-1",
+            "cocktails-paloma-ingredient-2",
+            "cocktails-paloma-ingredient-3",
+            "cocktails-paloma-ingredient-4"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "cocktails-paloma-step-1",
@@ -14884,6 +20189,16 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "cocktails-paloma-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "cocktails-paloma-step-1"
         }
       ],
       "tips": [],
@@ -14940,6 +20255,18 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "cocktails-margarita-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "cocktails-margarita-ingredient-1",
+            "cocktails-margarita-ingredient-2",
+            "cocktails-margarita-ingredient-3",
+            "cocktails-margarita-ingredient-4"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "cocktails-margarita-step-1",
@@ -14954,6 +20281,16 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "cocktails-margarita-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "cocktails-margarita-step-1"
         }
       ],
       "tips": [],
@@ -15011,6 +20348,18 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "cocktails-negroni-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "cocktails-negroni-ingredient-1",
+            "cocktails-negroni-ingredient-2",
+            "cocktails-negroni-ingredient-3",
+            "cocktails-negroni-ingredient-4"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "cocktails-negroni-step-1",
@@ -15025,6 +20374,16 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "cocktails-negroni-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "cocktails-negroni-step-1"
         }
       ],
       "tips": [],
@@ -15081,6 +20440,18 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "popcorn-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "popcorn-ingredient-1",
+            "popcorn-ingredient-2",
+            "popcorn-ingredient-3",
+            "popcorn-ingredient-4"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "popcorn-step-1",
@@ -15123,6 +20494,24 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "popcorn-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "popcorn-step-1"
+        },
+        {
+          "kind": "step",
+          "id": "popcorn-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "popcorn-step-3"
         }
       ],
       "tips": [
@@ -15205,6 +20594,27 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "raspberry_lime_rickey-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "raspberry_lime_rickey-ingredient-1",
+            "raspberry_lime_rickey-ingredient-2",
+            "raspberry_lime_rickey-ingredient-3"
+          ]
+        },
+        {
+          "id": "raspberry_lime_rickey-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "raspberry_lime_rickey-ingredient-4",
+            "raspberry_lime_rickey-ingredient-5",
+            "raspberry_lime_rickey-ingredient-6",
+            "raspberry_lime_rickey-ingredient-7"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "raspberry_lime_rickey-step-1",
@@ -15232,6 +20642,24 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "raspberry_lime_rickey-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "raspberry_lime_rickey-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "raspberry_lime_rickey-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "raspberry_lime_rickey-step-2"
         }
       ],
       "tips": [],
@@ -15384,6 +20812,36 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "ham_and_cheese_italian-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "ham_and_cheese_italian-ingredient-1",
+            "ham_and_cheese_italian-ingredient-2",
+            "ham_and_cheese_italian-ingredient-3",
+            "ham_and_cheese_italian-ingredient-4",
+            "ham_and_cheese_italian-ingredient-5"
+          ]
+        },
+        {
+          "id": "ham_and_cheese_italian-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "ham_and_cheese_italian-ingredient-6",
+            "ham_and_cheese_italian-ingredient-7",
+            "ham_and_cheese_italian-ingredient-8",
+            "ham_and_cheese_italian-ingredient-9",
+            "ham_and_cheese_italian-ingredient-10",
+            "ham_and_cheese_italian-ingredient-11",
+            "ham_and_cheese_italian-ingredient-12",
+            "ham_and_cheese_italian-ingredient-13",
+            "ham_and_cheese_italian-ingredient-14",
+            "ham_and_cheese_italian-ingredient-15",
+            "ham_and_cheese_italian-ingredient-16"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "ham_and_cheese_italian-step-1",
@@ -15462,6 +20920,32 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "ham_and_cheese_italian-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "ham_and_cheese_italian-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "ham_and_cheese_italian-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "ham_and_cheese_italian-step-2"
+        },
+        {
+          "kind": "step",
+          "id": "ham_and_cheese_italian-step-3"
+        },
+        {
+          "kind": "step",
+          "id": "ham_and_cheese_italian-step-4"
         }
       ],
       "tips": [],
@@ -15594,6 +21078,45 @@
           "excludeFromGroceries": false
         }
       ],
+      "ingredientGroups": [
+        {
+          "id": "chili_oil-group-1",
+          "title": null,
+          "ingredientIDs": [
+            "chili_oil-ingredient-1",
+            "chili_oil-ingredient-2",
+            "chili_oil-ingredient-3",
+            "chili_oil-ingredient-4"
+          ]
+        },
+        {
+          "id": "chili_oil-group-2",
+          "title": null,
+          "ingredientIDs": [
+            "chili_oil-ingredient-5",
+            "chili_oil-ingredient-6",
+            "chili_oil-ingredient-7",
+            "chili_oil-ingredient-8",
+            "chili_oil-ingredient-9"
+          ]
+        },
+        {
+          "id": "chili_oil-group-3",
+          "title": null,
+          "ingredientIDs": [
+            "chili_oil-ingredient-10",
+            "chili_oil-ingredient-11",
+            "chili_oil-ingredient-12"
+          ]
+        },
+        {
+          "id": "chili_oil-group-4",
+          "title": null,
+          "ingredientIDs": [
+            "chili_oil-ingredient-13"
+          ]
+        }
+      ],
       "steps": [
         {
           "id": "chili_oil-step-1",
@@ -15680,6 +21203,52 @@
           ],
           "durationMinutes": null,
           "active": true
+        }
+      ],
+      "contentOrder": [
+        {
+          "kind": "ingredientGroup",
+          "id": "chili_oil-group-1"
+        },
+        {
+          "kind": "step",
+          "id": "chili_oil-step-1"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chili_oil-group-2"
+        },
+        {
+          "kind": "step",
+          "id": "chili_oil-step-2"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chili_oil-group-3"
+        },
+        {
+          "kind": "step",
+          "id": "chili_oil-step-3"
+        },
+        {
+          "kind": "ingredientGroup",
+          "id": "chili_oil-group-4"
+        },
+        {
+          "kind": "step",
+          "id": "chili_oil-step-4"
+        },
+        {
+          "kind": "step",
+          "id": "chili_oil-step-5"
+        },
+        {
+          "kind": "step",
+          "id": "chili_oil-step-6"
+        },
+        {
+          "kind": "step",
+          "id": "chili_oil-step-7"
         }
       ],
       "tips": [],

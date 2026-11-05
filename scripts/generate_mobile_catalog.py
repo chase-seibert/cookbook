@@ -37,7 +37,9 @@ def recipe_segments(recipe: Recipe) -> list[tuple[str, str, list[dict]]]:
 def mobile_recipe(recipe: Recipe, slug: str, category: str, title: str, stable_id: str,
                   blocks: list[dict], metadata: dict) -> dict:
     ingredients: list[dict] = []
+    ingredient_groups: list[dict] = []
     steps: list[dict] = []
+    content_order: list[dict] = []
     tips: list[str] = []
     healthier_options: list[str] = []
     introduction = ""
@@ -82,6 +84,10 @@ def mobile_recipe(recipe: Recipe, slug: str, category: str, title: str, stable_i
                     first, second = "", " ".join((first, second)).strip()
                 current_ids.append(add_ingredient(first, second))
             latest_ingredient_ids = current_ids
+            if current_ids:
+                group_id = f"{stable_id}-group-{len(ingredient_groups) + 1}"
+                ingredient_groups.append({"id": group_id, "title": None, "ingredientIDs": current_ids})
+                content_order.append({"kind": "ingredientGroup", "id": group_id})
         elif kind == "step":
             step_id = f"{stable_id}-step-{len(steps) + 1}"
             assigned = metadata.get("stepIngredientIDs", {}).get(step_id, latest_ingredient_ids)
@@ -94,6 +100,7 @@ def mobile_recipe(recipe: Recipe, slug: str, category: str, title: str, stable_i
                 "durationMinutes": None,
                 "active": True,
             })
+            content_order.append({"kind": "step", "id": step_id})
 
     canonical = json.dumps(
         {"title": title, "blocks": blocks},
@@ -111,7 +118,9 @@ def mobile_recipe(recipe: Recipe, slug: str, category: str, title: str, stable_i
         "provenance": metadata.get("recipeProvenance", {}).get(stable_id),
         "introduction": introduction,
         "ingredients": ingredients,
+        "ingredientGroups": ingredient_groups,
         "steps": steps,
+        "contentOrder": content_order,
         "tips": tips,
         "healthierOptions": healthier_options,
         "sourceHash": hashlib.sha256(canonical).hexdigest(),

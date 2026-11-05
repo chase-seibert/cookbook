@@ -7,8 +7,17 @@ struct WebRecipeImportDraft: Decodable {
     let title: String
     let introduction: String
     let servings: String
-    let ingredients: [Ingredient]
-    let instructions: [String]
+    let blocks: [ContentBlock]
+
+    var ingredients: [Ingredient] { blocks.flatMap(\.ingredients) }
+    var instructions: [String] { blocks.compactMap(\.instruction) }
+
+    struct ContentBlock: Decodable {
+        let type: String
+        let title: String?
+        let ingredients: [Ingredient]
+        let instruction: String?
+    }
 
     struct Ingredient: Decodable {
         let amount: String
@@ -47,7 +56,7 @@ enum WebRecipeIngredientNormalizer {
         return Recipe(
             id: recipe.id, title: recipe.title, category: recipe.category, collectionTitle: recipe.collectionTitle,
             sourceFile: recipe.sourceFile, sourceSection: recipe.sourceSection, introduction: recipe.introduction,
-            ingredients: ingredients, steps: recipe.steps, tips: recipe.tips, healthierOptions: recipe.healthierOptions,
+                ingredients: ingredients, ingredientGroups: recipe.ingredientGroups, steps: recipe.steps, contentOrder: recipe.contentOrder, tips: recipe.tips, healthierOptions: recipe.healthierOptions,
             thumbnailAsset: recipe.thumbnailAsset, labelIDs: recipe.labelIDs, provenance: recipe.provenance,
             menuDescription: recipe.menuDescription, menuPairings: recipe.menuPairings, servings: recipe.servings
         )
@@ -87,16 +96,12 @@ enum WebRecipeExtractor {
             "type": "object", "additionalProperties": false,
             "properties": [
                 "title": ["type": "string"], "introduction": ["type": "string"], "servings": ["type": "string"],
-                "ingredients": ["type": "array", "items": ["type": "object", "additionalProperties": false,
-                    "properties": [
-                        "amount": ["type": "string", "description": "Numeric measurement amount only, such as 2, 1 1/2, or 3/4. No units or ingredient words."],
-                        "unit": ["type": "string", "description": "Measurement unit only, such as pounds, cups, tablespoons, teaspoons, or ounces. Keep it separate from amount and description."],
-                        "description": ["type": "string", "description": "The ingredient being measured, with preparation details, but without the amount or measurement unit."],
-                        "group": ["type": "string"]
-                    ],
-                    "required": ["amount", "unit", "description", "group"]]],
-                "instructions": ["type": "array", "items": ["type": "string"]]
-            ], "required": ["title", "introduction", "servings", "ingredients", "instructions"]
+                "blocks": ["type": "array", "items": ["type": "object", "additionalProperties": false,
+                    "properties": ["type": ["type": "string", "enum": ["ingredientGroup", "instruction"]], "title": ["type": ["string", "null"]],
+                        "ingredients": ["type": "array", "items": ["type": "object", "additionalProperties": false,
+                            "properties": ["amount": ["type": "string"], "unit": ["type": "string"], "description": ["type": "string"], "group": ["type": "string"]], "required": ["amount", "unit", "description", "group"]]],
+                        "instruction": ["type": ["string", "null"]]], "required": ["type", "title", "ingredients", "instruction"]]]
+            ], "required": ["title", "introduction", "servings", "blocks"]
         ]
         var request = URLRequest(url: URL(string: "https://api.openai.com/v1/responses")!)
         request.httpMethod = "POST"
@@ -105,7 +110,7 @@ enum WebRecipeExtractor {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: [
             "model": model, "store": false, "max_output_tokens": 10000,
-            "instructions": "Extract a home-cookable recipe only from the supplied page data. Do not invent missing quantities, ingredients, temperatures, times, or steps. Preserve original wording and ordered steps.\n\nReturn each ingredient as one distinct ingredient record with three distinct fields: amount, unit, and description. amount is only the numeric measurement, including fractions or ranges (examples: '5', '1 1/2', '3/4', '2 to 3'). unit is only the measurement unit (examples: 'pounds', 'tablespoons', 'cups', 'cloves'); do not combine it with amount or description. description is the food being measured and its preparation details, without repeating amount or unit. For '5 pounds medium or small yukon gold potatoes', return amount='5', unit='pounds', description='medium or small yukon gold potatoes'. For '1 tablespoon celery seed', return amount='1', unit='tablespoon', description='celery seed'. For '2 cups mayonnaise', return amount='2', unit='cups', description='mayonnaise'. For 'kosher salt', return amount='', unit='', description='kosher salt'. If a source line names two measured ingredients, return two records, one per ingredient, preserving each amount, unit, and description. Never put a second measurement or ingredient in another record's description. Do not combine ingredients. The app repairs common field-placement mistakes and splits an explicit 'plus' or 'and' followed by another measurement. The saved schema and Markdown format require Quantity to contain only amount, while Ingredient contains unit followed by description; for example, '| 2 | pounds ground beef |'.\n\nUse empty strings for absent introduction or servings. Return empty arrays if no recipe is present.",
+            "instructions": "Extract a recipe from the supplied page data without inventing missing details. Return an ordered blocks array interleaving ingredientGroup and instruction blocks when source order is clear. Keep each source ingredient group separate, including untitled groups; use all ingredient groups followed by all instruction blocks when source order is ambiguous. Preserve original wording. Each ingredient has separate amount, unit, description, and group fields; group is its source section label or an empty string. Ingredient groups contain rows and optional title; instruction blocks contain one instruction. For instruction blocks use title=null, ingredients=[], instruction=source text. For ingredientGroup blocks use instruction=null.",
             "input": input,
             "text": ["format": ["type": "json_schema", "name": "web_recipe", "strict": true, "schema": schema]]
         ])
@@ -125,26 +130,29 @@ enum WebRecipeExtractor {
     }
 
     private static func normalizeIngredientFields(in draft: WebRecipeImportDraft) -> WebRecipeImportDraft {
-        let ingredients = draft.ingredients.flatMap { item in
-            RecipeIngredientTextNormalizer.normalize(amount: item.amount, unit: item.unit, description: item.description)
-                .map { normalized in
-                    WebRecipeImportDraft.Ingredient(amount: normalized.amount, unit: normalized.unit, description: normalized.description, group: item.group)
+        let blocks = draft.blocks.map { block in
+            let ingredients = block.ingredients.flatMap { item in
+                RecipeIngredientTextNormalizer.normalize(amount: item.amount, unit: item.unit, description: item.description).map {
+                    WebRecipeImportDraft.Ingredient(amount: $0.amount, unit: $0.unit, description: $0.description, group: item.group)
                 }
+            }
+            return WebRecipeImportDraft.ContentBlock(type: block.type, title: block.title, ingredients: ingredients, instruction: block.instruction)
         }
-        return WebRecipeImportDraft(title: draft.title, introduction: draft.introduction, servings: draft.servings, ingredients: ingredients, instructions: draft.instructions)
+        return WebRecipeImportDraft(title: draft.title, introduction: draft.introduction, servings: draft.servings, blocks: blocks)
     }
 
     static func validate(_ draft: WebRecipeImportDraft) throws {
         guard !draft.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               draft.title.utf8.count <= 500, draft.introduction.utf8.count <= 8_000,
-              draft.servings.utf8.count <= 300, (1...200).contains(draft.ingredients.count),
+              draft.servings.utf8.count <= 300, (1...200).contains(draft.ingredients.count), (1...300).contains(draft.blocks.count),
               (1...100).contains(draft.instructions.count),
               draft.ingredients.allSatisfy({ !$0.description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && $0.description.utf8.count <= 1_000 && $0.amount.utf8.count <= 200 && $0.unit.utf8.count <= 200 && $0.group.utf8.count <= 200 }),
               draft.ingredients.allSatisfy({ item in
                   let amount = item.amount.trimmingCharacters(in: .whitespacesAndNewlines)
                   return amount.isEmpty || amountPattern.firstMatch(in: amount, range: NSRange(amount.startIndex..., in: amount)) != nil
               }),
-              draft.instructions.allSatisfy({ !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && $0.utf8.count <= 5_000 }) else {
+              draft.instructions.allSatisfy({ !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && $0.utf8.count <= 5_000 }),
+              draft.blocks.allSatisfy({ block in block.type == "ingredientGroup" ? !block.ingredients.isEmpty && block.instruction == nil : block.type == "instruction" && block.ingredients.isEmpty && block.instruction?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false }) else {
             throw WebRecipeImportError.invalidRecipe
         }
     }
@@ -155,6 +163,11 @@ private struct WebRecipeIngredientEdit: Identifiable {
     var quantity: String
     var name: String
     var group: String
+}
+
+enum RecipeImportContentTemplate {
+    case ingredientGroup(title: String?, ingredientIDs: [UUID])
+    case instruction(index: Int)
 }
 
 struct WebRecipeImportReviewView: View {
@@ -168,6 +181,7 @@ struct WebRecipeImportReviewView: View {
     @State private var servings = ""
     @State private var ingredients: [WebRecipeIngredientEdit] = []
     @State private var instructionLines = ""
+    @State private var contentTemplate: [RecipeImportContentTemplate] = []
     @State private var isExtracting = true
     @State private var isSaving = false
     @State private var errorMessage: String?
@@ -243,13 +257,23 @@ struct WebRecipeImportReviewView: View {
             title = draft.title
             introduction = draft.introduction
             servings = draft.servings
-            ingredients = draft.ingredients.map {
-                WebRecipeIngredientEdit(
-                    quantity: WebRecipeIngredientNormalizer.quantity(amount: $0.amount),
-                    name: WebRecipeIngredientNormalizer.ingredient(unit: $0.unit, description: $0.description),
-                    group: $0.group
-                )
+            var edits: [WebRecipeIngredientEdit] = []
+            var template: [RecipeImportContentTemplate] = []
+            var instructionIndex = 0
+            for block in draft.blocks {
+                if block.type == "ingredientGroup" {
+                    let groupEdits = block.ingredients.map { item in
+                        WebRecipeIngredientEdit(quantity: WebRecipeIngredientNormalizer.quantity(amount: item.amount), name: WebRecipeIngredientNormalizer.ingredient(unit: item.unit, description: item.description), group: item.group)
+                    }
+                    edits.append(contentsOf: groupEdits)
+                    template.append(.ingredientGroup(title: block.title, ingredientIDs: groupEdits.map(\.id)))
+                } else if block.type == "instruction" {
+                    template.append(.instruction(index: instructionIndex))
+                    instructionIndex += 1
+                }
             }
+            ingredients = edits
+            contentTemplate = template
             instructionLines = draft.instructions.joined(separator: "\n")
         } catch { errorMessage = error.localizedDescription }
         isExtracting = false
@@ -285,7 +309,7 @@ struct WebRecipeImportReviewView: View {
             guard !name.isEmpty else { return nil }
             let quantity = item.quantity.trimmingCharacters(in: .whitespacesAndNewlines)
             let group = item.group.trimmingCharacters(in: .whitespacesAndNewlines)
-            return RecipeIngredient(id: UUID().uuidString, quantity: quantity, name: name, groceryName: name, staple: false, excludeFromGroceries: false, group: group.isEmpty ? nil : group)
+            return RecipeIngredient(id: item.id.uuidString, quantity: quantity, name: name, groceryName: name, staple: false, excludeFromGroceries: false, group: group.isEmpty ? nil : group)
         }
         let instructions = instructionLines.split(whereSeparator: \.isNewline).map(String.init)
         let steps = instructions.enumerated().map { index, line in
@@ -295,7 +319,26 @@ struct WebRecipeImportReviewView: View {
         let cleanedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleanedTitle.isEmpty, !instructions.isEmpty else { return nil }
         let source = URLComponents(string: capture.url)?.url?.absoluteString ?? capture.url
-        return Recipe(id: id, title: cleanedTitle, category: categories.sorted { $0.order < $1.order }.first?.name ?? "General", collectionTitle: nil, sourceFile: "", sourceSection: "", introduction: introduction, ingredients: recipeIngredients, steps: steps, tips: [], healthierOptions: [], thumbnailAsset: nil, labelIDs: nil, provenance: RecipeProvenance(type: .website, name: URL(string: source)?.host, reference: source), menuDescription: nil, menuPairings: nil, servings: servings.isEmpty ? nil : servings)
+        let ingredientsByID = Dictionary(uniqueKeysWithValues: recipeIngredients.map { ($0.id, $0) })
+        var groups: [RecipeIngredientGroup] = []
+        var order: [RecipeContentReference] = []
+        for entry in contentTemplate {
+            switch entry {
+            case .ingredientGroup(let title, let ids):
+                let validIDs = ids.map(\.uuidString).filter { ingredientsByID[$0] != nil }
+                guard !validIDs.isEmpty else { continue }
+                let groupID = "group-\(groups.count + 1)"
+                groups.append(RecipeIngredientGroup(id: groupID, title: title, ingredientIDs: validIDs))
+                order.append(RecipeContentReference(kind: .ingredientGroup, id: groupID))
+            case .instruction(let index):
+                guard steps.indices.contains(index) else { continue }
+                order.append(RecipeContentReference(kind: .step, id: steps[index].id))
+            }
+        }
+        for step in steps where !order.contains(where: { $0.id == step.id }) {
+            order.append(RecipeContentReference(kind: .step, id: step.id))
+        }
+        return Recipe(id: id, title: cleanedTitle, category: categories.sorted { $0.order < $1.order }.first?.name ?? "General", collectionTitle: nil, sourceFile: "", sourceSection: "", introduction: introduction, ingredients: recipeIngredients, ingredientGroups: groups, steps: steps, contentOrder: order, tips: [], healthierOptions: [], thumbnailAsset: nil, labelIDs: nil, provenance: RecipeProvenance(type: .website, name: URL(string: source)?.host, reference: source), menuDescription: nil, menuPairings: nil, servings: servings.isEmpty ? nil : servings)
     }
 
     @MainActor private func save() {

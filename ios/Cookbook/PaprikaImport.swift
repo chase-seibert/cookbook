@@ -113,7 +113,9 @@ enum PaprikaImportReader {
             sourceSection: category,
             introduction: string("description"),
             ingredients: ingredients,
+            ingredientGroups: nil,
             steps: steps,
+            contentOrder: nil,
             tips: notes,
             healthierOptions: [],
             thumbnailAsset: nil,
@@ -873,7 +875,7 @@ enum PaprikaImportStore {
 
 private extension Recipe {
     func replacingCategory(_ value: String) -> Recipe {
-        Recipe(id: id, title: title, category: value, collectionTitle: collectionTitle, sourceFile: sourceFile, sourceSection: sourceSection, introduction: introduction, ingredients: ingredients, steps: steps, tips: tips, healthierOptions: healthierOptions, thumbnailAsset: thumbnailAsset, labelIDs: labelIDs, provenance: provenance, menuDescription: menuDescription, menuPairings: menuPairings, servings: servings)
+        Recipe(id: id, title: title, category: value, collectionTitle: collectionTitle, sourceFile: sourceFile, sourceSection: sourceSection, introduction: introduction, ingredients: ingredients, ingredientGroups: ingredientGroups, steps: steps, contentOrder: contentOrder, tips: tips, healthierOptions: healthierOptions, thumbnailAsset: thumbnailAsset, labelIDs: labelIDs, provenance: provenance, menuDescription: menuDescription, menuPairings: menuPairings, servings: servings)
     }
 }
 
@@ -904,7 +906,7 @@ private extension Recipe {
     func addingBrowseLabels(_ labels: [String], id: String? = nil) -> Recipe {
         var labelIDs = browseLabelIDs
         for label in labels where !labelIDs.contains(label) { labelIDs.append(label) }
-        return Recipe(id: id ?? self.id, title: title, category: category, collectionTitle: collectionTitle, sourceFile: sourceFile, sourceSection: sourceSection, introduction: introduction, ingredients: ingredients, steps: steps, tips: tips, healthierOptions: healthierOptions, thumbnailAsset: thumbnailAsset, labelIDs: labelIDs, provenance: provenance, menuDescription: menuDescription, menuPairings: menuPairings, servings: servings)
+        return Recipe(id: id ?? self.id, title: title, category: category, collectionTitle: collectionTitle, sourceFile: sourceFile, sourceSection: sourceSection, introduction: introduction, ingredients: ingredients, ingredientGroups: ingredientGroups, steps: steps, contentOrder: contentOrder, tips: tips, healthierOptions: healthierOptions, thumbnailAsset: thumbnailAsset, labelIDs: labelIDs, provenance: provenance, menuDescription: menuDescription, menuPairings: menuPairings, servings: servings)
     }
 }
 

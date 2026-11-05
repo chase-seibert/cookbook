@@ -9,6 +9,14 @@ struct RecipeLabelTests {
         let labels = try XCTUnwrap(catalog.labels)
 
         try require(catalog.recipes.count == 76, "expected all 76 cookbook recipes")
+        let deepDish = try XCTUnwrap(catalog.recipes.first(where: { $0.id == "deepdish" }))
+        try require(deepDish.orderedContent.map { $0.group != nil ? "ingredients" : "step" } == ["ingredients", "step", "step", "step", "step", "step", "step", "ingredients", "step", "ingredients", "step", "step"], "deep dish should preserve each source table around its instructions")
+        try require(deepDish.ingredientGroups?.map(\.ingredientIDs.count) == [7, 7, 2], "deep dish source tables should remain separate ingredient groups")
+        try require(deepDish.orderedContent.compactMap(\.stepNumber) == Array(0..<9), "step numbers should remain sequential across ingredient groups")
+        let oldData = Data(#"{"schemaVersion":1,"categoryOrder":[],"recipes":[{"id":"old","title":"Old","category":"Old","sourceFile":"old.tex","sourceSection":"Old","introduction":"","ingredients":[{"id":"i1","quantity":"1","name":"flour","groceryName":"flour","staple":false,"excludeFromGroceries":false}],"steps":[{"id":"s1","sectionTitle":"","instruction":"Mix.","originalInstruction":"Mix.","ingredientIDs":[],"active":true}],"tips":[],"healthierOptions":[]}]}"#.utf8)
+        let oldCatalog = try JSONDecoder().decode(CookbookCatalog.self, from: oldData)
+        try require(oldCatalog.recipes[0].ingredientGroups == nil && oldCatalog.recipes[0].contentOrder == nil, "legacy recipes without ordered content should decode without migration")
+        try require(oldCatalog.recipes[0].orderedContent.map { $0.group != nil ? "ingredients" : "step" } == ["ingredients", "step"], "legacy display fallback should show ingredient groups before steps")
         try require(catalog.recipes.allSatisfy { !$0.browseLabelIDs.isEmpty }, "every recipe needs a browse label")
         try require(catalog.label(matching: "BROCCOLI RABE")?.id == "broccoli", "broccoli rabe must resolve through its reviewed alias")
 
@@ -59,8 +67,7 @@ struct RecipeLabelTests {
         try require(mahi.menuDescription?.contains("mahi-mahi") == true, "reviewed menu description should be present in generated catalog")
         try require(mahi.menuPairings?.count == 2, "reviewed menu pairings should be present in generated catalog")
 
-        let oldData = Data(#"{"schemaVersion":1,"categoryOrder":[],"recipes":[{"id":"old","title":"Old","category":"Old","sourceFile":"old.tex","sourceSection":"Old","introduction":"","ingredients":[],"steps":[],"tips":[],"healthierOptions":[]}]}"#.utf8)
-        let oldCatalog = try JSONDecoder().decode(CookbookCatalog.self, from: oldData)
+
         try require(oldCatalog.labelGroups == nil && oldCatalog.labels == nil, "legacy catalogs without taxonomy should decode")
         try require(oldCatalog.recipes[0].browseLabelIDs.isEmpty, "legacy recipes without label IDs should decode")
         try require(oldCatalog.recipes[0].menuDescription == nil && oldCatalog.recipes[0].menuPairings == nil, "legacy recipes without menu copy should decode")
