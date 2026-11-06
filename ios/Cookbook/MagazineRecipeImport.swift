@@ -121,12 +121,7 @@ struct MagazineRecipeImportReviewView: View {
                         Button("Done") { dismiss() }.buttonStyle(.borderedProminent)
                     }.padding(28)
                 } else if isExtracting {
-                    VStack(spacing: 14) {
-                        ProgressView()
-                        Text("Extracting the recipe from your magazine photo…").font(.headline).multilineTextAlignment(.center)
-                        Text("AI is organizing the ingredients and steps. This usually takes about 10–20 seconds.")
-                            .font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.center)
-                    }.padding(28)
+                    RecipeImportLoadingStatus(context: "Extracting your magazine photo. AI is organizing the ingredients and steps; this usually takes about 10–20 seconds.")
                 } else if let recipe = makeRecipe(id: "magazine:preview") {
                     RecipeDetailView(recipe: recipe, previewOnly: true)
                 } else {

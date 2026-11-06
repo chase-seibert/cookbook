@@ -170,6 +170,54 @@ enum RecipeImportContentTemplate {
     case instruction(index: Int)
 }
 
+struct RecipeImportLoadingStatus: View {
+    @State private var messageIndex = 0
+
+    let context: String
+
+    private static let messages = [
+        "Whisking the recipe into shape…",
+        "Asking the onions to share their secrets…",
+        "Convincing the tomatoes to stick together…",
+        "Counting the noodles. They keep moving…",
+        "Preheating the pun oven…",
+        "Giving the garlic a tiny pep talk…",
+        "Making sure the cheese is grate…",
+        "Sorting the ingredients before they form a union…",
+        "Letting the flavors introduce themselves…",
+        "Tasting the instructions. Carefully. Virtually…"
+    ]
+
+    var body: some View {
+        VStack(spacing: 14) {
+            ProgressView()
+                .accessibilityLabel("Importing recipe")
+            Text(Self.messages[messageIndex])
+                .font(.headline)
+                .multilineTextAlignment(.center)
+                .contentTransition(.opacity)
+            Text(context)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(28)
+        .task {
+            while !Task.isCancelled {
+                do {
+                    try await Task.sleep(nanoseconds: 4_000_000_000)
+                } catch {
+                    return
+                }
+                guard !Task.isCancelled else { return }
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    messageIndex = (messageIndex + 1) % Self.messages.count
+                }
+            }
+        }
+    }
+}
+
 struct WebRecipeImportReviewView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -210,14 +258,7 @@ struct WebRecipeImportReviewView: View {
                         Button("Done") { dismiss() }.buttonStyle(.bordered)
                     }.padding(28)
                 } else if isExtracting {
-                    VStack(spacing: 14) {
-                        ProgressView()
-                        Text("Extracting the recipe from Safari’s page capture…")
-                            .multilineTextAlignment(.center)
-                        Text("AI is organizing the ingredients and steps. This usually takes about 10–20 seconds.")
-                            .font(.footnote).foregroundStyle(.secondary).multilineTextAlignment(.center)
-                    }
-                        .padding(28)
+                    RecipeImportLoadingStatus(context: "Extracting your Safari page capture. AI is organizing the ingredients and steps; this usually takes about 10–20 seconds.")
                 } else if let recipe = makeRecipe(id: "web:preview") {
                     RecipeDetailView(recipe: recipe, previewOnly: true, previewImage: webpageImageData.flatMap(UIImage.init(data:)))
                 } else {
