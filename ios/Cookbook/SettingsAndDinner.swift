@@ -1116,7 +1116,7 @@ struct DinnerPlannerView: View {
             .navigationTitle("Dinner")
             .sheet(isPresented: $showingPlan) { timelineSheet }
             .sheet(item: $groceryReviewSession) { session in GroceryReviewView(recipes: session.recipes) }
-            .fullScreenCover(isPresented: $showingCookingRun) { DinnerTimelineCookingView(activities: $plan, dinnerTime: dinnerTime) }
+            .fullScreenCover(isPresented: $showingCookingRun) { DinnerTimelineCookingView(activities: $plan, dinnerTime: dinnerTime, recipes: recipes) }
             .onChange(of: plan.map(\.isComplete)) { _, _ in persistCompletionIfNeeded() }
             .alert("Dinner plan", isPresented: Binding(get: { status != nil }, set: { if !$0 { status = nil } })) { Button("OK") { status = nil } } message: { Text(status ?? "") }
         }
@@ -1391,12 +1391,24 @@ private struct TimelineActivityRow: View {
 private struct DinnerTimelineCookingView: View {
     @Binding var activities: [TimelineActivity]
     let dinnerTime: Date
+    let recipes: [Recipe]
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     @State private var currentIndex = 0
 
     private var current: TimelineActivity? { activities.indices.contains(currentIndex) ? activities[currentIndex] : nil }
     private var completedCount: Int { activities.filter(\.isComplete).count }
+    private var currentIngredients: [RecipeIngredient] {
+        guard let current,
+              let separator = current.id.firstIndex(of: ":") else { return [] }
+        let recipeID = String(current.id[..<separator])
+        let stepID = String(current.id[current.id.index(after: separator)...])
+        guard !recipeID.isEmpty, !stepID.isEmpty,
+              let recipe = recipes.first(where: { $0.id == recipeID }),
+              let step = recipe.steps.first(where: { $0.id == stepID }) else { return [] }
+        let ingredientIDs = Set(step.ingredientIDs)
+        return recipe.ingredients.filter { ingredientIDs.contains($0.id) }
+    }
 
     var body: some View {
         NavigationStack {
@@ -1409,6 +1421,16 @@ private struct DinnerTimelineCookingView: View {
                             Text(dayTitle(for: current.start)).font(.subheadline.weight(.semibold)).foregroundStyle(.secondary)
                             Text(current.start.formatted(date: .omitted, time: .shortened)).font(.title3.weight(.medium))
                             Text(current.recipeTitle).font(.system(.title2, design: .serif).weight(.semibold))
+                            if !currentIngredients.isEmpty {
+                                VStack(alignment: .leading, spacing: 5) {
+                                    ForEach(currentIngredients) { ingredient in
+                                        HStack(alignment: .firstTextBaseline, spacing: 4) {
+                                            Text(ingredient.quantity).foregroundStyle(.secondary).frame(width: 60, alignment: .trailing)
+                                            Text(ingredient.name).font(.system(.title2, design: .rounded, weight: .medium)).frame(maxWidth: .infinity, alignment: .leading)
+                                        }.fixedSize(horizontal: false, vertical: true)
+                                    }
+                                }
+                            }
                             Text(current.instruction).font(.system(.title, design: .serif)).fixedSize(horizontal: false, vertical: true).lineSpacing(5)
                             Text(current.estimateLabel + (current.active ? " · active" : " · passive")).font(.footnote).foregroundStyle(.secondary)
                         }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 8)
