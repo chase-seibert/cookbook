@@ -1,4 +1,4 @@
-.PHONY: all pdf html latex cookbook-outputs docker-build docker-pdf docker-html docker recipe-pdf recipe-md-validate recipe-md-latex recipe-md-html recipe-md-import-sqlite catalog catalog-check label-test recipe-import-test thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
+.PHONY: all pdf html latex cookbook-outputs docker-build docker-pdf docker-html docker recipe-pdf recipe-md-validate recipe-md-latex recipe-md-html recipe-md-import-sqlite catalog catalog-check label-test recipe-import-test paprika-direction-test thumbnail-queue thumbnail-validate sim-build sim-launch phone-build phone-install phone-launch phone-deploy test
 
 DOCKER_PLATFORM ?= linux/amd64
 DOCKER_IMAGE ?= cookbook-latex
@@ -92,6 +92,11 @@ recipe-import-test:
 	  CLANG_MODULE_CACHE_PATH=/private/tmp/cookbook-recipe-import-module-cache swiftc ios/Cookbook/RecipeIngredientTextNormalizer.swift ios/Cookbook/Catalog.swift tests/RecipeIngredientNormalizerTests.swift -o "$$binary"; \
 	  "$$binary"
 
+paprika-direction-test:
+	@set -eu; binary=$$(mktemp /tmp/cookbook-paprika-direction-tests.XXXXXX); trap 'rm -f "$$binary"' EXIT; \
+	  CLANG_MODULE_CACHE_PATH=/private/tmp/cookbook-paprika-direction-module-cache swiftc ios/Cookbook/PaprikaDirectionParser.swift tests/PaprikaDirectionParserTests.swift -o "$$binary"; \
+	  "$$binary"
+
 REMAINING_PERCENT ?=
 QUOTA_CHECKED_AT ?=
 
@@ -129,7 +134,7 @@ phone-launch:
 
 phone-deploy: phone-build phone-install phone-launch
 
-test: catalog-check recipe-import-test label-test
+test: catalog-check recipe-import-test paprika-direction-test label-test
 	xcodebuild -project $(IOS_PROJECT) -scheme $(IOS_SCHEME) -configuration Debug \
 	  -destination '$(GENERIC_SIM_DESTINATION)' -derivedDataPath $(IOS_DERIVED_DATA) \
 	  CODE_SIGNING_ALLOWED=NO test

@@ -95,7 +95,7 @@ enum PaprikaImportReader {
         let categoryValues = (fields["categories"] as? [String] ?? []).map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
         let category = categoryValues.first ?? ""
         let ingredientLines = string("ingredients").components(separatedBy: .newlines).map(cleanLine).filter { !$0.isEmpty }
-        let directionLines = string("directions").components(separatedBy: #"\n\s*\n"#).map(cleanLine).filter { !$0.isEmpty }
+        let directionLines = PaprikaDirectionParser.parse(string("directions"))
         let notes = string("notes").components(separatedBy: #"\n\s*\n"#).map(cleanLine).filter { !$0.isEmpty }
         let ingredients = ingredientLines.enumerated().map { index, line in
             RecipeIngredient(id: "paprika-ingredient-\(index + 1)", quantity: "", name: line, groceryName: line, staple: false, excludeFromGroceries: false)
