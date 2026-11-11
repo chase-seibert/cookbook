@@ -73,7 +73,7 @@ this logical inventory as a hand-written SQL migration contract.
 | `ImageGenerationEntry` | `id*: UUID`, `runID: UUID`, `recipeID: String`, `status: String`, `generatedPhotoID: String?`, `previousPhotoID: String?`, `previousBundledAsset: String?`, `previousHadNoImage: Bool`, `errorMessage: String?` | Per-recipe work and before/after cover state for a run. |
 | `DinnerTimeline` | `id*: UUID`, `name: String`, `targetDate: Date`, `recipeIDsData: Data`, `activitiesData: Data`, `updatedAt: Date` | Saved dinner schedule. Ordered recipe IDs and `TimelineActivity` values are JSON-encoded in `Data`. |
 | `PlannedDinnerRecipe` | `id*: UUID`, `recipeID: String`, `dinnerDate: Date`, `addedAt: Date` | One recipe scheduled on a dinner date. No uniqueness constraint prevents scheduling the same recipe more than once. |
-| `RecipeUsageStats` | `recipeID*: String`, `recipeOpenCount: Int`, `groceryAddFlowCount: Int`, `updatedAt: Date` | Aggregate open and successfully completed grocery-flow counts, one row per recipe ID. |
+| `RecipeUsageStats` | `recipeID*: String`, `recipeOpenCount: Int`, `groceryAddFlowCount: Int`, `updatedAt: Date`, `lastOpenedAt: Date?` | Aggregate open and successfully completed grocery-flow counts, plus the last recorded recipe open; one row per recipe ID. Grocery activity updates `updatedAt` but not `lastOpenedAt`. |
 
 The catalog `Recipe` payload stored inside imported `recipeData` has `id`,
 `title`, `category`, optional `collectionTitle`, `sourceFile`, `sourceSection`,

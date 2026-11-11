@@ -381,12 +381,14 @@ struct PaprikaSkippedRecipe: Codable, Hashable, Identifiable, Sendable {
     var recipeOpenCount: Int
     var groceryAddFlowCount: Int
     var updatedAt: Date
+    var lastOpenedAt: Date?
 
-    init(recipeID: String, recipeOpenCount: Int = 0, groceryAddFlowCount: Int = 0, updatedAt: Date = .now) {
+    init(recipeID: String, recipeOpenCount: Int = 0, groceryAddFlowCount: Int = 0, updatedAt: Date = .now, lastOpenedAt: Date? = nil) {
         self.recipeID = recipeID
         self.recipeOpenCount = recipeOpenCount
         self.groceryAddFlowCount = groceryAddFlowCount
         self.updatedAt = updatedAt
+        self.lastOpenedAt = lastOpenedAt
     }
 }
 
@@ -396,7 +398,10 @@ struct PaprikaSkippedRecipe: Codable, Hashable, Identifiable, Sendable {
     init(context: ModelContext) { self.context = context }
 
     func recordRecipeOpen(_ recipeID: String) {
-        update(recipeID) { $0.recipeOpenCount += 1 }
+        update(recipeID) {
+            $0.recipeOpenCount += 1
+            $0.lastOpenedAt = .now
+        }
     }
 
     func recordCompletedGroceryFlow(_ recipeID: String) {

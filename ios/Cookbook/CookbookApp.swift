@@ -234,7 +234,7 @@ struct RecipeBrowserView: View {
                                     VStack(alignment: .leading, spacing: 10) {
                                         if let title = group.title { Text(title).font(.headline) }
                                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 14)], spacing: 14) {
-                                            ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe) }.buttonStyle(.plain).simultaneousGesture(TapGesture().onEnded { RecipeUsageStore(context: modelContext).recordRecipeOpen(recipe.id) }) }
+                                            ForEach(group.recipes) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe) }.buttonStyle(.plain) }
                                         }
                                     }
                                 }
@@ -577,6 +577,7 @@ struct RecipeDetailView: View {
     @State private var recipeDocumentStatus: String?
     @State private var exportingRecipeDocument = false
     @State private var showRecipeDocumentShare = false
+    @State private var recordedRecipeOpen = false
     @Environment(\.modelContext) private var modelContext
     @Query private var photos: [RecipePhoto]
     @Query private var notes: [RecipeNote]
@@ -676,6 +677,12 @@ struct RecipeDetailView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .onAppear {
+            if !previewOnly && !recordedRecipeOpen {
+                recordedRecipeOpen = true
+                RecipeUsageStore(context: modelContext).recordRecipeOpen(recipe.id)
+            }
+        }
         .toolbar {
             if !previewOnly {
             ToolbarItem(placement: .topBarTrailing) {
