@@ -6,7 +6,7 @@ import UIKit
 @main struct CookbookApp: App {
     var body: some Scene {
         WindowGroup { RootView() }
-        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self, ImportedWebRecipe.self, ImportedMagazineRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, ImageGenerationRun.self, ImageGenerationEntry.self, RecipeCategory.self, RecipeCategorySettings.self, RecipeCategoryAssignment.self])
+        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeDinnerUsage.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self, ImportedWebRecipe.self, ImportedMagazineRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, ImageGenerationRun.self, ImageGenerationEntry.self, RecipeCategory.self, RecipeCategorySettings.self, RecipeCategoryAssignment.self])
     }
 }
 
@@ -16,6 +16,7 @@ struct RootView: View {
     @State private var selectedTab = 0
     @State private var incomingPaprikaURL: URL?
     @State private var categorySetupError: String?
+    @State private var dinnerUsageSetupError: String?
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -35,10 +36,15 @@ struct RootView: View {
             if phase == .active { openPendingPaprikaShareIfNeeded() }
         }
         .task {
+            do { _ = try RecipeDinnerUsageStore.backfillMissingEvents(in: modelContext) }
+            catch { dinnerUsageSetupError = "Could not restore planned dinner history: \(error.localizedDescription)" }
             do { try RecipeCategoryStore.seedIfNeeded(in: modelContext) }
             catch { categorySetupError = "Could not initialize recipe categories: \(error.localizedDescription)" }
             openPendingPaprikaShareIfNeeded()
         }
+        .alert("Dinner history", isPresented: Binding(get: { dinnerUsageSetupError != nil }, set: { if !$0 { dinnerUsageSetupError = nil } })) {
+            Button("OK") { dinnerUsageSetupError = nil }
+        } message: { Text(dinnerUsageSetupError ?? "") }
         .alert("Recipe categories", isPresented: Binding(get: { categorySetupError != nil }, set: { if !$0 { categorySetupError = nil } })) {
             Button("OK") { categorySetupError = nil }
         } message: { Text(categorySetupError ?? "") }
@@ -587,6 +593,7 @@ struct RecipeDetailView: View {
     @Query private var deletedRecipes: [DeletedRecipe]
     @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
     @Query private var categoryAssignments: [RecipeCategoryAssignment]
+    @Query private var dinnerUsages: [RecipeDinnerUsage]
     init(recipe: Recipe, previewOnly: Bool = false, previewImage: UIImage? = nil) {
         self.recipe = recipe
         self.previewOnly = previewOnly
@@ -594,6 +601,7 @@ struct RecipeDetailView: View {
         let recipeID = recipe.id
         _photos = Query(filter: #Predicate<RecipePhoto> { $0.recipeID == recipeID })
         _notes = Query(filter: #Predicate<RecipeNote> { $0.recipeID == recipeID })
+        _dinnerUsages = Query(filter: #Predicate<RecipeDinnerUsage> { $0.recipeID == recipeID }, sort: \RecipeDinnerUsage.addedAt)
     }
 
     var body: some View {
@@ -656,6 +664,15 @@ struct RecipeDetailView: View {
                             }.frame(maxWidth: .infinity, alignment: .leading)
                         }.foregroundStyle(.primary).contextMenu { Button("Delete Note", role: .destructive) { note.deletedAt = .now; note.updatedAt = .now } }
                     }
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(dinnerUsages.isEmpty ? "Not added to dinner yet" : "Added to dinner \(dinnerUsages.count) times")
+                            .font(.subheadline.weight(.medium))
+                        if let latestAddition = dinnerUsages.last {
+                            Text("Last added \(latestAddition.addedAt.formatted(date: .abbreviated, time: .omitted))")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                    .accessibilityElement(children: .combine)
                 }
                 if let provenance = recipe.provenance, provenance.type != .paprikaImport {
                     HStack(spacing: 0) {
@@ -872,7 +889,7 @@ struct AddRecipeToDinnerView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @Query private var scheduled: [PlannedDinnerRecipe]
-    @State private var dinnerDate = Calendar.current.date(byAdding: .day, value: 1, to: .now).flatMap { Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: $0) } ?? .now
+    @State private var dinnerDate = Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: .now).map { max($0, .now) } ?? .now
 
     var body: some View {
         NavigationStack {
@@ -895,11 +912,20 @@ struct AddRecipeToDinnerView: View {
     private func save() {
         if let existing = scheduled.first(where: { $0.recipeID == recipe.id && Calendar.current.isDate($0.dinnerDate, inSameDayAs: dinnerDate) }) {
             existing.dinnerDate = dinnerDate
+            if let usage = usages.first(where: { $0.id == existing.id }) { usage.dinnerDate = dinnerDate }
         } else {
-            context.insert(PlannedDinnerRecipe(recipeID: recipe.id, dinnerDate: dinnerDate))
+            let entry = PlannedDinnerRecipe(recipeID: recipe.id, dinnerDate: dinnerDate)
+            context.insert(entry)
+            context.insert(RecipeDinnerUsage(id: entry.id, recipeID: recipe.id, dinnerDate: dinnerDate))
         }
         onSaved()
         dismiss()
+    }
+
+    private var usages: [RecipeDinnerUsage] {
+        let recipeID = recipe.id
+        let descriptor = FetchDescriptor<RecipeDinnerUsage>(predicate: #Predicate { $0.recipeID == recipeID })
+        return (try? context.fetch(descriptor)) ?? []
     }
 }
 

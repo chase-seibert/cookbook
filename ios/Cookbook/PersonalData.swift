@@ -376,6 +376,39 @@ struct PaprikaSkippedRecipe: Codable, Hashable, Identifiable, Sendable {
     }
 }
 
+@Model final class RecipeDinnerUsage {
+    @Attribute(.unique) var id: UUID
+    var recipeID: String
+    var dinnerDate: Date
+    var addedAt: Date
+
+    init(id: UUID = UUID(), recipeID: String, dinnerDate: Date, addedAt: Date = .now) {
+        self.id = id; self.recipeID = recipeID; self.dinnerDate = dinnerDate; self.addedAt = addedAt
+    }
+}
+
+@MainActor struct RecipeDinnerUsageStore {
+    static func backfillMissingEvents(in context: ModelContext) throws -> Int {
+        let plannedDinners = try context.fetch(FetchDescriptor<PlannedDinnerRecipe>())
+        guard !plannedDinners.isEmpty else { return 0 }
+
+        let recordedIDs = Set(try context.fetch(FetchDescriptor<RecipeDinnerUsage>()).map(\.id))
+        let missing = plannedDinners.filter { !recordedIDs.contains($0.id) }
+        guard !missing.isEmpty else { return 0 }
+
+        for dinner in missing {
+            context.insert(RecipeDinnerUsage(
+                id: dinner.id,
+                recipeID: dinner.recipeID,
+                dinnerDate: dinner.dinnerDate,
+                addedAt: dinner.addedAt
+            ))
+        }
+        try context.save()
+        return missing.count
+    }
+}
+
 @Model final class RecipeUsageStats {
     @Attribute(.unique) var recipeID: String
     var recipeOpenCount: Int
