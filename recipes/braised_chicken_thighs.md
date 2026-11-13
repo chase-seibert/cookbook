@@ -15,7 +15,7 @@ id: braised_chicken_thighs
 |  | olive oil |
 |  | salt |
 
-Pat chicken dry and salt. Saute whole thighs on medium heat until browned. Add Better than Bouillon and water and bring to simmer. Reduce until liquid is nearly gone, flipping once in a while. Shred the meat in the pan and toss with sauce to coat.
+Pat chicken dry and salt. Saute whole thighs on medium heat until browned. Add Better than Bouillon and water and bring to a simmer. Braise uncovered in a 325° oven for 2 hours, until tender. Remove the chicken and reduce the liquid until nearly gone. Shred the meat in the pan and toss with the sauce to coat.
 
 | Quantity | Ingredient |
 |---|---|
