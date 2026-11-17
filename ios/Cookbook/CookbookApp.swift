@@ -573,6 +573,7 @@ struct RecipeDetailView: View {
     @State private var showAddToDinner = false
     @State private var showImageGeneration = false
     @State private var noteToEdit: RecipeNote?
+    @State private var noteCopied = false
     @State private var pickedPhoto: PhotosPickerItem?
     @State private var paprikaExportURL: URL?
     @State private var showPaprikaShare = false
@@ -662,7 +663,12 @@ struct RecipeDetailView: View {
                                 Text(note.text).font(.body).multilineTextAlignment(.leading)
                                 Text(note.updatedAt.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(.secondary)
                             }.frame(maxWidth: .infinity, alignment: .leading)
-                        }.foregroundStyle(.primary).contextMenu { Button("Delete Note", role: .destructive) { note.deletedAt = .now; note.updatedAt = .now } }
+                        }
+                        .foregroundStyle(.primary)
+                        .contextMenu {
+                            Button { copyNote(note) } label: { Label("Copy Note", systemImage: "doc.on.doc") }
+                            Button("Delete Note", role: .destructive) { note.deletedAt = .now; note.updatedAt = .now }
+                        }
                     }
                     VStack(alignment: .leading, spacing: 4) {
                         Text(dinnerUsages.isEmpty ? "Not added to dinner yet" : "Added to dinner \(dinnerUsages.count) times")
@@ -691,6 +697,19 @@ struct RecipeDetailView: View {
                     Button { showCooking = true } label: { Label("Start cooking", systemImage: "play.fill").frame(maxWidth: .infinity).padding(14).background(.primary, in: Capsule()).foregroundStyle(.background) }
                 }
             }.padding(22)
+        }
+        .overlay(alignment: .bottom) {
+            if noteCopied {
+                Label("Note copied", systemImage: "checkmark.circle.fill")
+                    .font(.subheadline.weight(.medium))
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(.regularMaterial, in: Capsule())
+                    .padding(.bottom, 20)
+                    .accessibilityAddTraits(.isStaticText)
+                    .allowsHitTesting(false)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
@@ -772,6 +791,14 @@ struct RecipeDetailView: View {
     }
 
     private var activeNotes: [RecipeNote] { notes.filter { $0.deletedAt == nil }.sorted { $0.updatedAt > $1.updatedAt } }
+    private func copyNote(_ note: RecipeNote) {
+        UIPasteboard.general.string = note.text
+        withAnimation { noteCopied = true }
+        UIAccessibility.post(notification: .announcement, argument: "Note copied")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation { noteCopied = false }
+        }
+    }
     private var quantityColumnWidth: CGFloat {
         let longest = recipe.ingredients.map { $0.quantity.count }.max() ?? 0
         return min(160, max(76, CGFloat(longest) * 6.2))
