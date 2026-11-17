@@ -1240,6 +1240,11 @@ private struct GroceryReviewSession: Identifiable {
     let recipes: [Recipe]
 }
 
+private enum DinnerNavigationRoute: Hashable {
+    case recommendations
+    case recipe(String)
+}
+
 struct DinnerPlannerView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \PlannedDinnerRecipe.dinnerDate) private var scheduled: [PlannedDinnerRecipe]
@@ -1261,6 +1266,7 @@ struct DinnerPlannerView: View {
     @State private var groceryReviewSession: GroceryReviewSession?
     @State private var checklistShareFile: TimelineShareFile?
     @State private var checklistError: String?
+    @State private var navigationPath: [DinnerNavigationRoute] = []
     @AppStorage("aiProvider") private var aiProvider = "openai"
     @AppStorage("openAIModel") private var openAIModel = "gpt-6-astra"
     private var recipes: [Recipe] {
@@ -1269,6 +1275,7 @@ struct DinnerPlannerView: View {
     }
 
     private var recipeTitles: [String: String] { Dictionary(uniqueKeysWithValues: recipes.map { ($0.id, $0.title) }) }
+    private var today: Date { Calendar.current.startOfDay(for: .now) }
     private var dinnerGroups: [DinnerDateGroup] {
         let calendar = Calendar.current
         let dates = Set(scheduled.map { calendar.startOfDay(for: $0.dinnerDate) })
@@ -1287,15 +1294,24 @@ struct DinnerPlannerView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             List {
+                if !dinnerGroups.contains(where: { Calendar.current.isDate($0.date, inSameDayAs: today) }) {
+                    Section("Today · \(today.formatted(date: .complete, time: .omitted))") {
+                        Button {
+                            navigationPath.append(.recommendations)
+                        } label: {
+                            Label("Plan dinner", systemImage: "sparkles")
+                        }
+                    }
+                }
                 if dinnerGroups.isEmpty {
                     Section("Dinner dates") {
                         ContentUnavailableView("No dinners planned", systemImage: "calendar.badge.plus", description: Text("Open a recipe, tap the ellipsis, and choose Add to Dinner."))
                     }
                 }
                 ForEach(dinnerGroups) { group in
-                    Section(group.date.formatted(date: .complete, time: .omitted)) {
+                    Section(dinnerSectionTitle(for: group.date)) {
                         ForEach(group.entries) { entry in
                             Group {
                                 if let recipe = recipes.first(where: { $0.id == entry.recipeID }) {
@@ -1344,12 +1360,32 @@ struct DinnerPlannerView: View {
                 Section { Text("Choose recipes from Recipes and assign them to a dinner date. Generate a work-back plan from that date; saved plans appear with their dinner date.").font(.footnote).foregroundStyle(.secondary) }
             }
             .navigationTitle("Dinner")
+            .navigationDestination(for: DinnerNavigationRoute.self) { route in
+                switch route {
+                case .recommendations:
+                    DinnerRecommendationPromptView(recipes: recipes) { recipe in
+                        navigationPath = [.recipe(recipe.id)]
+                    }
+                case .recipe(let recipeID):
+                    if let recipe = recipes.first(where: { $0.id == recipeID }) {
+                        RecipeDetailView(recipe: recipe)
+                    } else {
+                        ContentUnavailableView("Recipe unavailable", systemImage: "book.closed", description: Text("This recipe is no longer in your active cookbook."))
+                    }
+                }
+            }
             .sheet(isPresented: $showingPlan) { timelineSheet }
             .sheet(item: $groceryReviewSession) { session in GroceryReviewView(recipes: session.recipes) }
             .fullScreenCover(isPresented: $showingCookingRun) { DinnerTimelineCookingView(activities: $plan, dinnerTime: dinnerTime, recipes: recipes) }
             .onChange(of: plan.map(\.isComplete)) { _, _ in persistCompletionIfNeeded() }
             .alert("Dinner plan", isPresented: Binding(get: { status != nil }, set: { if !$0 { status = nil } })) { Button("OK") { status = nil } } message: { Text(status ?? "") }
         }
+    }
+
+    private func dinnerSectionTitle(for date: Date) -> String {
+        Calendar.current.isDate(date, inSameDayAs: today)
+            ? "Today · \(date.formatted(date: .complete, time: .omitted))"
+            : date.formatted(date: .complete, time: .omitted)
     }
 
     private var timelineSheet: some View {
@@ -1532,6 +1568,110 @@ struct DinnerPlannerView: View {
         let minutes = max(0, Int(timeline.targetDate.timeIntervalSince(start) / 60))
         let duration = minutes >= 60 ? "\(minutes / 60)h \(minutes % 60)m" : "\(minutes)m"
         return "Dinner \(dinner) · starts \(start.formatted(date: .abbreviated, time: .shortened)) · \(duration)"
+    }
+}
+
+private struct DinnerRecommendationPromptView: View {
+    let recipes: [Recipe]
+    let onRecipeAdded: (Recipe) -> Void
+    @AppStorage("aiProvider") private var aiProvider = "openai"
+    @AppStorage("openAIModel") private var openAIModel = "gpt-6-astra"
+    @State private var prompt = ""
+    @State private var recommendations: [DinnerRecipeRecommendation]?
+    @State private var recommendationMessage: String?
+    @State private var loadingRecommendations = false
+    @State private var recipeToAdd: Recipe?
+    @State private var addedRecipe: Recipe?
+
+    private var resultRecipes: [(DinnerRecipeRecommendation, Recipe)] {
+        (recommendations ?? []).compactMap { recommendation in
+            recipes.first(where: { $0.id == recommendation.recipeID }).map { (recommendation, $0) }
+        }
+    }
+
+    var body: some View {
+        List {
+            Section("What would you like for dinner?") {
+                TextField("Describe what you’re craving or what you have", text: $prompt, axis: .vertical)
+                    .lineLimit(3...6)
+                    .textInputAutocapitalization(.sentences)
+                Text("Try: “I have a loaf of bread. What could I use it for or pair with dinner?” or “We have a lot of frozen beef. What could we make?”")
+                    .font(.footnote).foregroundStyle(.secondary)
+                if aiProvider == "openai" {
+                    Text("Uses your configured OpenAI model. Your request and relevant recipe details are sent to OpenAI.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                } else {
+                    Text("Uses the on-device model on this iPhone. The request stays on this device; there is no cloud fallback.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+                Button {
+                    Task { await findRecommendations() }
+                } label: {
+                    if loadingRecommendations {
+                        HStack { ProgressView(); Text("Finding dinner ideas…") }
+                    } else {
+                        Label("Find dinner ideas", systemImage: "sparkles")
+                    }
+                }
+                .disabled(loadingRecommendations || prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                if let recommendationMessage {
+                    Text(recommendationMessage).font(.footnote).foregroundStyle(.red)
+                }
+            }
+            if let recommendations {
+                if recommendations.isEmpty || resultRecipes.isEmpty {
+                    ContentUnavailableView("No strong matches found", systemImage: "text.magnifyingglass", description: Text("Try naming an ingredient, a dish you’re craving, or how much time you have. You can also return to Dinner and browse your recipes."))
+                } else {
+                    Section("Suggestions") {
+                        ForEach(resultRecipes, id: \.1.id) { recommendation, recipe in
+                            VStack(alignment: .leading, spacing: 10) {
+                                NavigationLink {
+                                    RecipeDetailView(recipe: recipe)
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        Text(recipe.title).font(.headline)
+                                        Text(recommendation.reason).font(.subheadline).foregroundStyle(.secondary)
+                                    }.frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                Button {
+                                    recipeToAdd = recipe
+                                } label: {
+                                    Label("Add to Dinner…", systemImage: "calendar.badge.plus")
+                                        .font(.subheadline)
+                                }
+                                .buttonStyle(.borderless)
+                            }
+                            .padding(.vertical, 5)
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Plan dinner")
+        .scrollDismissesKeyboard(.interactively)
+        .sheet(item: $recipeToAdd, onDismiss: {
+            if let addedRecipe { onRecipeAdded(addedRecipe) }
+        }) { recipe in
+            AddRecipeToDinnerView(recipe: recipe) { addedRecipe = recipe }
+        }
+    }
+
+    @MainActor private func findRecommendations() async {
+        let request = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !request.isEmpty else { return }
+        loadingRecommendations = true
+        recommendationMessage = nil
+        recommendations = nil
+        defer { loadingRecommendations = false }
+        do {
+            if aiProvider == "on-device" {
+                recommendations = try await DinnerRecommendationPlanner.recommendOnDevice(prompt: request, recipes: recipes)
+            } else {
+                recommendations = try await DinnerRecommendationPlanner.recommend(prompt: request, recipes: recipes, model: openAIModel, key: KeychainKey.read())
+            }
+        } catch {
+            recommendationMessage = error.localizedDescription
+        }
     }
 }
 
