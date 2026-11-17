@@ -6,10 +6,10 @@
 
 Let someone describe what they want for dinner and get a small set of relevant suggestions from their active Cookbook recipes. The description is the primary signal. It can include ingredients they have or want to use, a dish or cuisine they are craving, time or effort constraints, or context like “it’s cold out.”
 
-- On the Dinner tab, show today's date and a **Plan dinner** button when there is no dinner scheduled or saved for today. Open a dedicated prompt screen from that button; do not put an always-visible text box on the Dinner tab. Include example prompts, such as “I have a loaf of bread. What could I use it for or pair with for dinner?” and “We have a lot of frozen beef. What could we make?”
+- On the Dinner tab, show a **Plan dinner** button for the next unplanned day: today if no dinner is scheduled or saved for today, and tomorrow if today already has a dinner. Label it with the target day and date. Open a dedicated prompt screen from that button; do not put an always-visible text box on the Dinner tab. Include example prompts, such as “I have a loaf of bread. What could I use it for or pair with for dinner?” and “We have a lot of frozen beef. What could we make?”
 - Recommend up to five active recipes from the full library, including imported recipes and excluding deleted recipes. Prefer recipes that use the named ingredients or fit the stated request. Do not require the user to provide weather or configure a location.
 - Give each suggestion a short, compelling reason grounded in the recipe and the user's description. Call out how a recipe uses or pairs with a named ingredient when relevant. Do not claim a recipe contains an ingredient or property that is not in its catalog data.
-- Let the user open a recipe or add it to tonight using the existing dinner planner. Keep normal dinner planning available if recommendations are unavailable.
+- Let the user open a recipe or add it to the target dinner date using the existing dinner planner. Keep normal dinner planning available if recommendations are unavailable.
 - After the user adds a suggested recipe to a dinner date, navigate to that recipe's detail page. Returning to Dinner should show the new dinner entry. Starting Plan dinner again should present a fresh, empty prompt.
 - Treat weather as optional context. If the user mentions cold, rain, or another condition in the prompt, use that as part of the request. Do not fetch weather or request location for the default flow. A separately chosen live-weather context can be considered later, but is outside the core plan.
 
@@ -26,7 +26,7 @@ Use the user's description as the main ranking signal, with recipe metadata as g
 ## Basic test cases
 
 - The recommendation flow accepts a freeform description and does not ask for location or fetch weather.
-- When there is no current-day dinner, the Dinner tab shows today's date and a Plan dinner action; the prompt appears only after opening that action.
+- The Dinner tab offers Plan dinner for today when today has no dinner, and for tomorrow when today already has one; the prompt appears only after opening that action.
 - A prompt naming a loaf of bread ranks applicable active recipes and explains whether the bread is used in the recipe or offered as a separate pairing.
 - A prompt about frozen beef favors relevant recipes, accounts for stated constraints, and does not claim unlisted ingredients.
 - A prompt that includes weather context, such as “it’s cold out,” can use that as a preference without fetching a forecast.
@@ -34,13 +34,13 @@ Use the user's description as the main ranking signal, with recipe metadata as g
 - Cloud processing uses existing OpenAI configuration only when the user's provider/settings permit it and clearly communicates when prompt and recipe data will be sent.
 - Results include active imported recipes and exclude deleted recipes.
 - If Foundation Models is unavailable, cloud processing is disabled, the API key is missing, the network fails, or model output is invalid, show a clear retry/setup state without preventing normal dinner planning.
-- A recipe opens from a result and can be added to tonight through the existing dinner-planning flow.
+- A recipe opens from a result and can be added to the date targeted by Plan dinner through the existing dinner-planning flow.
 - Saving a suggestion to dinner takes the user to its recipe detail page; going back shows the new dinner record, and reopening Plan dinner starts with an empty prompt.
 - An empty or overly broad prompt asks the user to add detail or returns a helpful empty state rather than unsupported claims.
 
 ## High-level implementation details
 
-1. Add a current-day dinner section to the Dinner tab, with a Plan dinner action when today has no dinner. Put the freeform prompt, example prompts, and AI request in a dedicated screen with local-only prompt state.
+1. Add a Plan dinner action to the Dinner tab for today when it is open or tomorrow when today already has a dinner. Put the freeform prompt, example prompts, and AI request in a dedicated screen with local-only prompt state, and preselect the targeted day when adding a suggested recipe.
 2. Add a dedicated structured LLM recommendation request that takes the user description and active cookbook recipe data, prioritizes the described ingredients and constraints, and validates the returned recipe IDs and explanations.
 3. Prefer Foundation Models on supported devices; route to the existing OpenAI Responses API configuration when the user's provider choice permits. Keep cloud data use explicit and do not silently fall back from on-device to cloud.
 4. Add loading, recommendation, empty, retry, provider/setup, and unavailable states. Keep normal dinner planning accessible.

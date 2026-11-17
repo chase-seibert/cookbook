@@ -1241,7 +1241,7 @@ private struct GroceryReviewSession: Identifiable {
 }
 
 private enum DinnerNavigationRoute: Hashable {
-    case recommendations
+    case recommendations(Date)
     case recipe(String)
 }
 
@@ -1276,6 +1276,39 @@ struct DinnerPlannerView: View {
 
     private var recipeTitles: [String: String] { Dictionary(uniqueKeysWithValues: recipes.map { ($0.id, $0.title) }) }
     private var today: Date { Calendar.current.startOfDay(for: .now) }
+    private var planningDate: Date {
+        let hasDinnerToday = dinnerGroups.contains { Calendar.current.isDate($0.date, inSameDayAs: today) }
+        return hasDinnerToday ? (Calendar.current.date(byAdding: .day, value: 1, to: today) ?? today) : today
+    }
+    private var planningSection: some View {
+        let targetDate = planningDate
+        let title = Calendar.current.isDate(targetDate, inSameDayAs: today)
+            ? "Today · \(targetDate.formatted(date: .complete, time: .omitted))"
+            : "Tomorrow · \(targetDate.formatted(date: .complete, time: .omitted))"
+        return Section(title) {
+            Button {
+                navigationPath.append(.recommendations(targetDate))
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "sparkles")
+                        .font(.headline)
+                    Text("Plan dinner")
+                        .font(.headline)
+                    Spacer(minLength: 12)
+                    Image(systemName: "arrow.right")
+                        .font(.subheadline.weight(.semibold))
+                        .accessibilityHidden(true)
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 16)
+                .frame(maxWidth: .infinity, minHeight: 54)
+                .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            .listRowBackground(Color.clear)
+        }
+    }
     private var dinnerGroups: [DinnerDateGroup] {
         let calendar = Calendar.current
         let dates = Set(scheduled.map { calendar.startOfDay(for: $0.dinnerDate) })
@@ -1296,15 +1329,7 @@ struct DinnerPlannerView: View {
     var body: some View {
         NavigationStack(path: $navigationPath) {
             List {
-                if !dinnerGroups.contains(where: { Calendar.current.isDate($0.date, inSameDayAs: today) }) {
-                    Section("Today · \(today.formatted(date: .complete, time: .omitted))") {
-                        Button {
-                            navigationPath.append(.recommendations)
-                        } label: {
-                            Label("Plan dinner", systemImage: "sparkles")
-                        }
-                    }
-                }
+                planningSection
                 if dinnerGroups.isEmpty {
                     Section("Dinner dates") {
                         ContentUnavailableView("No dinners planned", systemImage: "calendar.badge.plus", description: Text("Open a recipe, tap the ellipsis, and choose Add to Dinner."))
@@ -1362,8 +1387,8 @@ struct DinnerPlannerView: View {
             .navigationTitle("Dinner")
             .navigationDestination(for: DinnerNavigationRoute.self) { route in
                 switch route {
-                case .recommendations:
-                    DinnerRecommendationPromptView(recipes: recipes) { recipe in
+                case .recommendations(let targetDate):
+                    DinnerRecommendationPromptView(recipes: recipes, dinnerDate: targetDate) { recipe in
                         navigationPath = [.recipe(recipe.id)]
                     }
                 case .recipe(let recipeID):
@@ -1573,6 +1598,7 @@ struct DinnerPlannerView: View {
 
 private struct DinnerRecommendationPromptView: View {
     let recipes: [Recipe]
+    let dinnerDate: Date
     let onRecipeAdded: (Recipe) -> Void
     @AppStorage("aiProvider") private var aiProvider = "openai"
     @AppStorage("openAIModel") private var openAIModel = "gpt-6-astra"
@@ -1652,7 +1678,7 @@ private struct DinnerRecommendationPromptView: View {
         .sheet(item: $recipeToAdd, onDismiss: {
             if let addedRecipe { onRecipeAdded(addedRecipe) }
         }) { recipe in
-            AddRecipeToDinnerView(recipe: recipe) { addedRecipe = recipe }
+            AddRecipeToDinnerView(recipe: recipe, initialDinnerDate: dinnerDate) { addedRecipe = recipe }
         }
     }
 

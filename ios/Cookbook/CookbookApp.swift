@@ -889,7 +889,18 @@ struct AddRecipeToDinnerView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @Query private var scheduled: [PlannedDinnerRecipe]
-    @State private var dinnerDate = Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: .now).map { max($0, .now) } ?? .now
+    @State private var dinnerDate: Date
+
+    init(recipe: Recipe, initialDinnerDate: Date? = nil, onSaved: @escaping () -> Void = {}) {
+        self.recipe = recipe
+        self.onSaved = onSaved
+        _dinnerDate = State(initialValue: Self.defaultDinnerDate(on: initialDinnerDate))
+    }
+
+    private static func defaultDinnerDate(on date: Date?) -> Date {
+        let day = date ?? .now
+        return Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: day).map { max($0, .now) } ?? .now
+    }
 
     var body: some View {
         NavigationStack {
