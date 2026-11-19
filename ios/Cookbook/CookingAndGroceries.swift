@@ -10,6 +10,7 @@ struct CookingModeView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var sessions: [CookingSessionRecord]
     @State private var stepIndex = 0
+    @State private var stepTransitionDirection = 1
     private var step: RecipeStep { recipe.steps[stepIndex] }
     private var currentIngredients: [RecipeIngredient] { recipe.ingredients.filter { step.ingredientIDs.contains($0.id) } }
     private var sections: [String] { Array(NSOrderedSet(array: recipe.steps.map { $0.sectionTitle.isEmpty ? recipe.title : $0.sectionTitle })) as? [String] ?? [recipe.title] }
@@ -25,34 +26,53 @@ struct CookingModeView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
             HStack { Text(recipe.title).font(.headline); Spacer(); Button("Done") { dismiss() }.font(.headline) }
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(sections, id: \.self) { section in
-                        Button(section) { openSection(section) }
-                            .font(.subheadline.weight(section == currentSection ? .semibold : .regular))
-                            .padding(.horizontal, 14).padding(.vertical, 10)
-                            .background(section == currentSection ? Color.primary : Color(uiColor: .secondarySystemBackground), in: Capsule())
-                            .foregroundStyle(section == currentSection ? Color(uiColor: .systemBackground) : Color.primary)
+            if sections.count > 1 {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(sections, id: \.self) { section in
+                            Button(section) { openSection(section) }
+                                .font(.subheadline.weight(section == currentSection ? .semibold : .regular))
+                                .padding(.horizontal, 14).padding(.vertical, 10)
+                                .background(section == currentSection ? Color.primary : Color(uiColor: .secondarySystemBackground), in: Capsule())
+                                .foregroundStyle(section == currentSection ? Color(uiColor: .systemBackground) : Color.primary)
+                        }
                     }
                 }
             }
-            Text("\(currentSection.uppercased()) · STEP \((stepsInCurrentSection.firstIndex(of: stepIndex) ?? 0) + 1) OF \(stepsInCurrentSection.count)").font(.caption.weight(.bold)).tracking(1.2).foregroundStyle(.secondary)
+            Text("STEP \((stepsInCurrentSection.firstIndex(of: stepIndex) ?? 0) + 1) OF \(stepsInCurrentSection.count)").font(.caption.weight(.bold)).tracking(1.2).foregroundStyle(.secondary)
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    VStack(alignment: .leading, spacing: 5) {
-                        ForEach(currentIngredients) { ingredient in HStack(alignment: .firstTextBaseline, spacing: 4) {
-                            Text(ingredient.quantity).foregroundStyle(.secondary).frame(width: 60, alignment: .trailing)
-                            Text(ingredient.name).font(.system(.title2, design: .rounded, weight: .medium)).frame(maxWidth: .infinity, alignment: .leading)
-                        }.fixedSize(horizontal: false, vertical: true) }
+                ZStack(alignment: .topLeading) {
+                    VStack(alignment: .leading, spacing: 24) {
+                        VStack(alignment: .leading, spacing: 5) {
+                            ForEach(currentIngredients) { ingredient in HStack(alignment: .firstTextBaseline, spacing: 4) {
+                                Text(ingredient.quantity).foregroundStyle(.secondary).frame(width: 60, alignment: .trailing)
+                                Text(ingredient.name).font(.system(.title2, design: .rounded, weight: .medium)).frame(maxWidth: .infinity, alignment: .leading)
+                            }.fixedSize(horizontal: false, vertical: true) }
+                        }
+                        Divider()
+                        if !step.sectionTitle.isEmpty { Text(step.sectionTitle).font(.system(.title2, design: .serif).weight(.semibold)) }
+                        Text(step.originalInstruction).font(.system(.title2, design: .serif)).fixedSize(horizontal: false, vertical: true).lineSpacing(5)
                     }
-                    Divider()
-                    if !step.sectionTitle.isEmpty { Text(step.sectionTitle).font(.system(.title2, design: .serif).weight(.semibold)) }
-                    Text(step.originalInstruction).font(.system(.title, design: .serif)).fixedSize(horizontal: false, vertical: true).lineSpacing(5)
-                }.padding(.vertical, 8)
+                    .padding(.vertical, 8)
+                    .id(step.id)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: stepTransitionDirection > 0 ? .trailing : .leading),
+                        removal: .move(edge: stepTransitionDirection > 0 ? .leading : .trailing)
+                    ))
+                }
             }
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 25)
+                    .onEnded { value in
+                        let horizontal = value.translation.width
+                        let vertical = value.translation.height
+                        guard abs(horizontal) >= 60, abs(horizontal) > abs(vertical) * 1.3 else { return }
+                        navigateStep(horizontal < 0 ? 1 : -1)
+                    }
+            )
             HStack(spacing: 14) {
-                Button { moveStep(-1) } label: { Label("Previous", systemImage: "chevron.left").frame(maxWidth: .infinity).padding() }.disabled(stepIndex == 0).buttonStyle(.bordered)
-                Button { moveStep(1) } label: { HStack { Text(stepIndex == recipe.steps.indices.last ? "Finish" : "Next"); Image(systemName: "chevron.right") }.frame(maxWidth: .infinity).padding() }.buttonStyle(.borderedProminent)
+                Button { navigateStep(-1) } label: { Label("Previous", systemImage: "chevron.left").frame(maxWidth: .infinity).padding() }.disabled(stepIndex == 0).buttonStyle(.bordered)
+                Button { navigateStep(1) } label: { HStack { Text(stepIndex == recipe.steps.indices.last ? "Finish" : "Next"); Image(systemName: "chevron.right") }.frame(maxWidth: .infinity).padding() }.buttonStyle(.borderedProminent)
             }
         }
         .padding(22)
@@ -71,6 +91,12 @@ struct CookingModeView: View {
     private func openSection(_ section: String) {
         if let saved = sessions.first?.sectionProgress[section], let index = recipe.steps.firstIndex(where: { $0.id == saved }) { stepIndex = index }
         else if let index = recipe.steps.firstIndex(where: { ($0.sectionTitle.isEmpty ? recipe.title : $0.sectionTitle) == section }) { stepIndex = index }
+    }
+    private func navigateStep(_ direction: Int) {
+        stepTransitionDirection = direction
+        withAnimation(.easeInOut(duration: 0.28)) {
+            moveStep(direction)
+        }
     }
     private func moveStep(_ direction: Int) {
         guard let position = stepsInCurrentSection.firstIndex(of: stepIndex) else { return }
