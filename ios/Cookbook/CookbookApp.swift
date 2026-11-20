@@ -325,7 +325,7 @@ struct RecipeBrowserView: View {
                             .offset(x: 8, y: -7)
                     }
                 }
-        }
+            }
         .accessibilityLabel("Filters")
         .accessibilityValue(activeFilterCount == 0 ? "No active filters" : "\(activeFilterCount) active \(activeFilterCount == 1 ? "filter" : "filters")")
         .accessibilityHint("Opens Protein, Meal Style, and Ingredients filters.")
@@ -572,6 +572,9 @@ struct RecipeDetailView: View {
     @State private var showCooking = false
     @State private var showAddToDinner = false
     @State private var showImageGeneration = false
+    @State private var imageEditButtonVisible = false
+    @State private var showPhotoPicker = false
+    @State private var showDeleteConfirmation = false
     @State private var noteToEdit: RecipeNote?
     @State private var noteCopied = false
     @State private var pickedPhoto: PhotosPickerItem?
@@ -579,6 +582,7 @@ struct RecipeDetailView: View {
     @State private var showPaprikaShare = false
     @State private var paprikaExportStatus: String?
     @State private var restorationMessage: String?
+    @State private var photoStatus: String?
     @State private var exportingPaprika = false
     @State private var recipeDocumentURL: URL?
     @State private var recipeDocumentStatus: String?
@@ -610,15 +614,45 @@ struct RecipeDetailView: View {
             VStack(alignment: .leading, spacing: 22) {
                 if let previewImage {
                     Image(uiImage: previewImage).resizable().scaledToFill().frame(maxHeight: 260).clipped().clipShape(RoundedRectangle(cornerRadius: 18))
+                } else if hasEffectiveImage && !previewOnly && !isDeleted {
+                    Button {
+                        imageEditButtonVisible = true
+                    } label: {
+                        RecipeArtwork(recipe: recipe, height: 260)
+                            .clipShape(RoundedRectangle(cornerRadius: 18))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Recipe image")
+                    .accessibilityHint("Show image editing options.")
+                    .popover(isPresented: $imageEditButtonVisible, attachmentAnchor: .rect(.bounds), arrowEdge: .bottom) {
+                        Menu { imageEditActions } label: {
+                            Label("Edit Image", systemImage: "pencil")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .padding(12)
+                        .presentationCompactAdaptation(.popover)
+                    }
                 } else if hasEffectiveImage {
                     RecipeArtwork(recipe: recipe, height: 260)
                         .clipShape(RoundedRectangle(cornerRadius: 18))
+                } else if !previewOnly && !isDeleted {
+                    Menu { imageEditActions } label: {
+                        VStack(spacing: 10) {
+                            Image(systemName: "photo.badge.plus").font(.system(size: 34))
+                            Text("Add Image").font(.headline)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 260)
+                        .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 18))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 18)
+                                .strokeBorder(.tertiary, style: StrokeStyle(lineWidth: 1, dash: [7, 5]))
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Add recipe image")
                 }
                 Text(recipe.title).font(.system(size: 34, weight: .semibold, design: .serif)).fixedSize(horizontal: false, vertical: true)
-                if isDeleted {
-                    Button { restoreDeletedRecipe() } label: { Label("Restore recipe", systemImage: "arrow.uturn.backward") }
-                        .buttonStyle(.borderedProminent)
-                }
                 if !recipe.introduction.isEmpty { Text(recipe.introduction).font(.body).foregroundStyle(.secondary) }
                 if let servings = recipe.servings, !servings.isEmpty { LabeledContent("Servings", value: servings) }
                 ForEach(recipe.orderedContent) { content in
@@ -655,7 +689,14 @@ struct RecipeDetailView: View {
                 ForEach(recipe.tips, id: \.self) { Text("Tip: \($0)").italic().foregroundStyle(.secondary) }
                 ForEach(recipe.healthierOptions, id: \.self) { Text("Healthier option: \($0)").italic().foregroundStyle(.secondary) }
                 if !previewOnly {
-                    SectionTitle("My notes")
+                    HStack(alignment: .center) {
+                        SectionTitle("My notes")
+                        Spacer()
+                        Button { showNote = true } label: { Image(systemName: "plus.circle.fill") }
+                            .font(.title3)
+                            .accessibilityLabel("Add Note")
+                            .accessibilityHint("Add a note to this recipe.")
+                    }
                     if activeNotes.isEmpty { Text("No notes yet.").foregroundStyle(.secondary) }
                     ForEach(activeNotes) { note in
                         Button { noteToEdit = note; showNoteEdit = true } label: {
@@ -694,7 +735,50 @@ struct RecipeDetailView: View {
                     .accessibilityLabel("Recipe source: \(provenance.tagLabel)")
                 }
                 if !previewOnly {
-                    Button { showCooking = true } label: { Label("Start cooking", systemImage: "play.fill").frame(maxWidth: .infinity).padding(14).background(.primary, in: Capsule()).foregroundStyle(.background) }
+                    if !isDeleted && !categories.isEmpty {
+                        Menu {
+                            ForEach(categories.sorted { $0.order < $1.order }) { category in
+                                Button {
+                                    do { try RecipeCategoryStore.setAssignment(recipeID: recipe.id, categoryID: category.id, in: modelContext) }
+                                    catch { restorationMessage = error.localizedDescription }
+                                } label: {
+                                    if assignedCategoryID == category.id { Label(category.name, systemImage: "checkmark") }
+                                    else { Text(category.name) }
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "folder")
+                                Text(assignedCategoryName)
+                                Image(systemName: "chevron.down").font(.caption2.weight(.semibold))
+                            }
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(Color(red: 0.32, green: 0.39, blue: 0.27))
+                        }
+                        .accessibilityLabel("Category: \(assignedCategoryName)")
+                        .accessibilityHint("Choose a recipe category.")
+                    } else {
+                        Label(assignedCategoryName, systemImage: "folder")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(.primary)
+                    }
+                }
+                if !previewOnly && isDeleted {
+                    Button { restoreDeletedRecipe() } label: {
+                        Label("Restore Recipe", systemImage: "arrow.uturn.backward")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.regular)
+                    .padding(.top, 10)
+                } else if !previewOnly {
+                    Button(role: .destructive) { showDeleteConfirmation = true } label: {
+                        Label("Delete Recipe", systemImage: "trash")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.regular)
+                    .padding(.top, 10)
                 }
             }.padding(22)
         }
@@ -721,44 +805,33 @@ struct RecipeDetailView: View {
         }
         .toolbar {
             if !previewOnly {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button { showCooking = true } label: { Label("Start Cooking", systemImage: "play.fill") }
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-            Menu {
-                Button { showGroceries = true } label: { Label("Add to Groceries…", systemImage: "cart") }
-                Button { showAddToDinner = true } label: { Label("Add to Dinner…", systemImage: "calendar.badge.plus") }
-                Button { showCooking = true } label: { Label("Start Cooking", systemImage: "play.fill") }
-                Button { showNote = true } label: { Label("Add Note", systemImage: "note.text") }
-                if !isDeleted && !categories.isEmpty {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button { showCooking = true } label: { Image(systemName: "play.fill") }
+                        .accessibilityLabel("Start Cooking")
+
                     Menu {
-                        ForEach(categories.sorted { $0.order < $1.order }) { category in
-                            Button {
-                                do { try RecipeCategoryStore.setAssignment(recipeID: recipe.id, categoryID: category.id, in: modelContext) }
-                                catch { restorationMessage = error.localizedDescription }
-                            } label: {
-                                if assignedCategoryID == category.id { Label(category.name, systemImage: "checkmark") }
-                                else { Text(category.name) }
-                            }
-                        }
-                    } label: { Label("Category: \(assignedCategoryName)", systemImage: "folder") }
-                }
-                PhotosPicker(selection: $pickedPhoto, matching: .images) { Label("Add Photo", systemImage: "camera") }
-                Button { showCamera = true } label: { Label("Take Photo", systemImage: "camera.fill") }.disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
-                Button { showPrint = true } label: { Label("Print Recipe", systemImage: "printer") }
-                Button { Task { await exportRecipeDocument(format: .markdown) } } label: { Label("Export Markdown…", systemImage: "doc.text") }.disabled(exportingRecipeDocument)
-                Button { Task { await exportRecipeDocument(format: .html) } } label: { Label("Export HTML…", systemImage: "chevron.left.forwardslash.chevron.right") }.disabled(exportingRecipeDocument)
-                Button { Task { await exportPaprikaRecipe() } } label: { Label("Export Paprika File…", systemImage: "square.and.arrow.up") }.disabled(exportingPaprika)
-                if !isDeleted {
-                    Button { showImageGeneration = true } label: {
-                        Label(hasEffectiveImage ? "Manage Recipe Images" : "Generate Recipe Cover", systemImage: "sparkles")
+                        Button { showGroceries = true } label: { Label("Add to Groceries…", systemImage: "cart") }
+                        Button { showAddToDinner = true } label: { Label("Add to Dinner…", systemImage: "calendar.badge.plus") }
+                    } label: {
+                        Label("Plan", systemImage: "calendar.badge.plus")
                     }
+                    .labelStyle(.iconOnly)
+                    .accessibilityLabel("Plan")
+
+                    Menu {
+                        Button { showPrint = true } label: { Label("Print Recipe", systemImage: "printer") }
+                        Menu {
+                            Button { Task { await exportRecipeDocument(format: .markdown) } } label: { Label("Markdown…", systemImage: "doc.text") }.disabled(exportingRecipeDocument)
+                            Button { Task { await exportRecipeDocument(format: .html) } } label: { Label("HTML…", systemImage: "chevron.left.forwardslash.chevron.right") }.disabled(exportingRecipeDocument)
+                            Button { Task { await exportPaprikaRecipe() } } label: { Label("Paprika File…", systemImage: "square.and.arrow.up") }.disabled(exportingPaprika)
+                        } label: { Label("Export", systemImage: "square.and.arrow.up") }
+                    } label: {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                    .labelStyle(.iconOnly)
+                    .accessibilityLabel("Share")
                 }
-                if !isDeleted {
-                    Button(role: .destructive) { deleteRecipe() } label: { Label("Delete Recipe", systemImage: "trash") }
-                }
-            } label: { Image(systemName: "ellipsis.circle") }
-        }}
+            }
         }
         .sheet(isPresented: $showGroceries) { GroceryReviewView(recipe: recipe) }
         .sheet(isPresented: $showImageGeneration) {
@@ -781,13 +854,35 @@ struct RecipeDetailView: View {
         .alert("Paprika export", isPresented: Binding(get: { paprikaExportStatus != nil }, set: { if !$0 { paprikaExportStatus = nil } })) {
             Button("OK") { paprikaExportStatus = nil }
         } message: { Text(paprikaExportStatus ?? "") }
-        .alert("Deleted recipe", isPresented: Binding(get: { restorationMessage != nil }, set: { if !$0 { restorationMessage = nil } })) {
+        .alert("Recipe update", isPresented: Binding(get: { restorationMessage != nil }, set: { if !$0 { restorationMessage = nil } })) {
             Button("OK") { restorationMessage = nil }
         } message: { Text(restorationMessage ?? "") }
+        .alert("Recipe image", isPresented: Binding(get: { photoStatus != nil }, set: { if !$0 { photoStatus = nil } })) {
+            Button("OK") { photoStatus = nil }
+        } message: { Text(photoStatus ?? "") }
         .sheet(isPresented: $showCamera) {
             CameraCaptureView { image in savePhoto(image) }
         }
+        .photosPicker(isPresented: $showPhotoPicker, selection: $pickedPhoto, matching: .images)
+        .confirmationDialog("Delete \(recipe.title)?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
+            Button("Delete Recipe", role: .destructive) { deleteRecipe() }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This recipe will move to Deleted Recipes in Settings, where you can restore it.")
+        }
         .onChange(of: pickedPhoto) { _, item in Task { await savePhoto(item) } }
+    }
+
+    @ViewBuilder
+    private var imageEditActions: some View {
+        Button { Task { await presentPhotoPicker() } } label: { Label("Add Photo", systemImage: "photo") }
+        Button { Task { await presentCamera() } } label: { Label("Take Photo", systemImage: "camera.fill") }
+            .disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
+        if !isDeleted {
+            Button { Task { await presentImageManagement() } } label: {
+                Label(hasEffectiveImage ? "Manage Recipe Images" : "Generate Recipe Cover", systemImage: "sparkles")
+            }
+        }
     }
 
     private var activeNotes: [RecipeNote] { notes.filter { $0.deletedAt == nil }.sorted { $0.updatedAt > $1.updatedAt } }
@@ -892,15 +987,64 @@ struct RecipeDetailView: View {
     }
 
     @MainActor private func savePhoto(_ item: PhotosPickerItem?) async {
-        guard let item, let data = try? await item.loadTransferable(type: Data.self), let image = UIImage(data: data) else { return }
-        savePhoto(image)
-        pickedPhoto = nil
+        guard let item else { return }
+        defer { pickedPhoto = nil }
+        do {
+            guard let data = try await item.loadTransferable(type: Data.self) else {
+                photoStatus = "The selected photo could not be read. Please choose another photo."
+                return
+            }
+            guard let image = UIImage(data: data) else {
+                photoStatus = "The selected file is not a supported image."
+                return
+            }
+            savePhoto(image)
+        } catch {
+            photoStatus = "Could not load the selected photo: \(error.localizedDescription)"
+        }
+    }
+
+    @MainActor private func presentPhotoPicker() async {
+        imageEditButtonVisible = false
+        try? await Task.sleep(nanoseconds: 250_000_000)
+        showPhotoPicker = true
+    }
+
+    @MainActor private func presentCamera() async {
+        imageEditButtonVisible = false
+        try? await Task.sleep(nanoseconds: 250_000_000)
+        showCamera = true
+    }
+
+    @MainActor private func presentImageManagement() async {
+        imageEditButtonVisible = false
+        try? await Task.sleep(nanoseconds: 250_000_000)
+        showImageGeneration = true
     }
 
     @MainActor private func savePhoto(_ image: UIImage) {
-        guard let jpeg = image.jpegData(compressionQuality: 0.88) else { return }
+        guard let jpeg = image.jpegData(compressionQuality: 0.88) else {
+            photoStatus = "Could not prepare the selected image."
+            return
+        }
         let name = "\(UUID().uuidString).jpg"
-        do { try jpeg.write(to: UserFiles.url(for: name), options: .atomic); photos.forEach { $0.isCover = false }; modelContext.insert(RecipePhoto(recipeID: recipe.id, relativePath: name, isCover: true)) } catch { }
+        let url = UserFiles.url(for: name)
+        let previousCover = photos.first(where: \.isCover)
+        var insertedPhoto: RecipePhoto?
+        do {
+            try jpeg.write(to: url, options: .atomic)
+            photos.forEach { $0.isCover = false }
+            let photo = RecipePhoto(recipeID: recipe.id, relativePath: name, isCover: true)
+            insertedPhoto = photo
+            modelContext.insert(photo)
+            try modelContext.save()
+            photoStatus = "The recipe photo was added."
+        } catch {
+            if let insertedPhoto { modelContext.delete(insertedPhoto) }
+            if let previousCover { previousCover.isCover = true }
+            try? FileManager.default.removeItem(at: url)
+            photoStatus = "Could not save the recipe photo: \(error.localizedDescription)"
+        }
     }
 }
 

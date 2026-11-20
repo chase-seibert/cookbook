@@ -49,6 +49,13 @@ struct SettingsView: View {
         return bundledCount + paprikaCount + webCaptureCount + magazineCount
     }
 
+    private var deletedRecipeCount: Int {
+        importedRecords.filter { $0.deletedAt != nil }.count
+            + importedWebRecords.filter { $0.deletedAt != nil }.count
+            + importedMagazineRecords.filter { $0.deletedAt != nil }.count
+            + deletedRecipes.count
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -60,6 +67,12 @@ struct SettingsView: View {
                         Label("Manage categories", systemImage: "folder")
                     }
                     Text("Choose the Recipes list sections and the default category for unmatched imports.").font(.footnote).foregroundStyle(.secondary)
+                    NavigationLink {
+                        RecipeBrowserView(showingDeletedRecipes: true, managesNavigationStack: false, screenTitle: "Deleted recipes")
+                    } label: {
+                        Label("Deleted recipes (\(deletedRecipeCount))", systemImage: "trash")
+                    }
+                    Text("Recipes you delete can be restored from this list.").font(.footnote).foregroundStyle(.secondary)
                     SettingsGroupLabel(title: "Recipe notes")
                     Text("\(notes.filter { $0.deletedAt == nil }.count) saved notes")
                     Button("Export notes with timestamps") { exportNotes() }
@@ -138,11 +151,6 @@ struct SettingsView: View {
                     ForEach(paprikaImportRuns.prefix(3), id: \.id) { run in PaprikaImportRunRow(run: run) }
                     if paprikaImportRuns.count > 3 {
                         NavigationLink("All Paprika import runs (\(paprikaImportRuns.count))") { PaprikaImportHistoryView() }
-                    }
-                    NavigationLink {
-                        RecipeBrowserView(showingDeletedRecipes: true, managesNavigationStack: false, screenTitle: "Deleted recipes")
-                    } label: {
-                        Label("Deleted recipes (\(importedRecords.filter { $0.deletedAt != nil }.count + importedWebRecords.filter { $0.deletedAt != nil }.count + importedMagazineRecords.filter { $0.deletedAt != nil }.count + deletedRecipes.count))", systemImage: "trash")
                     }
                 }
                 Section("Export") {
