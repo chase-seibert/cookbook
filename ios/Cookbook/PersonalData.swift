@@ -387,6 +387,235 @@ struct PaprikaSkippedRecipe: Codable, Hashable, Identifiable, Sendable {
     }
 }
 
+@Model final class FamilyMember {
+    @Attribute(.unique) var id: UUID
+    var name: String
+    var isActive: Bool
+    var createdAt: Date
+
+    init(id: UUID = UUID(), name: String, isActive: Bool = true, createdAt: Date = .now) {
+        self.id = id
+        self.name = name
+        self.isActive = isActive
+        self.createdAt = createdAt
+    }
+}
+
+@Model final class DinnerVote {
+    @Attribute(.unique) var id: UUID
+    var dinnerDay: Date
+    var memberID: UUID
+    var stars: Int
+    var updatedAt: Date
+
+    init(id: UUID = UUID(), dinnerDay: Date, memberID: UUID, stars: Int, updatedAt: Date = .now) {
+        self.id = id
+        self.dinnerDay = Calendar.current.startOfDay(for: dinnerDay)
+        self.memberID = memberID
+        self.stars = stars
+        self.updatedAt = updatedAt
+    }
+}
+
+enum FamilyDinnerStoreError: LocalizedError {
+    case emptyName
+    case duplicateName(String)
+    case invalidRating
+
+    var errorDescription: String? {
+        switch self {
+        case .emptyName: "Enter a family member name."
+        case .duplicateName(let name): "A family member named \(name) already exists. Restore that person or edit the existing name."
+        case .invalidRating: "A dinner rating must be from 1 to 5 stars."
+        }
+    }
+}
+
+@MainActor enum FamilyDinnerStore {
+    static func addMember(name: String, in context: ModelContext) throws {
+        let cleanName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanName.isEmpty else { throw FamilyDinnerStoreError.emptyName }
+        try ensureUniqueName(cleanName, excluding: nil, in: context)
+        context.insert(FamilyMember(name: cleanName))
+        try context.save()
+    }
+
+    static func renameMember(_ member: FamilyMember, to name: String, in context: ModelContext) throws {
+        let cleanName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanName.isEmpty else { throw FamilyDinnerStoreError.emptyName }
+        try ensureUniqueName(cleanName, excluding: member.id, in: context)
+        member.name = cleanName
+        try context.save()
+    }
+
+    static func removeMember(_ member: FamilyMember, in context: ModelContext) throws {
+        member.isActive = false
+        try context.save()
+    }
+
+    static func restoreMember(_ member: FamilyMember, in context: ModelContext) throws {
+        try ensureUniqueName(member.name, excluding: member.id, in: context)
+        member.isActive = true
+        try context.save()
+    }
+
+    /// Coalesces older rows with the same normalized name while keeping the earliest member ID.
+    /// Votes move to that ID; if both rows rated the same occurrence, the most recent vote wins.
+    static func mergeDuplicateMembers(in context: ModelContext) throws -> Int {
+        let members = try context.fetch(FetchDescriptor<FamilyMember>())
+        let groups = Dictionary(grouping: members, by: { normalizedName($0.name) })
+        let duplicateGroups = groups.values.filter { $0.count > 1 }
+        guard !duplicateGroups.isEmpty else { return 0 }
+
+        let recipeVotes = try context.fetch(FetchDescriptor<RecipeDinnerVote>())
+        let legacyVotes = try context.fetch(FetchDescriptor<DinnerVote>())
+        var mergedCount = 0
+
+        for group in duplicateGroups {
+            let ordered = group.sorted {
+                if $0.createdAt != $1.createdAt { return $0.createdAt < $1.createdAt }
+                return $0.id.uuidString < $1.id.uuidString
+            }
+            guard let canonical = ordered.first else { continue }
+            canonical.isActive = ordered.contains(where: \.isActive)
+
+            for duplicate in ordered.dropFirst() {
+                for vote in recipeVotes where vote.memberID == duplicate.id {
+                    if let existing = recipeVotes.first(where: {
+                        $0.memberID == canonical.id && $0.recipeDinnerUsageID == vote.recipeDinnerUsageID && $0.id != vote.id
+                    }) {
+                        if vote.updatedAt > existing.updatedAt {
+                            existing.stars = vote.stars
+                            existing.updatedAt = vote.updatedAt
+                        }
+                        context.delete(vote)
+                    } else {
+                        vote.memberID = canonical.id
+                    }
+                }
+
+                for vote in legacyVotes where vote.memberID == duplicate.id {
+                    if let existing = legacyVotes.first(where: {
+                        $0.memberID == canonical.id && Calendar.current.isDate($0.dinnerDay, inSameDayAs: vote.dinnerDay) && $0.id != vote.id
+                    }) {
+                        if vote.updatedAt > existing.updatedAt {
+                            existing.stars = vote.stars
+                            existing.updatedAt = vote.updatedAt
+                        }
+                        context.delete(vote)
+                    } else {
+                        vote.memberID = canonical.id
+                    }
+                }
+
+                context.delete(duplicate)
+                mergedCount += 1
+            }
+        }
+        try context.save()
+        return mergedCount
+    }
+
+    /// Applies the user's requested five-person active roster once. Later Settings
+    /// edits are preserved because the bootstrap marker is written only after save.
+    static func initializeRequestedFamilyRosterIfNeeded(in context: ModelContext) throws {
+        let defaultsKey = "familyDinner.requestedRosterInitialized.v1"
+        guard !UserDefaults.standard.bool(forKey: defaultsKey) else { return }
+
+        let roster = ["Chase", "Noelle", "Henry", "Owen", "Eleanor"]
+        var members = try context.fetch(FetchDescriptor<FamilyMember>())
+        let rosterKeys = Set(roster.map(normalizedName))
+
+        for name in roster {
+            let key = normalizedName(name)
+            if let member = members.first(where: { normalizedName($0.name) == key }) {
+                member.name = name
+                member.isActive = true
+            } else {
+                let member = FamilyMember(name: name)
+                context.insert(member)
+                members.append(member)
+            }
+        }
+        for member in members where !rosterKeys.contains(normalizedName(member.name)) {
+            member.isActive = false
+        }
+
+        try context.save()
+        UserDefaults.standard.set(true, forKey: defaultsKey)
+    }
+
+    static func saveRecipeVote(usageID: UUID, memberID: UUID, stars: Double, in context: ModelContext) throws {
+        guard (0.5...5).contains(stars), (stars * 2).rounded() == stars * 2 else {
+            throw FamilyDinnerStoreError.invalidRating
+        }
+        let descriptor = FetchDescriptor<RecipeDinnerVote>(predicate: #Predicate { $0.recipeDinnerUsageID == usageID && $0.memberID == memberID })
+        if let vote = try context.fetch(descriptor).first {
+            vote.stars = stars
+            vote.updatedAt = .now
+        } else {
+            context.insert(RecipeDinnerVote(recipeDinnerUsageID: usageID, memberID: memberID, stars: stars))
+        }
+    }
+
+    static func deleteRecipeVote(usageID: UUID, memberID: UUID, in context: ModelContext) throws {
+        let descriptor = FetchDescriptor<RecipeDinnerVote>(predicate: #Predicate { $0.recipeDinnerUsageID == usageID && $0.memberID == memberID })
+        for vote in try context.fetch(descriptor) { context.delete(vote) }
+    }
+
+    // Kept in the store schema so installs with the earlier calendar-day vote model retain its data.
+    static func saveVote(dinnerDate: Date, memberID: UUID, stars: Int, in context: ModelContext) throws {
+        guard (1...5).contains(stars) else { throw FamilyDinnerStoreError.invalidRating }
+        let dinnerDay = Calendar.current.startOfDay(for: dinnerDate)
+        let descriptor = FetchDescriptor<DinnerVote>(predicate: #Predicate { $0.memberID == memberID })
+        if let vote = try context.fetch(descriptor).first(where: { Calendar.current.isDate($0.dinnerDay, inSameDayAs: dinnerDay) }) {
+            vote.stars = stars
+            vote.updatedAt = .now
+        } else {
+            context.insert(DinnerVote(dinnerDay: dinnerDay, memberID: memberID, stars: stars))
+        }
+    }
+
+    static func deleteVote(dinnerDate: Date, memberID: UUID, in context: ModelContext) throws {
+        let dinnerDay = Calendar.current.startOfDay(for: dinnerDate)
+        let descriptor = FetchDescriptor<DinnerVote>(predicate: #Predicate { $0.memberID == memberID })
+        for vote in try context.fetch(descriptor) where Calendar.current.isDate(vote.dinnerDay, inSameDayAs: dinnerDay) {
+            context.delete(vote)
+        }
+    }
+
+    private static func ensureUniqueName(_ name: String, excluding memberID: UUID?, in context: ModelContext) throws {
+        let normalized = normalizedName(name)
+        let members = try context.fetch(FetchDescriptor<FamilyMember>())
+        if let existing = members.first(where: { $0.id != memberID && normalizedName($0.name) == normalized }) {
+            throw FamilyDinnerStoreError.duplicateName(existing.name)
+        }
+    }
+
+    private static func normalizedName(_ name: String) -> String {
+        name.trimmingCharacters(in: .whitespacesAndNewlines)
+            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+            .split(whereSeparator: \.isWhitespace)
+            .joined(separator: " ")
+    }
+}
+
+@Model final class RecipeDinnerVote {
+    @Attribute(.unique) var id: UUID
+    var recipeDinnerUsageID: UUID
+    var memberID: UUID
+    var stars: Double
+    var updatedAt: Date
+
+    init(id: UUID = UUID(), recipeDinnerUsageID: UUID, memberID: UUID, stars: Double, updatedAt: Date = .now) {
+        self.id = id
+        self.recipeDinnerUsageID = recipeDinnerUsageID
+        self.memberID = memberID
+        self.stars = stars
+        self.updatedAt = updatedAt
+    }
+}
+
 @MainActor struct RecipeDinnerUsageStore {
     static func backfillMissingEvents(in context: ModelContext) throws -> Int {
         let plannedDinners = try context.fetch(FetchDescriptor<PlannedDinnerRecipe>())

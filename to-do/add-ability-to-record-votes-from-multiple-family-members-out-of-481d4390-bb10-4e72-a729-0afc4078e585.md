@@ -1,36 +1,31 @@
 ## User requirements
 
-- As a user, I want to create and manage any number of named family members in Settings, so that each person's dinner vote can be attributed to them.
-- As a user, I want each family member to give a particular dinner instance a rating from 1 to 5 stars, so that votes stay attached to the meal that was actually shared.
-- As a user, I want each recipe to show its aggregated star rating across dinner instances that included it, with at most one decimal place, so that I can compare how the family has rated that recipe over time.
-
-Each recorded dinner instance is distinct, even when the same recipe is served more than once or on the same date. A dinner vote is shared across the recipes recorded as part of that instance; each such vote contributes to each included recipe's aggregate. Do not treat a planned date or saved timeline as proof that a dinner occurred. Decide whether removing a family member retains their historical votes.
+- Create and manage any number of named family members from a dedicated Settings screen using standard form sections. Add by button or Return; enforce case- and diacritic-insensitive unique names. Edit through a pushed form, remove with a swipe action, and restore directly from a separate Removed Members section. A visible keyboard Done action dismisses name entry.
+- On startup, merge older duplicate-name member rows into the earliest member ID, preserve active status if any duplicate was active, and move votes to the retained ID. If two duplicate rows rated the same occurrence, keep the most recently updated vote.
+- Perform a one-time roster repair for this user's requested active members (Chase, Noelle, Henry, Owen, and Eleanor); preserve their retained IDs, add missing names, and move any other existing members to Removed Members without deleting their history. Later Settings edits must not be overwritten.
+- Preserve existing family members and existing vote data during schema updates. Removing a person hides them from new ratings but retains their historical attribution and can be reversed.
+- In the Dinner tab, each past or current calendar day continues to show its scheduled recipes. Add an **Add Ratings** action for those dates, opening a dedicated screen.
+- In that screen, give each scheduled recipe occurrence its own rating from each family member. Repeated instances of the same recipe remain separate and are labeled by occurrence. Ratings support 0.5-star increments by tapping or pressing and dragging left/right, plus clearing a rating.
+- Recipe detail shows one aggregate family rating across that recipe's individual previous-dinner votes, formatted to at most one decimal place with a vote count. Opening a recipe from Dinner uses the same aggregate view. Recipe detail does not list individual vote rows.
 
 ## Architecture and data model
 
-The app has no family-member, recorded-dinner, or rating model today. `PlannedDinnerRecipe` records recipe/date pairs, while `DinnerTimeline` stores a saved plan; neither represents an actual occurrence. Add SwiftData records for named family members, dinner instances, and per-member votes. A dinner instance has a stable ID, date/time, and the recipe IDs served. Each vote references one dinner instance and one stable member ID, stores an integer star value constrained to 1–5, and has an update time. Enforce one current vote per member per dinner instance in the store layer. If one instance includes multiple recipes, its member votes contribute to each included recipe's aggregate.
+`RecipeDinnerUsage.id` identifies one scheduled recipe occurrence, including repeated instances. Add `RecipeDinnerVote` with `recipeDinnerUsageID`, stable `memberID`, a `Double` star value in half-star increments from 0.5 to 5, and `updatedAt`. The store upserts one vote per family member per recipe occurrence. Keep the previous calendar-day `DinnerVote` model registered as legacy storage so earlier installs retain those rows; do not include those rows in current aggregates. Preserve `FamilyMember` rows and IDs. Update the model container, `docs/data-model.md`, and `docs/architecture.md`.
 
-Provide an explicit way to record a dinner instance and the recipes served, then collect votes for it; scheduling a recipe or saving a timeline alone must not create a rated occurrence. Calculate each recipe's mean from votes on all recorded dinner instances containing that recipe and display at most one decimal place; show an unrated state when there are no votes. Decide whether the UI also displays vote count. Decide member deletion semantics before implementing persistence: retaining history may require a soft-deleted member or a voter-name snapshot; deleting votes is simpler but loses history. Register new SwiftData models in `CookbookApp.swift`. These are additive models, so existing recipe, schedule, and timeline data should remain intact without conversion; verify the app's normal SwiftData model upgrade on an existing store. Update `docs/data-model.md` and `docs/architecture.md` to describe the records, references, and aggregate calculation.
+## Basic checks
 
-## Basic test cases
+- Add several people by tapping Add and by pressing Return; verify both create new rows without renaming or replacing existing members.
+- Confirm the keyboard Done control is visible and dismisses the keyboard. Rename only through Edit; remove and restore members without losing IDs or votes.
+- From Dinner, open a past day and Add Ratings. Verify each scheduled recipe is rated separately, including two instances of the same recipe on one day.
+- Verify tapping and dragging sets 0.5-star increments; clear one rating and change one family member's rating without altering other votes.
+- Verify votes stay attached to the right recipe occurrence and persist across relaunch.
+- Confirm recipe detail shows only the aggregate and count, with no per-instance rating rows; both Recipes and Dinner entry points show the same aggregate.
+- Confirm future dinner dates do not expose Add Ratings and that an unrated recipe shows the unrated state.
 
-- Create several named members in Settings; each appears in the list and remains after leaving and reopening the app.
-- Reject an empty or whitespace-only member name; renaming a member keeps their prior votes associated with the same member identity.
-- Record two dinner instances containing the same recipe, including two instances on one date; votes remain separate by instance, and both instances contribute to that recipe's aggregate.
-- Record an instance containing multiple recipes; its votes appear on that instance and contribute to each included recipe's aggregate, not to recipes absent from it.
-- Change one member's vote; the existing vote is updated rather than duplicated, and the other members' votes remain unchanged.
-- Verify the rating control cannot save values below 1 or above 5, and that no vote is shown as a recorded rating until selected.
-- Verify a recipe with no votes shows an unrated state; aggregates across several votes are correct and display no more than one decimal place.
-- With no configured members, the dinner voting area explains that members can be added in Settings and remains usable without a vote.
-- Verify planning or saving a timeline alone does not create a dinner instance or affect recipe ratings; recording an instance does.
-- Exercise the chosen member-removal behavior and confirm historical dinner displays remain understandable.
+## Implementation and verification
 
-## High-level implementation details
-
-1. Define the record-dinner flow for creating a stable dinner instance and selecting/confirming the recipes served. Confirm whether to show vote count with the aggregate and decide family-member removal behavior. Use one vote per member per instance.
-2. Add SwiftData models and a small store API for creating, renaming, and removing members; recording dinner instances and their recipe IDs; and reading/upserting a member's 1–5 vote. Validate trimmed names and rating bounds at the store boundary; avoid duplicate votes when saving repeatedly.
-3. Add a Family Members section to `SettingsView` in `ios/Cookbook/SettingsAndDinner.swift`, with add, rename, and the agreed removal flow.
-4. Add a way in the Dinner experience to record a distinct occurrence, its served recipes, and each member's votes. Keep planned recipes and saved timelines separate from occurrence history unless the user explicitly records that they happened.
-5. Add recipe-level aggregate ratings to `RecipeDetailView` in `ios/Cookbook/CookbookApp.swift`, deriving the mean from votes for instances that included that recipe and formatting to at most one decimal place. Avoid storing a stale aggregate when it can be derived from vote and instance records.
-6. Register models in `ios/Cookbook/CookbookApp.swift` and update the data-model and architecture docs. Check behavior with a pre-existing local store to catch SwiftData schema compatibility issues.
-7. Verify add/edit/remove, distinct instances of the same recipe, multi-recipe instances, vote persistence and edits, aggregate calculation/formatting, unrated state, and relaunch behavior. For app code changes, follow repository checks: run `make catalog-check`, then `make sim-build`, wait for it to finish, and run `make phone-deploy` as a background session after the simulator build completes. Review the simulator build and actual phone deployment result; no catalog regeneration is needed unless recipe or catalog-generator content also changes.
+1. Keep existing `FamilyMember` and legacy `DinnerVote` schema data. Add a separate per-recipe-occurrence rating model and validated upsert/delete methods.
+2. Put family management on its own Form screen. Attach Return and an Add button to insertion, reject duplicate names, use navigation for rename, swipe to remove, and keep Restore as a direct action in the removed-members section. Show Done from this screen's keyboard toolbar.
+3. Add a Dinner → date → Add Ratings route. Build screen items from `RecipeDinnerUsage` and scheduled rows, preserving distinct occurrence IDs and showing occurrence numbers for duplicate recipes.
+4. Add a tap/drag half-star control, individual vote editors, and an aggregate-only recipe-detail rating.
+5. Update docs and this plan. Run `make catalog-check`, then `make sim-build`; wait for it to finish before running `make phone-deploy` as a background command/session. Report device or simulator blockers precisely.

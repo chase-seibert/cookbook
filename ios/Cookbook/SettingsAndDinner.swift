@@ -99,6 +99,14 @@ struct SettingsView: View {
                     Button("Load Reminders lists") { Task { await loadReminderLists() } }
                     Text("Cookbook checks the selected list for duplicate incomplete items before adding quantity-free ingredients.").font(.footnote).foregroundStyle(.secondary)
                 }
+                Section("Family") {
+                    NavigationLink {
+                        FamilyMembersSettingsView()
+                    } label: {
+                        Label("Manage family members", systemImage: "person.2")
+                    }
+                    Text("Add people who can rate recipes. Names must be unique.").font(.footnote).foregroundStyle(.secondary)
+                }
                 Section("Import") {
                     SettingsGroupLabel(title: "Capture from Safari")
                     Label("Capture a recipe in Safari", systemImage: "safari")
@@ -501,6 +509,126 @@ struct SettingsView: View {
                 status = "Prepared an HTML cookbook with \(recipes.count) recipes."
             }
         } catch { status = "Could not export recipes: \(error.localizedDescription)" }
+    }
+}
+
+private struct FamilyMembersSettingsView: View {
+    @Environment(\.modelContext) private var context
+    @Query(sort: \FamilyMember.createdAt) private var members: [FamilyMember]
+    @FocusState private var isAddNameFocused: Bool
+    @State private var newName = ""
+    @State private var errorMessage: String?
+
+    private var activeMembers: [FamilyMember] { members.filter(\.isActive) }
+    private var inactiveMembers: [FamilyMember] { members.filter { !$0.isActive } }
+
+    var body: some View {
+        Form {
+            Section("Add a person") {
+                TextField("Name", text: $newName)
+                    .textInputAutocapitalization(.words)
+                    .focused($isAddNameFocused)
+                    .submitLabel(.done)
+                    .onSubmit(addMember)
+                Button { addMember() } label: { Label("Add member", systemImage: "plus") }
+                    .disabled(newName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+            Section("Active members (\(activeMembers.count))") {
+                if activeMembers.isEmpty {
+                    Text("No active members yet.").foregroundStyle(.secondary)
+                }
+                ForEach(activeMembers) { member in
+                    NavigationLink {
+                        FamilyMemberRenameView(member: member)
+                    } label: {
+                        Text(member.name)
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button("Remove", systemImage: "person.badge.minus", role: .destructive) {
+                            do { try FamilyDinnerStore.removeMember(member, in: context); errorMessage = nil }
+                            catch { errorMessage = error.localizedDescription }
+                        }
+                    }
+                }
+            }
+            if !inactiveMembers.isEmpty {
+                Section {
+                    ForEach(inactiveMembers) { member in
+                        HStack {
+                            Text(member.name).foregroundStyle(.secondary)
+                            Spacer()
+                            Button("Restore", systemImage: "arrow.uturn.backward") {
+                                do { try FamilyDinnerStore.restoreMember(member, in: context); errorMessage = nil }
+                                catch { errorMessage = error.localizedDescription }
+                            }
+                        }
+                    }
+                } header: {
+                    Text("Removed members")
+                } footer: {
+                    Text("Their past ratings are kept. Restore makes a person active again.")
+                }
+            }
+            if let errorMessage {
+                Section { Text(errorMessage).font(.footnote).foregroundStyle(.red) }
+            }
+        }
+        .navigationTitle("Family members")
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { isAddNameFocused = false }
+            }
+        }
+    }
+
+    private func addMember() {
+        do {
+            try FamilyDinnerStore.addMember(name: newName, in: context)
+            newName = ""
+            errorMessage = nil
+            isAddNameFocused = true
+        } catch { errorMessage = error.localizedDescription }
+    }
+
+}
+
+private struct FamilyMemberRenameView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
+    let member: FamilyMember
+    @State private var name: String
+    @State private var errorMessage: String?
+    @FocusState private var isNameFocused: Bool
+
+    init(member: FamilyMember) {
+        self.member = member
+        _name = State(initialValue: member.name)
+    }
+
+    var body: some View {
+        Form {
+            TextField("Name", text: $name)
+                .textInputAutocapitalization(.words)
+                .focused($isNameFocused)
+                .submitLabel(.done)
+                .onSubmit { isNameFocused = false }
+            if let errorMessage { Text(errorMessage).font(.footnote).foregroundStyle(.red) }
+        }
+        .navigationTitle("Edit family member")
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+            ToolbarItem(placement: .confirmationAction) { Button("Save") { save() } }
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { isNameFocused = false }
+            }
+        }
+    }
+
+    private func save() {
+        do { try FamilyDinnerStore.renameMember(member, to: name, in: context); dismiss() }
+        catch { errorMessage = error.localizedDescription }
     }
 }
 
@@ -1239,8 +1367,21 @@ enum KeychainKey {
 private struct DinnerDateGroup: Identifiable {
     let date: Date
     let entries: [PlannedDinnerRecipe]
+    let usages: [RecipeDinnerUsage]
     let savedTimelines: [DinnerTimeline]
     var id: Date { date }
+}
+
+struct DinnerRecipeRatingItem: Identifiable, Hashable {
+    let usageID: UUID
+    let recipeID: String
+    let title: String
+    let occurrence: Int
+    let occurrenceCount: Int
+    var id: UUID { usageID }
+    var displayTitle: String {
+        occurrenceCount > 1 ? "\(title) · Serving \(occurrence) of \(occurrenceCount)" : title
+    }
 }
 
 private struct GroceryReviewSession: Identifiable {
@@ -1251,12 +1392,14 @@ private struct GroceryReviewSession: Identifiable {
 private enum DinnerNavigationRoute: Hashable {
     case recommendations(Date)
     case recipe(String)
+    case ratings(Date)
 }
 
 struct DinnerPlannerView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \PlannedDinnerRecipe.dinnerDate) private var scheduled: [PlannedDinnerRecipe]
     @Query(sort: \DinnerTimeline.updatedAt, order: .reverse) private var saved: [DinnerTimeline]
+    @Query private var dinnerUsages: [RecipeDinnerUsage]
     @Query private var importedRecords: [ImportedPaprikaRecipe]
     @Query private var importedWebRecords: [ImportedWebRecipe]
     @Query private var importedMagazineRecords: [ImportedMagazineRecipe]
@@ -1320,14 +1463,45 @@ struct DinnerPlannerView: View {
     private var dinnerGroups: [DinnerDateGroup] {
         let calendar = Calendar.current
         let dates = Set(scheduled.map { calendar.startOfDay(for: $0.dinnerDate) })
+            .union(dinnerUsages.map { calendar.startOfDay(for: $0.dinnerDate) })
             .union(saved.map { calendar.startOfDay(for: $0.targetDate) })
         return dates.map { date in
             DinnerDateGroup(
                 date: date,
                 entries: scheduled.filter { calendar.isDate($0.dinnerDate, inSameDayAs: date) }.sorted { $0.dinnerDate < $1.dinnerDate },
+                usages: dinnerUsages.filter { calendar.isDate($0.dinnerDate, inSameDayAs: date) }.sorted { $0.addedAt < $1.addedAt },
                 savedTimelines: saved.filter { calendar.isDate($0.targetDate, inSameDayAs: date) }.sorted { $0.updatedAt > $1.updatedAt }
             )
         }.sorted { $0.date > $1.date }
+    }
+
+    private func ratingItems(for day: Date) -> [DinnerRecipeRatingItem] {
+        let calendar = Calendar.current
+        var sources: [(id: UUID, recipeID: String)] = dinnerUsages
+            .filter { calendar.isDate($0.dinnerDate, inSameDayAs: day) }
+            .map { ($0.id, $0.recipeID) }
+        var seenIDs = Set(sources.map { $0.id })
+        for entry in scheduled where calendar.isDate(entry.dinnerDate, inSameDayAs: day) && seenIDs.insert(entry.id).inserted {
+            sources.append((entry.id, entry.recipeID))
+        }
+        sources.sort { lhs, rhs in
+            let lhsTime = dinnerUsages.first(where: { $0.id == lhs.id })?.addedAt ?? scheduled.first(where: { $0.id == lhs.id })?.addedAt ?? .distantPast
+            let rhsTime = dinnerUsages.first(where: { $0.id == rhs.id })?.addedAt ?? scheduled.first(where: { $0.id == rhs.id })?.addedAt ?? .distantPast
+            return lhsTime < rhsTime
+        }
+        let counts = Dictionary(grouping: sources, by: { $0.recipeID }).mapValues(\.count)
+        var occurrenceByRecipe: [String: Int] = [:]
+        return sources.map { source in
+            let occurrence = (occurrenceByRecipe[source.recipeID] ?? 0) + 1
+            occurrenceByRecipe[source.recipeID] = occurrence
+            return DinnerRecipeRatingItem(
+                usageID: source.id,
+                recipeID: source.recipeID,
+                title: recipeTitles[source.recipeID] ?? source.recipeID,
+                occurrence: occurrence,
+                occurrenceCount: counts[source.recipeID] ?? 1
+            )
+        }
     }
     private var timelineDayGroups: [TimelineDayGroup] {
         let grouped = Dictionary(grouping: plan.indices) { dayOffset(for: plan[$0].start) }
@@ -1356,6 +1530,21 @@ struct DinnerPlannerView: View {
                                 }
                             }
                             .contextMenu { Button("Remove from dinner", systemImage: "trash", role: .destructive) { context.delete(entry) } }
+                        }
+                        let scheduledIDs = Set(group.entries.map(\.id))
+                        ForEach(group.usages.filter { !scheduledIDs.contains($0.id) }) { usage in
+                            if let recipe = recipes.first(where: { $0.id == usage.recipeID }) {
+                                NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                                    dinnerRecipeLabel(title: recipe.title, date: usage.dinnerDate)
+                                }
+                            } else {
+                                dinnerRecipeLabel(title: recipeTitles[usage.recipeID] ?? usage.recipeID, date: usage.dinnerDate)
+                            }
+                        }
+                        if group.date <= today && !ratingItems(for: group.date).isEmpty {
+                            Button { navigationPath.append(.ratings(group.date)) } label: {
+                                Label("Add Ratings", systemImage: "star.leadinghalf.filled")
+                            }
                         }
                         if !group.entries.isEmpty && group.savedTimelines.isEmpty {
                             Button { Task { await generateWithAI(for: group.entries) } } label: {
@@ -1405,6 +1594,8 @@ struct DinnerPlannerView: View {
                     } else {
                         ContentUnavailableView("Recipe unavailable", systemImage: "book.closed", description: Text("This recipe is no longer in your active cookbook."))
                     }
+                case .ratings(let dinnerDate):
+                    DinnerDayRatingsView(dinnerDate: dinnerDate, items: ratingItems(for: dinnerDate))
                 }
             }
             .sheet(isPresented: $showingPlan) { timelineSheet }
@@ -1601,6 +1792,132 @@ struct DinnerPlannerView: View {
         let minutes = max(0, Int(timeline.targetDate.timeIntervalSince(start) / 60))
         let duration = minutes >= 60 ? "\(minutes / 60)h \(minutes % 60)m" : "\(minutes)m"
         return "Dinner \(dinner) · starts \(start.formatted(date: .abbreviated, time: .shortened)) · \(duration)"
+    }
+}
+
+private struct RecipeVoteKey: Hashable {
+    let usageID: UUID
+    let memberID: UUID
+}
+
+struct DinnerDayRatingsView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var context
+    @Query private var familyMembers: [FamilyMember]
+    @Query private var allVotes: [RecipeDinnerVote]
+    let dinnerDate: Date
+    let items: [DinnerRecipeRatingItem]
+    @State private var ratings: [RecipeVoteKey: Double] = [:]
+    @State private var errorMessage: String?
+
+    private var dinnerMembers: [FamilyMember] {
+        let usageIDs = Set(items.map(\.usageID))
+        let existingVoters = Set(allVotes.filter { usageIDs.contains($0.recipeDinnerUsageID) }.map(\.memberID))
+        return familyMembers.filter { $0.isActive || existingVoters.contains($0.id) }
+            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
+    var body: some View {
+        List {
+            Section("Dinner") { Text(dinnerDate.formatted(date: .complete, time: .omitted)) }
+            if dinnerMembers.isEmpty {
+                Section("Family ratings") {
+                    Text("Add family members in Settings before rating these recipes.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+            } else {
+                ForEach(items) { item in
+                    Section(item.displayTitle) {
+                        ForEach(dinnerMembers) { member in
+                            let key = RecipeVoteKey(usageID: item.usageID, memberID: member.id)
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack {
+                                    Text(member.name)
+                                    if !member.isActive { Text("Former member").font(.caption).foregroundStyle(.secondary) }
+                                    Spacer()
+                                    Text(ratings[key].map { $0.formatted(.number.precision(.fractionLength(0...1))) + " / 5" } ?? "Not rated")
+                                        .font(.caption).foregroundStyle(.secondary)
+                                }
+                                HStack(spacing: 8) {
+                                    HalfStarRatingControl(rating: ratings[key]) { ratings[key] = $0 }
+                                    if ratings[key] != nil {
+                                        Button { ratings[key] = nil } label: { Image(systemName: "xmark.circle") }
+                                            .buttonStyle(.plain)
+                                            .foregroundStyle(.secondary)
+                                            .accessibilityLabel("Clear \(member.name)'s rating for \(item.title)")
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 3)
+                        }
+                    }
+                }
+            }
+            if let errorMessage { Section { Text(errorMessage).font(.footnote).foregroundStyle(.red) } }
+        }
+        .navigationTitle("Add Ratings")
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) { Button("Save") { save() }.disabled(dinnerMembers.isEmpty || items.isEmpty) }
+        }
+        .onAppear {
+            ratings = Dictionary(uniqueKeysWithValues: allVotes
+                .filter { vote in items.contains(where: { $0.usageID == vote.recipeDinnerUsageID }) }
+                .map { (RecipeVoteKey(usageID: $0.recipeDinnerUsageID, memberID: $0.memberID), $0.stars) })
+        }
+    }
+
+    private func save() {
+        do {
+            for item in items {
+                for member in dinnerMembers {
+                    let key = RecipeVoteKey(usageID: item.usageID, memberID: member.id)
+                    if let stars = ratings[key] {
+                        try FamilyDinnerStore.saveRecipeVote(usageID: item.usageID, memberID: member.id, stars: stars, in: context)
+                    } else {
+                        try FamilyDinnerStore.deleteRecipeVote(usageID: item.usageID, memberID: member.id, in: context)
+                    }
+                }
+            }
+            try context.save()
+            dismiss()
+        } catch { errorMessage = error.localizedDescription }
+    }
+}
+
+private struct HalfStarRatingControl: View {
+    let rating: Double?
+    let onChange: (Double?) -> Void
+    private let starWidth: CGFloat = 26
+
+    var body: some View {
+        GeometryReader { geometry in
+            HStack(spacing: 2) {
+                ForEach(1...5, id: \.self) { index in
+                    let fill = min(max((rating ?? 0) - Double(index - 1), 0), 1)
+                    ZStack(alignment: .leading) {
+                        Image(systemName: "star")
+                            .foregroundStyle(.secondary)
+                        Image(systemName: "star.fill")
+                            .foregroundStyle(.yellow)
+                            .mask(alignment: .leading) { Rectangle().frame(width: starWidth * fill) }
+                    }
+                    .frame(width: starWidth, height: 32)
+                }
+            }
+            .contentShape(Rectangle())
+            .gesture(DragGesture(minimumDistance: 0).onChanged { gesture in
+                let portion = min(max(gesture.location.x / max(geometry.size.width, 1), 0), 1)
+                onChange(min(max((portion * 5 * 2).rounded() / 2, 0.5), 5))
+            })
+            .accessibilityElement()
+            .accessibilityLabel("Family rating")
+            .accessibilityValue(rating.map { "\($0.formatted()) out of 5" } ?? "Not rated")
+            .accessibilityAdjustableAction { direction in
+                let next = (rating ?? 0) + (direction == .increment ? 0.5 : -0.5)
+                onChange(next < 0.5 ? nil : min(next, 5))
+            }
+        }
+        .frame(width: starWidth * 5 + 8, height: 34)
     }
 }
 

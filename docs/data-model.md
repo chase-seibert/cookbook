@@ -74,6 +74,9 @@ this logical inventory as a hand-written SQL migration contract.
 | `DinnerTimeline` | `id*: UUID`, `name: String`, `targetDate: Date`, `recipeIDsData: Data`, `activitiesData: Data`, `updatedAt: Date` | Saved dinner schedule. Ordered recipe IDs and `TimelineActivity` values are JSON-encoded in `Data`. |
 | `PlannedDinnerRecipe` | `id*: UUID`, `recipeID: String`, `dinnerDate: Date`, `addedAt: Date` | One recipe scheduled on a dinner date. No uniqueness constraint prevents scheduling the same recipe more than once. |
 | `RecipeDinnerUsage` | `id*: UUID`, `recipeID: String`, `dinnerDate: Date`, `addedAt: Date` | Durable local event for one explicit add to a planned dinner. At startup, missing events are backfilled from surviving `PlannedDinnerRecipe` rows, preserving their IDs and timestamps. Its ID matches the originating planned entry so moving that entry's time updates the event; deleting the plan keeps the event. Counts and last-added dates are derived from these rows. Backfill cannot recover plans already removed before event history existed. |
+| `FamilyMember` | `id*: UUID`, `name: String`, `isActive: Bool`, `createdAt: Date` | Named family voter. Store operations enforce case- and diacritic-insensitive name uniqueness. Removing a member marks them inactive, preserving their identity and name for historical votes. Startup coalesces older duplicate-name rows into the earliest member ID and remaps votes, retaining the most recent vote if duplicates rated the same occurrence. A one-time roster repair activates Chase, Noelle, Henry, Owen, and Eleanor, and moves other existing members to inactive without deleting their history; later edits are preserved. |
+| `DinnerVote` | `id*: UUID`, `dinnerDay: Date`, `memberID: UUID`, `stars: Int`, `updatedAt: Date` | Legacy calendar-day vote rows retained in the SwiftData schema for compatibility with earlier builds. The current UI does not read or write them. |
+| `RecipeDinnerVote` | `id*: UUID`, `recipeDinnerUsageID: UUID`, `memberID: UUID`, `stars: Double`, `updatedAt: Date` | Current per-person rating for one scheduled recipe occurrence. `stars` is a half-star increment from 0.5 to 5. The store upserts by `(recipeDinnerUsageID, memberID)`. |
 | `RecipeUsageStats` | `recipeID*: String`, `recipeOpenCount: Int`, `groceryAddFlowCount: Int`, `updatedAt: Date`, `lastOpenedAt: Date?` | Aggregate open and successfully completed grocery-flow counts, plus the last recorded recipe open; one row per recipe ID. Grocery activity updates `updatedAt` but not `lastOpenedAt`. |
 
 The catalog `Recipe` payload stored inside imported `recipeData` has `id`,
@@ -109,6 +112,8 @@ erDiagram
     RecipePhoto }o..|| Recipe : "recipeID (logical)"
     PlannedDinnerRecipe }o..|| Recipe : "recipeID (logical)"
     RecipeUsageStats }o..|| Recipe : "recipeID (logical)"
+    RecipeDinnerVote }o..|| RecipeDinnerUsage : "recipeDinnerUsageID (logical)"
+    RecipeDinnerVote }o..|| FamilyMember : "memberID (logical)"
     DeletedRecipe }o..|| Recipe : "recipeID (logical)"
     ImageGenerationRun ||--o{ ImageGenerationEntry : "runID (logical)"
     ImageGenerationEntry }o..|| Recipe : "recipeID (logical)"
@@ -128,6 +133,26 @@ erDiagram
     RecipeCategoryAssignment {
         string recipeID PK
         string categoryID
+    }
+    FamilyMember {
+        uuid id PK
+        string name
+        bool isActive
+        timestamp createdAt
+    }
+    DinnerVote {
+        uuid id PK
+        timestamp dinnerDay
+        uuid memberID
+        int stars
+        timestamp updatedAt
+    }
+    RecipeDinnerVote {
+        uuid id PK
+        uuid recipeDinnerUsageID
+        uuid memberID
+        double stars
+        timestamp updatedAt
     }
     ImageGenerationRun {
         uuid id PK
@@ -155,6 +180,16 @@ recipe IDs and activities are embedded in `DinnerTimeline` JSON data. Notes'
 `stepID` and recipe-step `ingredientIDs` point inside Codable recipe content,
 not to separate rows.
 
+`RecipeDinnerVote` points to one `FamilyMember` and one `RecipeDinnerUsage`, so
+each scheduled recipe occurrence has independent votes even when the same
+recipe appears more than once on a date. Ratings use 0.5-star increments from
+0.5 to 5. Recipe detail shows the previous dinner count and last-added date,
+plus the mean of all valid per-instance votes for that recipe, formatted to at
+most one decimal place with its vote count. Votes are entered from Dinner →
+date → Add Ratings, where each recipe occurrence has its own family controls.
+Removing a member only marks them inactive, preserving their name and historical
+votes. Legacy `DinnerVote` rows are retained but not included in aggregates.
+
 ### Uniqueness and query indexes
 
 The following fields have declared uniqueness (`@Attribute(.unique)`):
@@ -177,6 +212,9 @@ The following fields have declared uniqueness (`@Attribute(.unique)`):
 | `DinnerTimeline` | `id` |
 | `PlannedDinnerRecipe` | `id` |
 | `RecipeUsageStats` | `recipeID` |
+| `FamilyMember` | `id` |
+| `DinnerVote` | `id` |
+| `RecipeDinnerVote` | `id` |
 
 There are no explicit non-unique indexes declared in the model code. Common
 filters include assignment by `recipeID`, Paprika rows by `paprikaImportRunID`

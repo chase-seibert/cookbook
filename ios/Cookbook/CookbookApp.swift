@@ -6,7 +6,7 @@ import UIKit
 @main struct CookbookApp: App {
     var body: some Scene {
         WindowGroup { RootView() }
-        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeDinnerUsage.self, RecipeUsageStats.self, ImportedPaprikaRecipe.self, ImportedWebRecipe.self, ImportedMagazineRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, ImageGenerationRun.self, ImageGenerationEntry.self, RecipeCategory.self, RecipeCategorySettings.self, RecipeCategoryAssignment.self])
+        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeDinnerUsage.self, RecipeUsageStats.self, FamilyMember.self, DinnerVote.self, RecipeDinnerVote.self, ImportedPaprikaRecipe.self, ImportedWebRecipe.self, ImportedMagazineRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, ImageGenerationRun.self, ImageGenerationEntry.self, RecipeCategory.self, RecipeCategorySettings.self, RecipeCategoryAssignment.self])
     }
 }
 
@@ -17,6 +17,7 @@ struct RootView: View {
     @State private var incomingPaprikaURL: URL?
     @State private var categorySetupError: String?
     @State private var dinnerUsageSetupError: String?
+    @State private var familySetupError: String?
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -36,6 +37,10 @@ struct RootView: View {
             if phase == .active { openPendingPaprikaShareIfNeeded() }
         }
         .task {
+            do {
+                _ = try FamilyDinnerStore.mergeDuplicateMembers(in: modelContext)
+                try FamilyDinnerStore.initializeRequestedFamilyRosterIfNeeded(in: modelContext)
+            } catch { familySetupError = "Could not update family members: \(error.localizedDescription)" }
             do { _ = try RecipeDinnerUsageStore.backfillMissingEvents(in: modelContext) }
             catch { dinnerUsageSetupError = "Could not restore planned dinner history: \(error.localizedDescription)" }
             do { try RecipeCategoryStore.seedIfNeeded(in: modelContext) }
@@ -48,6 +53,9 @@ struct RootView: View {
         .alert("Recipe categories", isPresented: Binding(get: { categorySetupError != nil }, set: { if !$0 { categorySetupError = nil } })) {
             Button("OK") { categorySetupError = nil }
         } message: { Text(categorySetupError ?? "") }
+        .alert("Family members", isPresented: Binding(get: { familySetupError != nil }, set: { if !$0 { familySetupError = nil } })) {
+            Button("OK") { familySetupError = nil }
+        } message: { Text(familySetupError ?? "") }
     }
 
     private func openPendingPaprikaShareIfNeeded() {
@@ -66,6 +74,8 @@ struct RecipeBrowserView: View {
     @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
     @Query private var categorySettings: [RecipeCategorySettings]
     @Query private var categoryAssignments: [RecipeCategoryAssignment]
+    @Query private var dinnerUsages: [RecipeDinnerUsage]
+    @Query private var recipeDinnerVotes: [RecipeDinnerVote]
     private let importRunLabelID: String?
     private let showingDeletedRecipes: Bool
     private let managesNavigationStack: Bool
@@ -74,6 +84,7 @@ struct RecipeBrowserView: View {
     @State private var query = ""
     @State private var isSearchPresented = false
     @State private var selectedLabelIDs: Set<String> = []
+    @State private var showingFavorites = false
     @State private var selectedDinnerRecipeID: String?
     @Query private var imageGenerationEntries: [ImageGenerationEntry]
     init(importRunLabelID: String? = nil, showingDeletedRecipes: Bool = false, managesNavigationStack: Bool = true, screenTitle: String? = nil, imageRunID: UUID? = nil) {
@@ -131,9 +142,27 @@ struct RecipeBrowserView: View {
     private func selectionCount(in group: RecipeLabelGroup) -> Int {
         allLabels(in: group).filter { selectedLabelIDs.contains($0.id) }.count
     }
-    private var activeFilterCount: Int { selectedLabelIDs.count }
+    private var activeFilterCount: Int { selectedLabelIDs.count + (showingFavorites ? 1 : 0) }
     private func matchesSearch(_ recipe: Recipe) -> Bool {
         query.isEmpty || recipe.title.localizedCaseInsensitiveContains(query) || recipe.ingredients.contains { $0.name.localizedCaseInsensitiveContains(query) }
+    }
+    private var familyRatingsByRecipeID: [String: Double] {
+        let today = Calendar.current.startOfDay(for: .now)
+        let recipeIDByUsageID = Dictionary(
+            dinnerUsages
+                .filter { Calendar.current.startOfDay(for: $0.dinnerDate) <= today }
+                .map { ($0.id, $0.recipeID) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        var totals: [String: (sum: Double, count: Int)] = [:]
+        for vote in recipeDinnerVotes where (0.5...5).contains(vote.stars) {
+            guard let recipeID = recipeIDByUsageID[vote.recipeDinnerUsageID] else { continue }
+            var total = totals[recipeID] ?? (sum: 0, count: 0)
+            total.sum += vote.stars
+            total.count += 1
+            totals[recipeID] = total
+        }
+        return totals.mapValues { $0.sum / Double($0.count) }
     }
     private var visibleCategories: [String] {
         categoryOrder.filter { categoryKey in filtered.contains { categoryID(for: $0) == categoryKey } }
@@ -162,12 +191,22 @@ struct RecipeBrowserView: View {
         return result
     }
     private var filtered: [Recipe] {
-        recipes.filter { recipe in
+        let matchingRecipes = recipes.filter { recipe in
             return matchesSearch(recipe) &&
                 (imageRunID.map { runID in imageGenerationEntries.contains { $0.runID == runID && $0.recipeID == recipe.id && $0.generatedPhotoID != nil } } ?? true) &&
                 (importRunLabelID.map { recipe.browseLabelIDs.contains($0) } ?? true) &&
                 RecipeLabelFilter.matches(recipe, selectedLabelIDs: selectedLabelIDs, groups: labelGroups, labels: labels)
         }
+        guard showingFavorites else { return matchingRecipes }
+        let ratingsByRecipe = familyRatingsByRecipeID
+        return matchingRecipes
+            .filter { (ratingsByRecipe[$0.id] ?? 0) >= 2 }
+            .sorted {
+                let leftRating = ratingsByRecipe[$0.id] ?? 0
+                let rightRating = ratingsByRecipe[$1.id] ?? 0
+                if leftRating != rightRating { return leftRating > rightRating }
+                return $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            }
     }
 
     var body: some View {
@@ -224,13 +263,24 @@ struct RecipeBrowserView: View {
             ContentUnavailableView {
                 Label("No matching recipes", systemImage: "line.3.horizontal.decrease.circle")
             } description: {
-                Text("Try changing a label or search.")
+                Text("Try changing your filters or search.")
             } actions: {
-                Button("Clear filters") { selectedLabelIDs.removeAll(); query = "" }
+                Button("Clear filters") { selectedLabelIDs.removeAll(); showingFavorites = false; query = "" }
                     .buttonStyle(.borderedProminent)
             }
         } else {
-            ScrollViewReader { proxy in
+            if showingFavorites {
+                ScrollView {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 14)], spacing: 14) {
+                        ForEach(filtered) { recipe in
+                            NavigationLink(destination: RecipeDetailView(recipe: recipe)) { RecipeTile(recipe: recipe) }
+                                .buttonStyle(.plain)
+                        }
+                    }
+                    .padding()
+                }
+            } else {
+                ScrollViewReader { proxy in
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
                         ForEach(visibleCategories, id: \.self) { sectionName in
@@ -249,6 +299,7 @@ struct RecipeBrowserView: View {
                         }
                     }.padding()
                 }
+            }
             }
         }
     }
@@ -290,6 +341,16 @@ struct RecipeBrowserView: View {
 
     private var recipeFilterMenu: some View {
         Menu {
+            Button {
+                showingFavorites.toggle()
+            } label: {
+                if showingFavorites {
+                    Label("Favorites", systemImage: "checkmark")
+                } else {
+                    Text("Favorites")
+                }
+            }
+            Divider()
             ForEach(labelGroups) { group in
                 Section(group.displayName) {
                     ForEach(labels(in: group)) { label in
@@ -308,9 +369,9 @@ struct RecipeBrowserView: View {
                     }
                 }
             }
-            if hasLabelFilters {
+            if hasLabelFilters || showingFavorites {
                 Divider()
-                Button("Clear all filters") { selectedLabelIDs.removeAll() }
+                Button("Clear all filters") { selectedLabelIDs.removeAll(); showingFavorites = false }
             }
         } label: {
             Image(systemName: "line.3.horizontal.decrease")
@@ -328,7 +389,7 @@ struct RecipeBrowserView: View {
             }
         .accessibilityLabel("Filters")
         .accessibilityValue(activeFilterCount == 0 ? "No active filters" : "\(activeFilterCount) active \(activeFilterCount == 1 ? "filter" : "filters")")
-        .accessibilityHint("Opens Protein, Meal Style, and Ingredients filters.")
+        .accessibilityHint("Opens Favorites and recipe label filters.")
     }
 }
 
@@ -599,6 +660,7 @@ struct RecipeDetailView: View {
     @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
     @Query private var categoryAssignments: [RecipeCategoryAssignment]
     @Query private var dinnerUsages: [RecipeDinnerUsage]
+    @Query private var recipeDinnerVotes: [RecipeDinnerVote]
     init(recipe: Recipe, previewOnly: Bool = false, previewImage: UIImage? = nil) {
         self.recipe = recipe
         self.previewOnly = previewOnly
@@ -609,6 +671,21 @@ struct RecipeDetailView: View {
         _dinnerUsages = Query(filter: #Predicate<RecipeDinnerUsage> { $0.recipeID == recipeID }, sort: \RecipeDinnerUsage.addedAt)
     }
 
+    private var pastDinnerUsages: [RecipeDinnerUsage] {
+        let today = Calendar.current.startOfDay(for: .now)
+        return dinnerUsages.filter { $0.dinnerDate < today }
+    }
+    private var recipeRatingVotes: [RecipeDinnerVote] {
+        let today = Calendar.current.startOfDay(for: .now)
+        let usageIDs = Set(dinnerUsages
+            .filter { Calendar.current.startOfDay(for: $0.dinnerDate) <= today }
+            .map(\.id))
+        return recipeDinnerVotes.filter { usageIDs.contains($0.recipeDinnerUsageID) && (0.5...5).contains($0.stars) }
+    }
+    private var recipeRating: Double? {
+        guard !recipeRatingVotes.isEmpty else { return nil }
+        return Double(recipeRatingVotes.reduce(0) { $0 + $1.stars }) / Double(recipeRatingVotes.count)
+    }
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
@@ -711,15 +788,23 @@ struct RecipeDetailView: View {
                             Button("Delete Note", role: .destructive) { note.deletedAt = .now; note.updatedAt = .now }
                         }
                     }
+                    SectionTitle("Previous Dinners")
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(dinnerUsages.isEmpty ? "Not added to dinner yet" : "Added to dinner \(dinnerUsages.count) times")
+                        Text(pastDinnerUsages.isEmpty ? "No previous dinners yet" : "Added to dinner \(pastDinnerUsages.count) times")
                             .font(.subheadline.weight(.medium))
-                        if let latestAddition = dinnerUsages.last {
+                        if let latestAddition = pastDinnerUsages.max(by: { $0.addedAt < $1.addedAt }) {
                             Text("Last added \(latestAddition.addedAt.formatted(date: .abbreviated, time: .omitted))")
                                 .font(.caption).foregroundStyle(.secondary)
                         }
                     }
                     .accessibilityElement(children: .combine)
+                    SectionTitle("Family Rating")
+                    if let recipeRating {
+                        Label("\(recipeRating.formatted(.number.precision(.fractionLength(0...1)))) / 5 · \(recipeRatingVotes.count) \(recipeRatingVotes.count == 1 ? "vote" : "votes")", systemImage: "star.fill")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text("Not rated yet").foregroundStyle(.secondary)
+                    }
                 }
                 if let provenance = recipe.provenance, provenance.type != .paprikaImport {
                     HStack(spacing: 0) {

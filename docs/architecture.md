@@ -30,9 +30,20 @@ metadata provides a more precise mapping.
 - `Catalog.swift` decodes the immutable bundled catalog.
 - `CookbookApp.swift` owns tab navigation and the SwiftData container.
 - `PersonalData.swift` stores notes, photo metadata, scheduled recipe dates,
-  saved dinner timelines, cooking resume points, and persistent image-generation
-  run and recipe-entry history. Photo bytes and PDF exports are stored under
-  Application Support.
+  saved dinner timelines, family members and per-recipe-occurrence votes,
+  cooking resume points, and persistent image-generation run and recipe-entry
+  history. Dinner → Add Ratings opens a dedicated screen where each scheduled
+  recipe occurrence gets separate family ratings in half-star increments.
+  Recipe detail shows the aggregate mean across that recipe's previous dinner
+  occurrences. Removing a family member preserves their historical name and
+  votes while hiding them from new ratings. Earlier calendar-day vote rows stay
+  in the store for compatibility and are not included in current aggregates.
+  Settings opens a dedicated family-management form; names are unique without
+  regard to case or accents, and startup merges existing duplicate-name rows
+  while preserving their rating history. One-time setup applies the requested
+  active roster of Chase, Noelle, Henry, Owen, and Eleanor; other existing
+  members remain recoverable in the removed-members section.
+  Photo bytes and PDF exports are stored under Application Support.
 - `ImageGeneration.swift` builds one fixed food-photography instruction plus the
   complete recipe context, calls the OpenAI Images API directly or presents
   Apple's system Image Playground sheet, and saves validated JPEG covers as
@@ -68,6 +79,9 @@ link to OpenAI's API-key page; recipe image settings do not duplicate the key
 editor. Main Settings orders the key editor before image generation and meal
 planning. Completed bulk runs first present a cover-preview review screen, which
 can continue into the Recipes browser filtered to that run.
+
+The Recipes filter menu puts Favorites first; it shows recipes with a family
+rating of at least 2 stars, sorted by rating, in a flat grid.
 
 ## Known implementation gaps
 
