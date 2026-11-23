@@ -132,7 +132,7 @@ struct GroceryReviewView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @AppStorage("reminderListID") private var selectedListID = ""
-    @State private var lists: [EKCalendar] = []
+    @State private var lists: [GroceryReminderList] = []
     @State private var existing: Set<String> = []
     @State private var selected: Set<String> = []
     @State private var message: String?
@@ -158,7 +158,7 @@ struct GroceryReviewView: View {
                     else if lists.isEmpty { Text(message ?? "No writable Reminders lists found.").foregroundStyle(.secondary) }
                     else { Picker("Destination list", selection: $selectedListID) {
                         Text("Select a list").tag("")
-                        ForEach(lists, id: \.calendarIdentifier) { Text($0.title).tag($0.calendarIdentifier) }
+                        ForEach(lists) { Text($0.title).tag($0.id) }
                     }.onChange(of: selectedListID) { _, _ in loadExisting() } }
                 } header: { Text("Add to") }
                 group("Ingredients to buy", items: buyItems)
@@ -199,16 +199,21 @@ struct GroceryReviewView: View {
     @MainActor private func requestAccess() async {
         do {
             if #available(iOS 17.0, *) { try await store.requestFullAccessToReminders() } else { try await store.requestAccess(to: .reminder) }
-            lists = store.calendars(for: .reminder).filter(\.allowsContentModifications)
+            lists = store.calendars(for: .reminder)
+                .filter(\.allowsContentModifications)
+                .map { GroceryReminderList(id: $0.calendarIdentifier, title: $0.title) }
             if selectedListID.isEmpty { message = "Choose the Reminders list in Settings before adding groceries." }
-            else if !lists.contains(where: { $0.calendarIdentifier == selectedListID }) { message = "The selected Reminders list is unavailable. Choose another list in Settings." }
+            else if !lists.contains(where: { $0.id == selectedListID }) { message = "The selected Reminders list is unavailable. Choose another list in Settings." }
             loading = false
             loadExisting()
         } catch { message = "Allow Reminders access in Settings to choose a list."; loading = false }
     }
 
     private func loadExisting() {
-        guard let calendar = lists.first(where: { $0.calendarIdentifier == selectedListID }) else { existing = []; return }
+        // Keep only calendar IDs in SwiftUI state. EKCalendar instances belong to
+        // the EKEventStore that created them and can become stale when SwiftUI
+        // recreates this view value.
+        guard let calendar = store.calendar(withIdentifier: selectedListID) else { existing = []; return }
         let predicate = store.predicateForIncompleteReminders(withDueDateStarting: nil, ending: nil, calendars: [calendar])
         store.fetchReminders(matching: predicate) { reminders in
             let keys = Set((reminders ?? []).map { normalize($0.title) })
@@ -222,7 +227,7 @@ struct GroceryReviewView: View {
     }
 
     private func addSelected() {
-        guard let calendar = lists.first(where: { $0.calendarIdentifier == selectedListID }), calendar.allowsContentModifications else { message = "That list is unavailable or read-only. Choose another list in Settings."; return }
+        guard let calendar = store.calendar(withIdentifier: selectedListID), calendar.allowsContentModifications else { message = "That list is unavailable or read-only. Choose another list in Settings."; return }
         let items = uniqueIngredients.filter { selected.contains($0.id) && !existing.contains(normalize($0.groceryName)) }
         guard !items.isEmpty else { message = "All selected ingredients are already on this list."; return }
         var savedCount = 0
@@ -244,4 +249,9 @@ struct GroceryReviewView: View {
     }
 
     private func normalize(_ value: String) -> String { value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current).split(whereSeparator: \.isWhitespace).joined(separator: " ") }
+}
+
+private struct GroceryReminderList: Identifiable {
+    let id: String
+    let title: String
 }
