@@ -629,7 +629,6 @@ struct RecipeDetailView: View {
     @State private var showNote = false
     @State private var showCamera = false
     @State private var showPrint = false
-    @State private var showNoteEdit = false
     @State private var showCooking = false
     @State private var showAddToDinner = false
     @State private var showImageGeneration = false
@@ -776,7 +775,7 @@ struct RecipeDetailView: View {
                     }
                     if activeNotes.isEmpty { Text("No notes yet.").foregroundStyle(.secondary) }
                     ForEach(activeNotes) { note in
-                        Button { noteToEdit = note; showNoteEdit = true } label: {
+                        Button { noteToEdit = note } label: {
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(note.text).font(.body).multilineTextAlignment(.leading)
                                 Text(note.updatedAt.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(.secondary)
@@ -925,7 +924,7 @@ struct RecipeDetailView: View {
         .sheet(isPresented: $showCooking) { CookingModeView(recipe: recipe) }
         .sheet(isPresented: $showAddToDinner) { AddRecipeToDinnerView(recipe: recipe) }
         .sheet(isPresented: $showNote) { NoteEditorView(recipe: recipe) }
-        .sheet(isPresented: $showNoteEdit) { if let noteToEdit { NoteEditorView(recipe: recipe, note: noteToEdit) } }
+        .sheet(item: $noteToEdit) { note in NoteEditorView(recipe: recipe, note: note) }
         .sheet(isPresented: $showPrint) { RecipePrintView(recipe: recipe) }
         .sheet(isPresented: $showPaprikaShare) {
             if let paprikaExportURL { ActivityView(items: [paprikaExportURL]) }
