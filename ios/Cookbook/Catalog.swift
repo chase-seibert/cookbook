@@ -47,6 +47,10 @@ struct Recipe: Codable, Identifiable, Hashable, Sendable {
 
     var browseLabelIDs: [String] { labelIDs ?? [] }
 
+    func replacingTitle(_ title: String) -> Recipe {
+        Recipe(id: id, title: title, category: category, collectionTitle: collectionTitle, sourceFile: sourceFile, sourceSection: sourceSection, introduction: introduction, ingredients: ingredients, ingredientGroups: ingredientGroups, steps: steps, contentOrder: contentOrder, tips: tips, healthierOptions: healthierOptions, thumbnailAsset: thumbnailAsset, labelIDs: labelIDs, provenance: provenance, menuDescription: menuDescription, menuPairings: menuPairings, servings: servings)
+    }
+
     var orderedContent: [RecipeDisplayContent] {
         let groups = ingredientGroups ?? legacyIngredientGroups
         let groupByID = Dictionary(groups.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })

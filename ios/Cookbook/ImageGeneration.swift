@@ -342,12 +342,13 @@ struct ImageGenerationSettingsView: View {
     @AppStorage("imageOpenAIModel") private var model = "gpt-image-2.5-flare"
     @Query private var imported: [ImportedPaprikaRecipe]
     @Query private var deleted: [DeletedRecipe]
+    @Query private var titleOverrides: [RecipeTitleOverride]
     @Query private var photos: [RecipePhoto]
     @Query(sort: \ImageGenerationRun.createdAt, order: .reverse) private var runs: [ImageGenerationRun]
 
     private var recipes: [Recipe] {
         let deletedIDs = Set(deleted.map(\.recipeID))
-        return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + imported.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+        return (CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + imported.filter { $0.deletedAt == nil }.compactMap(\.recipe)).map { RecipeTitleOverrideStore.applying($0, overrides: titleOverrides) }
     }
     private var eligible: [Recipe] { recipes.filter { recipe in
         !photos.contains(where: { $0.recipeID == recipe.id && $0.isCover }) && recipe.thumbnailAsset.flatMap { Bundle.main.url(forResource: $0, withExtension: nil, subdirectory: "Thumbnails") } == nil

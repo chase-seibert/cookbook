@@ -259,6 +259,42 @@ enum RecipeCategoryError: LocalizedError {
     }
 }
 
+@Model final class RecipeTitleOverride {
+    @Attribute(.unique) var recipeID: String
+    var title: String
+
+    init(recipeID: String, title: String) {
+        self.recipeID = recipeID
+        self.title = title
+    }
+}
+
+enum RecipeTitleOverrideStore {
+    static func applying(_ recipe: Recipe, overrides: [RecipeTitleOverride]) -> Recipe {
+        guard let override = overrides.first(where: { $0.recipeID == recipe.id }),
+              !override.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return recipe }
+        return recipe.replacingTitle(override.title)
+    }
+
+    @MainActor static func save(_ title: String, recipeID: String, in context: ModelContext) throws {
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { throw RecipeTitleOverrideError.emptyTitle }
+        let descriptor = FetchDescriptor<RecipeTitleOverride>(predicate: #Predicate { $0.recipeID == recipeID })
+        if let existing = try context.fetch(descriptor).first {
+            guard existing.title != trimmed else { return }
+            existing.title = trimmed
+        } else {
+            context.insert(RecipeTitleOverride(recipeID: recipeID, title: trimmed))
+        }
+        try context.save()
+    }
+}
+
+enum RecipeTitleOverrideError: LocalizedError {
+    case emptyTitle
+    var errorDescription: String? { "Enter a recipe name before saving." }
+}
+
 struct PaprikaSkippedRecipe: Codable, Hashable, Identifiable, Sendable {
     let uid: String
     let title: String

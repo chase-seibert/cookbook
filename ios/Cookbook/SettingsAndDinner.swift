@@ -37,6 +37,7 @@ struct SettingsView: View {
     @Query(sort: \ImportedWebRecipe.capturedAt, order: .reverse) private var importedWebRecords: [ImportedWebRecipe]
     @Query(sort: \ImportedMagazineRecipe.capturedAt, order: .reverse) private var importedMagazineRecords: [ImportedMagazineRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
+    @Query private var titleOverrides: [RecipeTitleOverride]
     @Query(sort: \PaprikaImportRun.createdAt, order: .reverse) private var paprikaImportRuns: [PaprikaImportRun]
     @Query private var recipePhotos: [RecipePhoto]
     private let reminderStore = EKEventStore()
@@ -367,7 +368,7 @@ struct SettingsView: View {
         let path = UserFiles.directory.appendingPathComponent("recipe-notes-\(stamp).json")
         let markdownPath = UserFiles.directory.appendingPathComponent("recipe-notes-\(stamp).md")
         let json = (try? JSONEncoder.pretty.encode(records)) ?? Data("[]".utf8)
-        let allRecipes = CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) + importedWebRecords.compactMap(\.recipe) + importedMagazineRecords.compactMap(\.recipe)
+        let allRecipes = (CookbookCatalog.bundled.recipes + importedRecords.compactMap(\.recipe) + importedWebRecords.compactMap(\.recipe) + importedMagazineRecords.compactMap(\.recipe)).map { RecipeTitleOverrideStore.applying($0, overrides: titleOverrides) }
         let titles = Dictionary(uniqueKeysWithValues: allRecipes.map { ($0.id, $0.title) })
         let body = records.map { record in
             "## \(titles[record.recipeID] ?? record.recipeID)\n\n- Note ID: `\(record.id.uuidString)`\n- Recipe ID: `\(record.recipeID)`\n- Step ID: \(record.stepID ?? "whole recipe")\n- Created: \(record.createdAt)\n- Updated: \(record.updatedAt)\n\n\(record.text)"
@@ -377,10 +378,10 @@ struct SettingsView: View {
 
     private var activePaprikaRecipes: [Recipe] {
         let deletedIDs = Set(deletedRecipes.map(\.recipeID))
-        return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) }
+        return (CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) }
             + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
             + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
-            + importedMagazineRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+            + importedMagazineRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)).map { RecipeTitleOverrideStore.applying($0, overrides: titleOverrides) }
     }
 
     private var paprikaExportDates: [String: RecipeExportDates] {
@@ -1168,11 +1169,12 @@ private struct RecipeUsageStatsView: View {
     @Query private var importedWebRecords: [ImportedWebRecipe]
     @Query private var importedMagazineRecords: [ImportedMagazineRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
+    @Query private var titleOverrides: [RecipeTitleOverride]
     @State private var exportURL: URL?
 
     private var rows: [(recipe: Recipe?, stats: RecipeUsageStats?)] {
         let deletedIDs = Set(deletedRecipes.map(\.recipeID))
-        let catalog = CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedMagazineRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+        let catalog = (CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedMagazineRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)).map { RecipeTitleOverrideStore.applying($0, overrides: titleOverrides) }
         var byID = Dictionary(uniqueKeysWithValues: stats.map { ($0.recipeID, $0) })
         let catalogRows: [(recipe: Recipe?, stats: RecipeUsageStats?)] = catalog.map { (Optional($0), byID.removeValue(forKey: $0.id)) }
         let unmatched = stats.filter { record in !catalog.contains { $0.id == record.recipeID } }
@@ -1404,6 +1406,7 @@ struct DinnerPlannerView: View {
     @Query private var importedWebRecords: [ImportedWebRecipe]
     @Query private var importedMagazineRecords: [ImportedMagazineRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
+    @Query private var titleOverrides: [RecipeTitleOverride]
     @State private var selectedIDs = Set<String>()
     @State private var dinnerTime = Date.now
     @State private var plan: [TimelineActivity] = []
@@ -1422,7 +1425,7 @@ struct DinnerPlannerView: View {
     @AppStorage("openAIModel") private var openAIModel = "gpt-6-astra"
     private var recipes: [Recipe] {
         let deletedIDs = Set(deletedRecipes.map(\.recipeID))
-        return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedMagazineRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)
+        return (CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedWebRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe) + importedMagazineRecords.filter { $0.deletedAt == nil }.compactMap(\.recipe)).map { RecipeTitleOverrideStore.applying($0, overrides: titleOverrides) }
     }
 
     private var recipeTitles: [String: String] { Dictionary(uniqueKeysWithValues: recipes.map { ($0.id, $0.title) }) }

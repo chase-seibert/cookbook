@@ -6,7 +6,7 @@ import UIKit
 @main struct CookbookApp: App {
     var body: some Scene {
         WindowGroup { RootView() }
-        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeDinnerUsage.self, RecipeUsageStats.self, FamilyMember.self, DinnerVote.self, RecipeDinnerVote.self, ImportedPaprikaRecipe.self, ImportedWebRecipe.self, ImportedMagazineRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, ImageGenerationRun.self, ImageGenerationEntry.self, RecipeCategory.self, RecipeCategorySettings.self, RecipeCategoryAssignment.self])
+        .modelContainer(for: [RecipeNote.self, RecipePhoto.self, DinnerTimeline.self, CookingSessionRecord.self, PlannedDinnerRecipe.self, RecipeDinnerUsage.self, RecipeUsageStats.self, FamilyMember.self, DinnerVote.self, RecipeDinnerVote.self, ImportedPaprikaRecipe.self, ImportedWebRecipe.self, ImportedMagazineRecipe.self, PaprikaImportRun.self, DeletedRecipe.self, RecipeTitleOverride.self, ImageGenerationRun.self, ImageGenerationEntry.self, RecipeCategory.self, RecipeCategorySettings.self, RecipeCategoryAssignment.self])
     }
 }
 
@@ -71,6 +71,7 @@ struct RecipeBrowserView: View {
     @Query private var importedWebRecords: [ImportedWebRecipe]
     @Query private var importedMagazineRecords: [ImportedMagazineRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
+    @Query private var titleOverrides: [RecipeTitleOverride]
     @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
     @Query private var categorySettings: [RecipeCategorySettings]
     @Query private var categoryAssignments: [RecipeCategoryAssignment]
@@ -102,8 +103,10 @@ struct RecipeBrowserView: View {
         let importedRecipes = availableImportedRecords.compactMap(\.recipe) + importedWebRecords.filter { showingDeletedRecipes ? $0.deletedAt != nil : $0.deletedAt == nil }.compactMap(\.recipe) + importedMagazineRecords.filter { showingDeletedRecipes ? $0.deletedAt != nil : $0.deletedAt == nil }.compactMap(\.recipe)
         let deletedIDs = Set(deletedRecipes.map(\.recipeID))
         let deletedBundledRecipes = CookbookCatalog.bundled.recipes.filter { deletedIDs.contains($0.id) }
-        if showingDeletedRecipes { return importedRecipes + deletedBundledRecipes }
-        return CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecipes
+        let available: [Recipe]
+        if showingDeletedRecipes { available = importedRecipes + deletedBundledRecipes }
+        else { available = CookbookCatalog.bundled.recipes.filter { !deletedIDs.contains($0.id) } + importedRecipes }
+        return available.map { RecipeTitleOverrideStore.applying($0, overrides: titleOverrides) }
     }
     private var defaultCategoryID: String { categorySettings.first?.defaultCategoryID ?? categories.first?.id ?? RecipeCategoryStore.fallbackID }
     private var categoryOrder: [String] { categories.sorted { $0.order < $1.order }.map(\.id) }
@@ -633,6 +636,10 @@ struct RecipeDetailView: View {
     @State private var showAddToDinner = false
     @State private var showImageGeneration = false
     @State private var imageEditButtonVisible = false
+    @State private var titleEditButtonVisible = false
+    @State private var showingTitleEditor = false
+    @State private var titleDraft = ""
+    @State private var titleStatus: String?
     @State private var showPhotoPicker = false
     @State private var showDeleteConfirmation = false
     @State private var noteToEdit: RecipeNote?
@@ -656,6 +663,7 @@ struct RecipeDetailView: View {
     @Query private var importedWebRecords: [ImportedWebRecipe]
     @Query private var importedMagazineRecords: [ImportedMagazineRecipe]
     @Query private var deletedRecipes: [DeletedRecipe]
+    @Query private var titleOverrides: [RecipeTitleOverride]
     @Query(sort: \RecipeCategory.order) private var categories: [RecipeCategory]
     @Query private var categoryAssignments: [RecipeCategoryAssignment]
     @Query private var dinnerUsages: [RecipeDinnerUsage]
@@ -728,7 +736,29 @@ struct RecipeDetailView: View {
                     .buttonStyle(.plain)
                     .accessibilityLabel("Add recipe image")
                 }
-                Text(recipe.title).font(.system(size: 34, weight: .semibold, design: .serif)).fixedSize(horizontal: false, vertical: true)
+                if canEditTitle {
+                    Button { titleEditButtonVisible = true } label: {
+                        Text(effectiveRecipe.title).font(.system(size: 34, weight: .semibold, design: .serif))
+                            .fixedSize(horizontal: false, vertical: true).frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(effectiveRecipe.title)
+                    .accessibilityHint("Show recipe name editing options.")
+                    .popover(isPresented: $titleEditButtonVisible, attachmentAnchor: .rect(.bounds), arrowEdge: .bottom) {
+                        Button {
+                            titleDraft = effectiveRecipe.title
+                            titleEditButtonVisible = false
+                            DispatchQueue.main.async { showingTitleEditor = true }
+                        } label: {
+                            Label("Edit Name", systemImage: "pencil")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .padding(12)
+                        .presentationCompactAdaptation(.popover)
+                    }
+                } else {
+                    Text(effectiveRecipe.title).font(.system(size: 34, weight: .semibold, design: .serif)).fixedSize(horizontal: false, vertical: true)
+                }
                 if !recipe.introduction.isEmpty { Text(recipe.introduction).font(.body).foregroundStyle(.secondary) }
                 if let servings = recipe.servings, !servings.isEmpty { LabeledContent("Servings", value: servings) }
                 ForEach(recipe.orderedContent) { content in
@@ -917,15 +947,15 @@ struct RecipeDetailView: View {
                 }
             }
         }
-        .sheet(isPresented: $showGroceries) { GroceryReviewView(recipe: recipe) }
+        .sheet(isPresented: $showGroceries) { GroceryReviewView(recipe: effectiveRecipe) }
         .sheet(isPresented: $showImageGeneration) {
-            NavigationStack { RecipeImageGenerationView(recipes: [recipe], resumeRun: nil) }
+            NavigationStack { RecipeImageGenerationView(recipes: [effectiveRecipe], resumeRun: nil) }
         }
-        .sheet(isPresented: $showCooking) { CookingModeView(recipe: recipe) }
-        .sheet(isPresented: $showAddToDinner) { AddRecipeToDinnerView(recipe: recipe) }
-        .sheet(isPresented: $showNote) { NoteEditorView(recipe: recipe) }
-        .sheet(item: $noteToEdit) { note in NoteEditorView(recipe: recipe, note: note) }
-        .sheet(isPresented: $showPrint) { RecipePrintView(recipe: recipe) }
+        .sheet(isPresented: $showCooking) { CookingModeView(recipe: effectiveRecipe) }
+        .sheet(isPresented: $showAddToDinner) { AddRecipeToDinnerView(recipe: effectiveRecipe) }
+        .sheet(isPresented: $showNote) { NoteEditorView(recipe: effectiveRecipe) }
+        .sheet(item: $noteToEdit) { note in NoteEditorView(recipe: effectiveRecipe, note: note) }
+        .sheet(isPresented: $showPrint) { RecipePrintView(recipe: effectiveRecipe) }
         .sheet(isPresented: $showPaprikaShare) {
             if let paprikaExportURL { ActivityView(items: [paprikaExportURL]) }
         }
@@ -944,11 +974,19 @@ struct RecipeDetailView: View {
         .alert("Recipe image", isPresented: Binding(get: { photoStatus != nil }, set: { if !$0 { photoStatus = nil } })) {
             Button("OK") { photoStatus = nil }
         } message: { Text(photoStatus ?? "") }
+        .alert("Recipe name", isPresented: Binding(get: { titleStatus != nil }, set: { if !$0 { titleStatus = nil } })) {
+            Button("OK") { titleStatus = nil }
+        } message: { Text(titleStatus ?? "") }
+        .alert("Edit Recipe Name", isPresented: $showingTitleEditor) {
+            TextField("Recipe name", text: $titleDraft).textInputAutocapitalization(.words).autocorrectionDisabled()
+            Button("Cancel", role: .cancel) { }
+            Button("Save", action: saveTitle)
+        } message: { Text("Enter a name for this recipe.") }
         .sheet(isPresented: $showCamera) {
             CameraCaptureView { image in savePhoto(image) }
         }
         .photosPicker(isPresented: $showPhotoPicker, selection: $pickedPhoto, matching: .images)
-        .confirmationDialog("Delete \(recipe.title)?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
+        .confirmationDialog("Delete \(effectiveRecipe.title)?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
             Button("Delete Recipe", role: .destructive) { deleteRecipe() }
             Button("Cancel", role: .cancel) { }
         } message: {
@@ -967,6 +1005,16 @@ struct RecipeDetailView: View {
                 Label(hasEffectiveImage ? "Manage Recipe Images" : "Generate Recipe Cover", systemImage: "sparkles")
             }
         }
+    }
+
+    private var effectiveRecipe: Recipe { RecipeTitleOverrideStore.applying(recipe, overrides: titleOverrides) }
+    private var canEditTitle: Bool { !previewOnly && !isDeleted }
+    @MainActor private func saveTitle() {
+        let trimmed = titleDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { titleStatus = "Enter a recipe name before saving."; return }
+        guard trimmed != effectiveRecipe.title else { return }
+        do { try RecipeTitleOverrideStore.save(trimmed, recipeID: recipe.id, in: modelContext) }
+        catch { titleStatus = "Could not save the recipe name: \(error.localizedDescription)" }
     }
 
     private var activeNotes: [RecipeNote] { notes.filter { $0.deletedAt == nil }.sorted { $0.updatedAt > $1.updatedAt } }
@@ -1012,9 +1060,9 @@ struct RecipeDetailView: View {
                 modelContext.insert(DeletedRecipe(recipeID: recipe.id))
             }
             try modelContext.save()
-            restorationMessage = "\(recipe.title) was moved to Deleted recipes."
+            restorationMessage = "\(effectiveRecipe.title) was moved to Deleted recipes."
         } catch {
-            restorationMessage = "Could not delete \(recipe.title): \(error.localizedDescription)"
+            restorationMessage = "Could not delete \(effectiveRecipe.title): \(error.localizedDescription)"
         }
     }
 
@@ -1025,9 +1073,9 @@ struct RecipeDetailView: View {
             magazineRecipeRecord?.deletedAt = nil
             if let deletedRecipeRecord { modelContext.delete(deletedRecipeRecord) }
             try modelContext.save()
-            restorationMessage = "\(recipe.title) was restored to your recipe list."
+            restorationMessage = "\(effectiveRecipe.title) was restored to your recipe list."
         } catch {
-            restorationMessage = "Could not restore \(recipe.title): \(error.localizedDescription)"
+            restorationMessage = "Could not restore \(effectiveRecipe.title): \(error.localizedDescription)"
         }
     }
 
@@ -1035,14 +1083,14 @@ struct RecipeDetailView: View {
         exportingPaprika = true
         defer { exportingPaprika = false }
         do {
-            let item = try PaprikaExporter.item(for: recipe, importedRecords: importedRecords, photos: photos)
+            let item = try PaprikaExporter.item(for: effectiveRecipe, importedRecords: importedRecords, photos: photos)
             let url = PaprikaExporter.temporaryURL(extension: "paprikarecipe")
             try await Task.detached(priority: .userInitiated) { try PaprikaExporter.writeRecipe(item, to: url) }.value
             paprikaExportURL = url
             // Let the ellipsis menu finish dismissing before presenting another controller.
             try await Task.sleep(nanoseconds: 300_000_000)
             showPaprikaShare = true
-        } catch { paprikaExportStatus = "Could not export \(recipe.title): \(error.localizedDescription)" }
+        } catch { paprikaExportStatus = "Could not export \(effectiveRecipe.title): \(error.localizedDescription)" }
     }
 
     private enum RecipeDocumentFormat: Equatable, Sendable {
@@ -1055,8 +1103,8 @@ struct RecipeDetailView: View {
         recipeDocumentURL = nil
         defer { exportingRecipeDocument = false }
         let fileExtension = format == .markdown ? "md" : "html"
-        let exportRecipe = recipe
-        let url = RecipeDocumentExporter.temporaryURL(for: recipe, extension: fileExtension)
+        let exportRecipe = effectiveRecipe
+        let url = RecipeDocumentExporter.temporaryURL(for: effectiveRecipe, extension: fileExtension)
         do {
             try await Task.detached(priority: .userInitiated) {
                 switch format {
@@ -1067,7 +1115,7 @@ struct RecipeDetailView: View {
             recipeDocumentURL = url
             try await Task.sleep(nanoseconds: 300_000_000)
             showRecipeDocumentShare = true
-        } catch { recipeDocumentStatus = "Could not export \(recipe.title): \(error.localizedDescription)" }
+        } catch { recipeDocumentStatus = "Could not export \(effectiveRecipe.title): \(error.localizedDescription)" }
     }
 
     @MainActor private func savePhoto(_ item: PhotosPickerItem?) async {
