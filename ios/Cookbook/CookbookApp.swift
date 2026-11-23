@@ -257,16 +257,21 @@ struct RecipeBrowserView: View {
         query = ""
     }
 
+    private func clearActiveFilters() {
+        selectedLabelIDs.removeAll()
+        showingFavorites = false
+        isEditingSpecificRecipeFilter = false
+        isSpecificRecipeFilterApplied = false
+        isSearchPresented = false
+        query = ""
+    }
+
     private func toggleRecipeSelection(_ recipe: Recipe) {
         if selectedRecipeIDs.contains(recipe.id) {
             selectedRecipeIDs.remove(recipe.id)
         } else {
             selectedRecipeIDs.insert(recipe.id)
         }
-    }
-
-    private func clearTemporaryRecipeSelection() {
-        selectedRecipeIDs.removeAll()
     }
 
     var body: some View {
@@ -310,6 +315,13 @@ struct RecipeBrowserView: View {
             if !isLandscape {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     if !isSearchPresented {
+                        if activeFilterCount > 0 {
+                            Button(action: clearActiveFilters) {
+                                Image(systemName: "xmark")
+                            }
+                            .accessibilityLabel("Clear filters")
+                            .accessibilityHint("Clears all active recipe filters.")
+                        }
                         recipeFilterMenu
                         if !isEditingSpecificRecipeFilter && !isSpecificRecipeFilterApplied && !showingFavorites {
                             Button {
@@ -338,24 +350,16 @@ struct RecipeBrowserView: View {
     @ViewBuilder private var browserContent: some View {
         if portraitRecipes.isEmpty {
             VStack(spacing: 0) {
-                if isEditingSpecificRecipeFilter { selectionActionBar }
+                if isEditingSpecificRecipeFilter { selectionActionBar(onApply: applySpecificRecipeFilter) }
                 ContentUnavailableView {
                     Label(isSpecificRecipeFilterApplied ? "No selected recipes" : "No matching recipes", systemImage: "line.3.horizontal.decrease.circle")
                 } description: {
                     if isSpecificRecipeFilterApplied {
-                        Text("Your specific recipe filter has no selected recipes. Choose Select specific recipes to update it, or show all recipes.")
+                        Text("Your specific recipe filter has no selected recipes. Choose Select specific recipes to update it, or use the X next to Filters to clear all filters.")
                     } else if isEditingSpecificRecipeFilter {
                         Text("No recipes are available to select right now.")
                     } else {
                         Text("Try changing your filters or search.")
-                    }
-                } actions: {
-                    if isSpecificRecipeFilterApplied {
-                        Button("Show all recipes", action: showAllRecipes)
-                            .buttonStyle(.borderedProminent)
-                    } else if !isEditingSpecificRecipeFilter {
-                        Button("Clear filters") { selectedLabelIDs.removeAll(); showingFavorites = false; query = "" }
-                            .buttonStyle(.borderedProminent)
                     }
                 }
             }
@@ -368,12 +372,17 @@ struct RecipeBrowserView: View {
                 }.padding()
             }
             .safeAreaInset(edge: .top, spacing: 0) {
-                if isEditingSpecificRecipeFilter { selectionActionBar }
+                if isEditingSpecificRecipeFilter {
+                    selectionActionBar(onApply: applySpecificRecipeFilter)
+                }
             }
         } else {
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
+                        Color.clear
+                            .frame(height: 1)
+                            .id("recipe-browser-top")
                         ForEach(visibleCategories, id: \.self) { sectionName in
                             VStack(alignment: .leading, spacing: 16) {
                                 categoryJumpMenu(sectionName: sectionName, scrollProxy: proxy)
@@ -391,36 +400,35 @@ struct RecipeBrowserView: View {
                     }.padding()
                 }
                 .safeAreaInset(edge: .top, spacing: 0) {
-                    if isEditingSpecificRecipeFilter { selectionActionBar }
+                    if isEditingSpecificRecipeFilter {
+                        selectionActionBar {
+                            applySpecificRecipeFilter()
+                            DispatchQueue.main.async {
+                                withAnimation(.easeInOut(duration: 0.25)) {
+                                    proxy.scrollTo("recipe-browser-top", anchor: .top)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
-    private var selectionActionBar: some View {
-        HStack(spacing: 12) {
-            Button(action: applySpecificRecipeFilter) {
+    private func selectionActionBar(onApply: @escaping () -> Void) -> some View {
+        HStack {
+            Spacer(minLength: 0)
+            Button(action: onApply) {
                 Label("Apply filter", systemImage: "checkmark")
                     .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-                    .frame(maxWidth: .infinity)
+                    .fixedSize()
             }
             .buttonStyle(.borderedProminent)
             .accessibilityHint("Applies the selected recipes to portrait and landscape browsing.")
-
-            Button(action: clearTemporaryRecipeSelection) {
-                Label("Clear", systemImage: "xmark.circle")
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.bordered)
-            .disabled(selectedRecipeIDs.isEmpty)
-            .accessibilityLabel("Clear selection")
-            .accessibilityHint("Removes every recipe from the selection being edited.")
+            Spacer(minLength: 0)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity)
+        .frame(height: 56)
         .background(.regularMaterial)
     }
 
@@ -535,10 +543,6 @@ struct RecipeBrowserView: View {
                             Button("Clear \(group.displayName)") { clearLabels(in: group) }
                         }
                     }
-                }
-                if hasLabelFilters {
-                    Divider()
-                    Button("Clear all filters") { selectedLabelIDs.removeAll() }
                 }
             }
         } label: {
